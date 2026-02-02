@@ -21,8 +21,8 @@ services:
     depends_on:
       - db
     # Use .env file for environment variables (optional, but recommended)
-    # env_file:
-    #   - .env
+    env_file:
+      - .env
 
 volumes:
   postgres_data:
