@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-$#^m@(2_f67zk^ux8@l@n!-p-7&oe(8!@wm-v@sh2zks8nc6dz"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True").lower() in {"1", "true", "yes", "on"}
 
 ALLOWED_HOSTS = []
 
@@ -79,25 +79,36 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_DB'),
-#         'USER': os.getenv('POSTGRES_USER'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-#         'HOST': 'db', # This matches the service name in docker-compose.yml
-#         'PORT': '5432',
-#     }
-# }
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': 'db', # This matches the service name in docker-compose.yml
+        'PORT': '5432',
     }
 }
 
+
+# if DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": os.getenv("POSTGRES_DB"),
+#             "USER": os.getenv("POSTGRES_USER"),
+#             "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+#             "HOST": os.getenv("POSTGRES_HOST", "db"),
+#             "PORT": os.getenv("POSTGRES_PORT", "5432"),
+#         }
+#     }
 
 
 
