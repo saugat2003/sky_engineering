@@ -1,508 +1,341 @@
-<!doctype html>
-
-<html class="light" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Broadcast Co. Engineering Team Registry</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#6467f2",
-              "background-light": "#f6f6f8",
-              "background-dark": "#101122",
-            },
-            fontFamily: {
-              sans: ["DM Sans", "sans-serif"],
-              display: ["Montserrat", "sans-serif"],
-              body: ["Nunito Sans", "sans-serif"],
-              mono: ["Roboto Mono", "Space Mono", "monospace"],
-            },
-            borderRadius: {
-              DEFAULT: "0.25rem",
-              lg: "0.5rem",
-              xl: "0.75rem",
-              full: "9999px",
-            },
-          },
-        },
-      };
-    </script>
-    <style>
-      body {
-        font-family: "DM Sans", sans-serif;
-      }
-      .material-symbols-outlined {
-        font-size: 24px;
-      }
-    </style>
-  </head>
-  <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display"
-  >
-    <div class="flex min-h-screen">
-      <!-- SideNavBar -->
-      <aside
-        class="w-64 border-r border-primary/10 bg-white dark:bg-background-dark flex flex-col fixed h-full"
+{% extends "base.html" %}
+{% block content %}
+    <!-- Stats Bar -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
       >
-        <div class="p-6 flex items-center gap-3">
-          <div
-            class="size-10 rounded-xl bg-primary flex items-center justify-center text-white"
-          >
-            <span class="material-symbols-outlined">broadcast_on_personal</span>
-          </div>
-          <div>
-            <h1 class="font-bold text-slate-900 dark:text-white leading-tight">
-              Broadcast Co.
-            </h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              Engineering Registry
-            </p>
-          </div>
-        </div>
-        <nav class="flex-1 px-4 py-4 space-y-1">
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">dashboard</span>
-            <span class="text-sm font-medium">Dashboard</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">corporate_fare</span>
-            <span class="text-sm font-medium">Departments</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">groups</span>
-            <span class="text-sm font-medium">Teams</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">engineering</span>
-            <span class="text-sm font-medium">Engineers</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">account_tree</span>
-            <span class="text-sm font-medium">Org Chart</span>
-          </a>
-        </nav>
-        <div class="px-4 py-6 border-t border-primary/10 space-y-1">
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">account_circle</span>
-            <span class="text-sm font-medium">Profile</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">logout</span>
-            <span class="text-sm font-medium">Logout</span>
-          </a>
-        </div>
-      </aside>
-      <!-- Main Content Area -->
-      <main class="ml-64 flex-1">
-        <!-- Hero Section & Search -->
-        <header
-          class="bg-white dark:bg-slate-900 border-b border-primary/10 p-8"
+        <div
+          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
         >
-          <div
-            class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6"
-          >
-            <div>
-              <h2
-                class="text-3xl font-black text-slate-900 dark:text-white tracking-tight"
-              >
-                Welcome to the Registry
-              </h2>
-              <p class="text-slate-500 dark:text-slate-400 mt-1">
-                Manage and explore the engineering organizational structure.
-              </p>
-            </div>
-            <div class="relative w-full md:w-96">
-              <span
-                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                >search</span
-              >
-              <input
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-primary/20 bg-background-light dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                placeholder="Search departments, teams, or engineers..."
-                type="text"
-              />
-            </div>
-          </div>
-        </header>
-        <div class="p-8 max-w-6xl mx-auto space-y-8">
-          <!-- Stats Bar -->
-          <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div
-              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-            >
-              <div
-                class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-              >
-                <span class="material-symbols-outlined">apartment</span>
-              </div>
-              <div>
-                <p class="text-2xl font-bold text-slate-900 dark:text-white">
-                  2
-                </p>
-                <p class="text-sm text-slate-500 font-medium">Departments</p>
-              </div>
-            </div>
-            <div
-              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-            >
-              <div
-                class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-              >
-                <span class="material-symbols-outlined">hub</span>
-              </div>
-              <div>
-                <p class="text-2xl font-bold text-slate-900 dark:text-white">
-                  6
-                </p>
-                <p class="text-sm text-slate-500 font-medium">Teams</p>
-              </div>
-            </div>
-            <div
-              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-            >
-              <div
-                class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-              >
-                <span class="material-symbols-outlined">engineering</span>
-              </div>
-              <div>
-                <p class="text-2xl font-bold text-slate-900 dark:text-white">
-                  35
-                </p>
-                <p class="text-sm text-slate-500 font-medium">Engineers</p>
-              </div>
-            </div>
-          </section>
-          <!-- Department Grid -->
-          <section>
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-                Departments
-              </h3>
-              <button
-                class="text-primary text-sm font-semibold hover:underline"
-              >
-                View All
-              </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <!-- Dept Card 1 -->
-              <div
-                class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-              >
-                <div class="h-2 bg-primary"></div>
-                <div class="p-6">
-                  <div class="flex justify-between items-start mb-4">
-                    <div>
-                      <h4
-                        class="text-lg font-bold text-slate-900 dark:text-white"
-                      >
-                        xTV_Web
-                      </h4>
-                      <p class="text-sm text-slate-500">
-                        Core web platform engineering
-                      </p>
-                    </div>
-                    <span
-                      class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase"
-                      >Active</span
-                    >
-                  </div>
-                  <div class="space-y-3 mb-6">
-                    <div
-                      class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >person</span
-                      >
-                      <span
-                        >Head:
-                        <span class="font-medium text-slate-900 dark:text-white"
-                          >Sebastian Holt</span
-                        ></span
-                      >
-                    </div>
-                    <div
-                      class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >layers</span
-                      >
-                      <span>3 Dedicated Teams</span>
-                    </div>
-                  </div>
-                  <button
-                    class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-                  >
-                    View Teams
-                    <span class="material-symbols-outlined text-sm"
-                      >arrow_forward</span
-                    >
-                  </button>
-                </div>
-              </div>
-              <!-- Dept Card 2 -->
-              <div
-                class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-              >
-                <div class="h-2 bg-slate-200 dark:bg-slate-700"></div>
-                <div class="p-6">
-                  <div class="flex justify-between items-start mb-4">
-                    <div>
-                      <h4
-                        class="text-lg font-bold text-slate-900 dark:text-white"
-                      >
-                        Broadcast Ops
-                      </h4>
-                      <p class="text-sm text-slate-500">
-                        Signal processing &amp; logistics
-                      </p>
-                    </div>
-                    <span
-                      class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase"
-                      >Review</span
-                    >
-                  </div>
-                  <div class="space-y-3 mb-6">
-                    <div
-                      class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >person</span
-                      >
-                      <span
-                        >Head:
-                        <span class="font-medium italic text-slate-400"
-                          >TBD</span
-                        ></span
-                      >
-                    </div>
-                    <div
-                      class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-                    >
-                      <span class="material-symbols-outlined text-sm"
-                        >layers</span
-                      >
-                      <span>3 Dedicated Teams</span>
-                    </div>
-                  </div>
-                  <button
-                    class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-                  >
-                    View Teams
-                    <span class="material-symbols-outlined text-sm"
-                      >arrow_forward</span
-                    >
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- Recent Updates Table -->
-          <section>
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-                Recent Team Changes
-              </h3>
-            </div>
-            <div
-              class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden"
-            >
-              <table class="w-full text-left">
-                <thead
-                  class="bg-background-light dark:bg-slate-800 border-b border-primary/10"
-                >
-                  <tr>
-                    <th
-                      class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-                    >
-                      Event
-                    </th>
-                    <th
-                      class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-                    >
-                      Target
-                    </th>
-                    <th
-                      class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-                    >
-                      Department
-                    </th>
-                    <th
-                      class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right"
-                    >
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-primary/5">
-                  <tr class="hover:bg-primary/5 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <span
-                          class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-sm"
-                          >edit</span
-                        >
-                        <span
-                          class="text-sm font-medium text-slate-900 dark:text-white"
-                          >Team updated</span
-                        >
-                      </div>
-                    </td>
-                    <td
-                      class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-                    >
-                      The Debuggers
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">xTV_Web</td>
-                    <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                      2 mins ago
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-primary/5 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <span
-                          class="material-symbols-outlined text-green-500 bg-green-50 p-1.5 rounded-lg text-sm"
-                          >add_circle</span
-                        >
-                        <span
-                          class="text-sm font-medium text-slate-900 dark:text-white"
-                          >Team created</span
-                        >
-                      </div>
-                    </td>
-                    <td
-                      class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-                    >
-                      Code Warriors
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
-                      Broadcast Ops
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                      1 hour ago
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-primary/5 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <span
-                          class="material-symbols-outlined text-amber-500 bg-amber-50 p-1.5 rounded-lg text-sm"
-                          >group_add</span
-                        >
-                        <span
-                          class="text-sm font-medium text-slate-900 dark:text-white"
-                          >Lead assigned</span
-                        >
-                      </div>
-                    </td>
-                    <td
-                      class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-                    >
-                      Sarah Jenkins
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
-                      Streaming Core
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                      3 hours ago
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-primary/5 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <span
-                          class="material-symbols-outlined text-purple-500 bg-purple-50 p-1.5 rounded-lg text-sm"
-                          >swap_horiz</span
-                        >
-                        <span
-                          class="text-sm font-medium text-slate-900 dark:text-white"
-                          >Transferred</span
-                        >
-                      </div>
-                    </td>
-                    <td
-                      class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-                    >
-                      Platform Sec
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
-                      Infrastructure
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                      Yesterday
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-primary/5 transition-colors">
-                    <td class="px-6 py-4">
-                      <div class="flex items-center gap-3">
-                        <span
-                          class="material-symbols-outlined text-slate-500 bg-slate-50 p-1.5 rounded-lg text-sm"
-                          >info</span
-                        >
-                        <span
-                          class="text-sm font-medium text-slate-900 dark:text-white"
-                          >Policy Update</span
-                        >
-                      </div>
-                    </td>
-                    <td
-                      class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-                    >
-                      Global Registry
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">
-                      All Departments
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                      2 days ago
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+          <span class="material-symbols-outlined">apartment</span>
         </div>
-      </main>
-    </div>
-  </body>
-</html>
+        <div>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">
+            2
+          </p>
+          <p class="text-sm text-slate-500 font-medium">Departments</p>
+        </div>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
+      >
+        <div
+          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined">hub</span>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">
+            6
+          </p>
+          <p class="text-sm text-slate-500 font-medium">Teams</p>
+        </div>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
+      >
+        <div
+          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined">engineering</span>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">
+            35
+          </p>
+          <p class="text-sm text-slate-500 font-medium">Engineers</p>
+        </div>
+      </div>
+    </section>
+    <!-- Department Grid -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+          Departments
+        </h3>
+        <button
+          class="text-primary text-sm font-semibold hover:underline"
+        >
+          View All
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Dept Card 1 -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
+        >
+          <div class="h-2 bg-primary"></div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4
+                  class="text-lg font-bold text-slate-900 dark:text-white"
+                >
+                  xTV_Web
+                </h4>
+                <p class="text-sm text-slate-500">
+                  Core web platform engineering
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase"
+                >Active</span
+              >
+            </div>
+            <div class="space-y-3 mb-6">
+              <div
+                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >person</span
+                >
+                <span
+                  >Head:
+                  <span class="font-medium text-slate-900 dark:text-white"
+                    >Sebastian Holt</span
+                  ></span
+                >
+              </div>
+              <div
+                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >layers</span
+                >
+                <span>3 Dedicated Teams</span>
+              </div>
+            </div>
+            <button
+              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
+            >
+              View Teams
+              <span class="material-symbols-outlined text-sm"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+        </div>
+        <!-- Dept Card 2 -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
+        >
+          <div class="h-2 bg-slate-200 dark:bg-slate-700"></div>
+          <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h4
+                  class="text-lg font-bold text-slate-900 dark:text-white"
+                >
+                  Broadcast Ops
+                </h4>
+                <p class="text-sm text-slate-500">
+                  Signal processing &amp; logistics
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase"
+                >Review</span
+              >
+            </div>
+            <div class="space-y-3 mb-6">
+              <div
+                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >person</span
+                >
+                <span
+                  >Head:
+                  <span class="font-medium italic text-slate-400"
+                    >TBD</span
+                  ></span
+                >
+              </div>
+              <div
+                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined text-sm"
+                  >layers</span
+                >
+                <span>3 Dedicated Teams</span>
+              </div>
+            </div>
+            <button
+              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
+            >
+              View Teams
+              <span class="material-symbols-outlined text-sm"
+                >arrow_forward</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Recent Updates Table -->
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
+          Recent Team Changes
+        </h3>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden"
+      >
+        <table class="w-full text-left">
+          <thead
+            class="bg-background-light dark:bg-slate-800 border-b border-primary/10"
+          >
+            <tr>
+              <th
+                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Event
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Target
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Department
+              </th>
+              <th
+                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right"
+              >
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-primary/5">
+            <tr class="hover:bg-primary/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-sm"
+                    >edit</span
+                  >
+                  <span
+                    class="text-sm font-medium text-slate-900 dark:text-white"
+                    >Team updated</span
+                  >
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
+              >
+                The Debuggers
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">xTV_Web</td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">
+                2 mins ago
+              </td>
+            </tr>
+            <tr class="hover:bg-primary/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined text-green-500 bg-green-50 p-1.5 rounded-lg text-sm"
+                    >add_circle</span
+                  >
+                  <span
+                    class="text-sm font-medium text-slate-900 dark:text-white"
+                    >Team created</span
+                  >
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
+              >
+                Code Warriors
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">
+                Broadcast Ops
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">
+                1 hour ago
+              </td>
+            </tr>
+            <tr class="hover:bg-primary/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined text-amber-500 bg-amber-50 p-1.5 rounded-lg text-sm"
+                    >group_add</span
+                  >
+                  <span
+                    class="text-sm font-medium text-slate-900 dark:text-white"
+                    >Lead assigned</span
+                  >
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
+              >
+                Sarah Jenkins
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">
+                Streaming Core
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">
+                3 hours ago
+              </td>
+            </tr>
+            <tr class="hover:bg-primary/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined text-purple-500 bg-purple-50 p-1.5 rounded-lg text-sm"
+                    >swap_horiz</span
+                  >
+                  <span
+                    class="text-sm font-medium text-slate-900 dark:text-white"
+                    >Transferred</span
+                  >
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
+              >
+                Platform Sec
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">
+                Infrastructure
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">
+                Yesterday
+              </td>
+            </tr>
+            <tr class="hover:bg-primary/5 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="material-symbols-outlined text-slate-500 bg-slate-50 p-1.5 rounded-lg text-sm"
+                    >info</span
+                  >
+                  <span
+                    class="text-sm font-medium text-slate-900 dark:text-white"
+                    >Policy Update</span
+                  >
+                </div>
+              </td>
+              <td
+                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
+              >
+                Global Registry
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">
+                All Departments
+              </td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">
+                2 days ago
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+{% endblock content %}
