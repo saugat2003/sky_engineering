@@ -1,0 +1,250 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6467f2",
+              "background-light": "#f6f6f8",
+              "background-dark": "#101122",
+            },
+            fontFamily: {
+              sans: ["DM Sans", "sans-serif"],
+              display: ["Montserrat", "sans-serif"],
+              body: ["Nunito Sans", "sans-serif"],
+              mono: ["Roboto Mono", "Space Mono", "monospace"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <title>Login | Broadcast Engineering Team Registry</title>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display antialiased"
+  >
+    <div class="flex min-h-screen">
+      <!-- Left Side: Branding and Visuals -->
+      <div
+        class="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-primary/10"
+      >
+        <!-- Background Image Overlay -->
+        <div class="absolute inset-0 z-0">
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-primary/80 to-primary mix-blend-multiply z-10"
+          ></div>
+          <img
+            alt="Broadcast equipment and circuit boards"
+            class="w-full h-full object-cover"
+            data-alt="High-tech broadcast engineering equipment with glowing lights"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA7NvA6DsicIIz90FtI0u--sCUWno5uWuS4XvpcHqYnsdcwjtZNDCliS6IyMJHPuLS_tOd4y0zejleGrnaiCOPKlC5ResKmhi9R_8k1uD8GOVD1fydPwSQsMCw6x1xJh5chcpoYF2Hl4C_IK9_czmYOzg7gY2-J7jhzbIFwTx4MyE6lIa_IuvF4fCtSITUmIsNneZUtUn7u7wm6NsB8wVCWyb1O4e7pUlVM6mFANPM4Sf8HEIOqoTl8hK1md0UAvZF95gfsfjyfDAb"
+          />
+        </div>
+        <!-- Logo Section -->
+        <div class="relative z-20 flex items-center gap-3 text-white">
+          <div
+            class="size-10 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="size-6"
+              fill="none"
+              viewbox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold tracking-tight">Broadcast Co.</h1>
+        </div>
+        <!-- Welcome Message -->
+        <div class="relative z-20 mb-12">
+          <h2 class="text-5xl font-black text-white leading-tight mb-4">
+            Welcome back to the Registry
+          </h2>
+          <p class="text-white/80 text-lg max-w-md">
+            Access the central hub for our global engineering network. Manage
+            signals, assets, and infrastructure in one place.
+          </p>
+        </div>
+        <!-- Footer Quote or Info -->
+        <div
+          class="relative z-20 text-white/60 text-sm flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-sm">verified_user</span>
+          Secure Access Gateway v4.2
+        </div>
+      </div>
+      <!-- Right Side: Login Form -->
+      <div
+        class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background-light dark:bg-background-dark"
+      >
+        <div class="w-full max-w-md space-y-8">
+          <div class="lg:hidden flex items-center gap-3 text-primary mb-12">
+            <svg
+              class="size-8"
+              fill="none"
+              viewbox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">
+              Broadcast Co.
+            </h2>
+          </div>
+          <div class="space-y-2">
+            <h3
+              class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight"
+            >
+              Login
+            </h3>
+            <p class="text-slate-500 dark:text-slate-400">
+              Enter your credentials to access the registry
+            </p>
+          </div>
+          <form class="mt-8 space-y-6">
+            <div class="space-y-4">
+              <!-- Username/Email -->
+              <div class="flex flex-col gap-2">
+                <label
+                  class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+                  for="email"
+                  >Username or Email</label
+                >
+                <div class="relative">
+                  <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >mail</span
+                  >
+                  <input
+                    class="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-slate-900 dark:text-slate-100"
+                    id="email"
+                    placeholder="engineer@broadcast.co"
+                    type="email"
+                  />
+                </div>
+              </div>
+              <!-- Password -->
+              <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                  <label
+                    class="text-sm font-semibold text-slate-700 dark:text-slate-300"
+                    for="password"
+                    >Password</label
+                  >
+                  <a
+                    class="text-xs font-bold text-primary hover:underline"
+                    href="#"
+                    >Forgot password?</a
+                  >
+                </div>
+                <div class="relative flex">
+                  <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >lock</span
+                  >
+                  <input
+                    class="w-full pl-10 pr-12 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none text-slate-900 dark:text-slate-100"
+                    id="password"
+                    placeholder="••••••••"
+                    type="password"
+                  />
+                  <button
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <input
+                class="h-4 w-4 text-primary focus:ring-primary border-slate-300 rounded"
+                id="remember-me"
+                type="checkbox"
+              />
+              <label
+                class="ml-2 block text-sm text-slate-600 dark:text-slate-400"
+                for="remember-me"
+                >Remember this device</label
+              >
+            </div>
+            <div>
+              <button
+                class="w-full flex justify-center items-center py-4 px-4 bg-primary hover:bg-primary/90 text-white text-base font-bold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                type="submit"
+              >
+                Login
+                <span class="material-symbols-outlined ml-2 text-xl"
+                  >login</span
+                >
+              </button>
+            </div>
+          </form>
+          <div
+            class="mt-8 text-center border-t border-slate-100 dark:border-slate-800 pt-8"
+          >
+            <p class="text-sm text-slate-600 dark:text-slate-400">
+              Don't have an account yet?
+              <a class="font-bold text-primary hover:underline ml-1" href="#"
+                >Register here</a
+              >
+            </p>
+          </div>
+          <div class="flex justify-center gap-6 pt-4">
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+            >
+              <span class="text-xs font-medium">Terms of Service</span>
+            </a>
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+            >
+              <span class="text-xs font-medium">Privacy Policy</span>
+            </a>
+            <a
+              class="text-slate-400 hover:text-primary transition-colors"
+              href="#"
+            >
+              <span class="text-xs font-medium">Support</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
