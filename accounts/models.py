@@ -4,10 +4,6 @@ from django.conf import settings
 
 # Create your models here.
 
-# class User(AbstractUser):
-#     email = models.EmailField(unique=True)
-
-
 class UserProfile(models.Model):
     user_id = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
