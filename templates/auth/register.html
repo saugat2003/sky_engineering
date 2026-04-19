@@ -145,7 +145,7 @@
               Join the broadcast engineering ecosystem
             </p>
           </div>
-          <form class="mt-8 space-y-5" method="post">
+          <form class="mt-6 space-y-3" method="post">
             {% csrf_token %}
             {% if form.non_field_errors %}
             <div class="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -160,7 +160,7 @@
                   class="block text-sm font-medium text-slate-700 dark:text-slate-300"
                   for="first_name"
                 >
-                  Full Name
+                  First Name
                 </label>
                 <div class="relative">
                   <div
@@ -175,13 +175,43 @@
                     class="block w-full pl-10 px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
                     id="first_name"
                     name="first_name"
-                    placeholder="Enter your full name"
+                    placeholder="Enter your first name"
                     required=""
                     type="text"
                     value="{{ form.first_name.value|default:'' }}"
                   />
                 </div>
                 {% for error in form.first_name.errors %}
+                <p class="text-xs text-red-600">{{ error }}</p>
+                {% endfor %}
+              </div>
+              <div class="space-y-1">
+                <label
+                  class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  for="last_name"
+                >
+                  Last Name
+                </label>
+                <div class="relative">
+                  <div
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  >
+                    <span
+                      class="material-symbols-outlined text-slate-400 text-sm"
+                      >badge</span
+                    >
+                  </div>
+                  <input
+                    class="block w-full pl-10 px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
+                    id="last_name"
+                    name="last_name"
+                    placeholder="Enter your last name"
+                    required=""
+                    type="text"
+                    value="{{ form.last_name.value|default:'' }}"
+                  />
+                </div>
+                {% for error in form.last_name.errors %}
                 <p class="text-xs text-red-600">{{ error }}</p>
                 {% endfor %}
               </div>
