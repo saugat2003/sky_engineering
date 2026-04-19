@@ -77,49 +77,49 @@
       </div>
       <nav class="flex-1 px-4 py-4 space-y-1">
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url "dashboard" %}"
         >
           <span class="material-symbols-outlined">dashboard</span>
           <span class="text-sm font-medium">Dashboard</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/department_overview.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="department_overview.html"
         >
           <span class="material-symbols-outlined">corporate_fare</span>
           <span class="text-sm font-medium">Departments</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/team_search_results.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="team_search_results.html"
         >
           <span class="material-symbols-outlined">groups</span>
           <span class="text-sm font-medium">Teams</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/engineers.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="engineers.html"
         >
           <span class="material-symbols-outlined">engineering</span>
           <span class="text-sm font-medium">Engineers</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/org_chart_dependency_view.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="org_chart_dependency_view.html"
         >
           <span class="material-symbols-outlined">account_tree</span>
           <span class="text-sm font-medium">Org Chart</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/message.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="message.html"
         >
           <span class="material-symbols-outlined">chat</span>
           <span class="text-sm font-medium">Messages</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/calender.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="calender.html"
         >
           <span class="material-symbols-outlined">calendar_month</span>
@@ -128,7 +128,7 @@
       </nav>
       <div class="px-4 py-6 border-t border-primary/10 space-y-1">
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/user_profile_settings.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="user_profile_settings.html"
         >
           <span class="material-symbols-outlined">account_circle</span>
