@@ -1,15 +1,14 @@
 
 
 from django.shortcuts import redirect, render
-from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
 from accounts.forms import RegisterForm
 
 
 # Create your views here.
-def register(request):
+def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
 
@@ -22,19 +21,42 @@ def register(request):
     return render(request, "auth/register.html", {"form": form}, status=200)
 
 
-def login(request):
+def login_view(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
+
+    context = {}
+
     if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        identifier = (request.POST.get("email") or "").strip()
+        password = request.POST.get("password") or ""
 
-        if not email or not password:
-            messages.error(request, "Email and password are required.")
-            return render(request, "auth/login.html", status=404 )
-        
-        user = authenticate(email=email, password=password)
-    return render(request, "auth/login.html", status=200)
+        context["email"] = identifier
 
-def logout(request):
+        if not identifier or not password:
+            context["error"] = "Email/username and password are required."
+        else:
+            username_candidate = identifier
+
+            if "@" in identifier:
+                try:
+                    username_candidate = User.objects.get(email__iexact=identifier).username
+                except User.DoesNotExist:
+                    username_candidate = identifier
+
+            user = authenticate(request, username=username_candidate, password=password)
+
+            if user is None:
+                user = authenticate(request, email=identifier, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect("dashboard")
+
+            context["error"] = "Invalid email/username or password."
+
+    return render(request, "auth/login.html", context, status=200)
+
+
+def logout_view(request):
     return render(request, "auth/logout.html", status=200)
