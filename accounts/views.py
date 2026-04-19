@@ -1,7 +1,7 @@
 
 
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from accounts.forms import RegisterForm
@@ -59,4 +59,5 @@ def login_view(request):
 
 
 def logout_view(request):
-    return render(request, "auth/logout.html", status=200)
+    logout(request)
+    return redirect("login")
