@@ -18,7 +18,8 @@ def register(request):
             return redirect("login")
     else:
         form = RegisterForm()
-        return render(request, "auth/register.html",{"form":form}, status=200)
+
+    return render(request, "auth/register.html", {"form": form}, status=200)
 
 
 def login(request):

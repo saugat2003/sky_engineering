@@ -145,12 +145,20 @@
               Join the broadcast engineering ecosystem
             </p>
           </div>
-          <form class="mt-8 space-y-5">
+          <form class="mt-8 space-y-5" method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
             <div class="grid grid-cols-1 gap-5">
               <div class="space-y-1">
                 <label
                   class="block text-sm font-medium text-slate-700 dark:text-slate-300"
-                  for="full-name"
+                  for="first_name"
                 >
                   Full Name
                 </label>
@@ -165,13 +173,17 @@
                   </div>
                   <input
                     class="block w-full pl-10 px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
-                    id="full-name"
-                    name="full-name"
+                    id="first_name"
+                    name="first_name"
                     placeholder="Enter your full name"
                     required=""
                     type="text"
+                    value="{{ form.first_name.value|default:'' }}"
                   />
                 </div>
+                {% for error in form.first_name.errors %}
+                <p class="text-xs text-red-600">{{ error }}</p>
+                {% endfor %}
               </div>
               <div class="space-y-1">
                 <label
@@ -196,8 +208,12 @@
                     placeholder="Choose a unique username"
                     required=""
                     type="text"
+                    value="{{ form.username.value|default:'' }}"
                   />
                 </div>
+                {% for error in form.username.errors %}
+                <p class="text-xs text-red-600">{{ error }}</p>
+                {% endfor %}
               </div>
               <div class="space-y-1">
                 <label
@@ -222,8 +238,12 @@
                     placeholder="you@company.com"
                     required=""
                     type="email"
+                    value="{{ form.email.value|default:'' }}"
                   />
                 </div>
+                {% for error in form.email.errors %}
+                <p class="text-xs text-red-600">{{ error }}</p>
+                {% endfor %}
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="space-y-1">
@@ -251,6 +271,9 @@
                       type="password"
                     />
                   </div>
+                  {% for error in form.password.errors %}
+                  <p class="text-xs text-red-600">{{ error }}</p>
+                  {% endfor %}
                 </div>
                 <div class="space-y-1">
                   <label
@@ -271,12 +294,15 @@
                     <input
                       class="block w-full pl-10 px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
                       id="confirm-password"
-                      name="confirm-password"
+                      name="confirm_password"
                       placeholder="••••••••"
                       required=""
                       type="password"
                     />
                   </div>
+                  {% for error in form.confirm_password.errors %}
+                  <p class="text-xs text-red-600">{{ error }}</p>
+                  {% endfor %}
                 </div>
               </div>
             </div>

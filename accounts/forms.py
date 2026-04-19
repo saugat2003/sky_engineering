@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 
 class RegisterForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=150)
+
     password = forms.CharField(
         widget=forms.PasswordInput,
         validators=[validate_password]
@@ -14,7 +16,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password"]
+        fields = ["first_name", "username", "email", "password"]
 
     def clean(self):
         cleaned_data = super().clean()
