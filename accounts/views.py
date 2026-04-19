@@ -1,13 +1,35 @@
+
+
 from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+
 
 # Create your views here.
 def register(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if not email or not password:
+            messages.error(request, "Email and password are required.")
+        user = User.object.create(email=email)
     return render(request, "auth/register.html", status=200)
 
 
 def login(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if not email or not password:
+            messages.error(request, "Email and password are required.")
+            return render(request, "auth/login.html", status=404 )
+        
+        user = authenticate(email=email, password=password)
     return render(request, "auth/login.html", status=200)
 
 def logout(request):
