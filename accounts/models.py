@@ -1,3 +1,5 @@
+"""Data models for account-related user profile information."""
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
@@ -5,6 +7,8 @@ from django.conf import settings
 # Create your models here.
 
 class UserProfile(models.Model):
+    """Stores additional profile data linked to an authenticated user."""
+
     user_id = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True)
     phone = models.CharField(max_length=30, blank=True)
