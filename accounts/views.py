@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 # Create your views here.
 def register(request):
@@ -6,6 +6,8 @@ def register(request):
 
 
 def login(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
     return render(request, "auth/login.html", status=200)
 
 def logout(request):

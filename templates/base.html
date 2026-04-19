@@ -53,121 +53,141 @@
       }
     </style>
   </head>
-  <body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display"
+<body
+    class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased overflow-hidden"
   >
-    <div class="flex min-h-screen">
-      <!-- SideNavBar -->
-      <aside
-        class="w-64 border-r border-primary/10 bg-white dark:bg-background-dark flex flex-col fixed h-full"
-      >
-        <div class="p-6 flex items-center gap-3">
-          <div
-            class="size-10 rounded-xl bg-primary flex items-center justify-center text-white"
-          >
-            <span class="material-symbols-outlined">broadcast_on_personal</span>
-          </div>
-          <div>
-            <h1 class="font-bold text-slate-900 dark:text-white leading-tight">
-              Broadcast Co.
-            </h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              Engineering Registry
-            </p>
-          </div>
-        </div>
-        <nav class="flex-1 px-4 py-4 space-y-1">
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">dashboard</span>
-            <span class="text-sm font-medium">Dashboard</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">corporate_fare</span>
-            <span class="text-sm font-medium">Departments</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">groups</span>
-            <span class="text-sm font-medium">Teams</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">engineering</span>
-            <span class="text-sm font-medium">Engineers</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">account_tree</span>
-            <span class="text-sm font-medium">Org Chart</span>
-          </a>
-        </nav>
-        <div class="px-4 py-6 border-t border-primary/10 space-y-1">
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">account_circle</span>
-            <span class="text-sm font-medium">Profile</span>
-          </a>
-          <a
-            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
-            href="#"
-          >
-            <span class="material-symbols-outlined">logout</span>
-            <span class="text-sm font-medium">Logout</span>
-          </a>
-        </div>
-      </aside>
-      <!-- Main Content Area -->
-      <main class="ml-64 flex-1">
-        <!-- Hero Section & Search -->
-        <header
-          class="bg-white dark:bg-slate-900 border-b border-primary/10 p-4"
+    <!-- SideNavBar Shell -->
+    <aside
+      class="w-64 border-r border-primary/10 bg-white dark:bg-gray-900 flex flex-col fixed h-full z-50"
+    >
+      <div class="p-6 flex items-center gap-3">
+        <div
+          class="size-10 rounded-xl bg-primary flex items-center justify-center text-white"
         >
-          <div
-            class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6"
+          <span class="material-symbols-outlined">broadcast_on_personal</span>
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-900 dark:text-white leading-tight">
+            Broadcast Co.
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Engineering Registry
+          </p>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 py-4 space-y-1">
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="{% url "dashboard" %}"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="text-sm font-medium">Dashboard</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="department_overview.html"
+        >
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span class="text-sm font-medium">Departments</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="team_search_results.html"
+        >
+          <span class="material-symbols-outlined">groups</span>
+          <span class="text-sm font-medium">Teams</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="engineers.html"
+        >
+          <span class="material-symbols-outlined">engineering</span>
+          <span class="text-sm font-medium">Engineers</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="org_chart_dependency_view.html"
+        >
+          <span class="material-symbols-outlined">account_tree</span>
+          <span class="text-sm font-medium">Org Chart</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="message.html"
+        >
+          <span class="material-symbols-outlined">chat</span>
+          <span class="text-sm font-medium">Messages</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white transition-colors"
+          href="calender.html"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          <span class="text-sm font-medium">Calendar</span>
+        </a>
+      </nav>
+      <div class="px-4 py-6 border-t border-primary/10 space-y-1">
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="user_profile_settings.html"
+        >
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="text-sm font-medium">Profile</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+          href="login_broadcast_engineering.html"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </a>
+      </div>
+    </aside>
+    <!-- TopNavBar Shell -->
+    <header
+      class="flex justify-between items-center ml-64 px-8 h-16 w-[calc(100%-16rem)] bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40"
+    >
+      <div class="flex items-center flex-1 max-w-xl">
+        <div class="relative w-full group">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-500 transition-colors"
+            >search</span
           >
-            <div>
-              <h2
-                class="text-3xl font-black text-slate-900 dark:text-white tracking-tight"
-              >
-			  {% block top-title %}Welcome to the Dashboard{% endblock top-title %}
-            
-              </h2>
-              <p class="text-slate-500 dark:text-slate-400 mt-1">
-                Manage and explore the engineering organizational structure.
-              </p>
-            </div>
-            <div class="relative w-full md:w-96">
-              <span
-                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                >search</span
-              >
-              <input
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-primary/20 bg-background-light dark:bg-background-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                placeholder="Search departments, teams, or engineers..."
-                type="text"
-              />
-            </div>
+          <input
+            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+            placeholder="Search events, engineers, or systems..."
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors"
+        >
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <p class="text-sm font-semibold leading-none">Saugat Don</p>
+            <p class="text-xs text-gray-500 mt-1">Lead Engineer</p>
           </div>
-        </header>
-        <div class="p-8 max-w-6xl mx-auto space-y-8">
+          <img
+            alt="User Profile"
+            class="w-9 h-9 rounded-full bg-gray-200"
+            data-alt="Portrait of a professional software engineer"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbaiokcHRkgg052rgq8cM6Lu6eQrI-e94CC1sJDkVV2YiKy1Qf_7SYXnsZgBtcqvChvDPYxt88tCH8_D02_yHQT2eAY1PWImPtGBcZtQt1EJuRqLfep91RivJ2Ul85AXdcXKqIhsvCzr3S-lWkINcAPzRc1AovQC3hOCLvQevueNJ_z_Esl2ZAJyQhGYdwJTktQpRGzw1cmbM-JM80sH0sNkiquh9dF4s8qlCy1km3xB9xtlOdrXQOawzWOGTG1MgatMS2zrcZ2O5D"
+          />
+        </div>
+      </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="ml-64 flex flex-col h-[calc(100vh-4rem)]">
+        <div class="m-8">
           {% block content %}{% endblock content %}
           
         </div>
-      </main>
-    </div>
+    </main>
+    
   </body>
 </html>
