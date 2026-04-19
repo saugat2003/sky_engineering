@@ -5,17 +5,20 @@ from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
+from accounts.forms import RegisterForm
+
 
 # Create your views here.
 def register(request):
     if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        form = RegisterForm(request.POST)
 
-        if not email or not password:
-            messages.error(request, "Email and password are required.")
-        user = User.object.create(email=email)
-    return render(request, "auth/register.html", status=200)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+    else:
+        form = RegisterForm()
+        return render(request, "auth/register.html",{"form":form}, status=200)
 
 
 def login(request):
