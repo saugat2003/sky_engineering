@@ -1,46 +1,87 @@
-# Django Docker Setup
+# Broadcast Engineering Team Registry (Django)
 
 ## Prerequisites
-- Docker
-- Docker Compose
+- Python 3.10+
+- pip
 
-## Quick Start
+## Project Setup (Local)
 
-1. **Clone the repository**
+1. Clone the repository and move into the project folder.
+
 ```bash
 git clone <repository-url>
-cd <project-directory>
+cd group_project
 ```
 
-2. **Build and run with Docker Compose**
+2. Create and activate a virtual environment.
+
+Windows (PowerShell):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+macOS/Linux:
+
 ```bash
-docker-compose up --build
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-3. **Access the application**
-- Application: http://localhost:8000
-- Admin panel: http://localhost:8000/admin
-
-## Docker Commands
+3. Install dependencies.
 
 ```bash
-# Build the image
-docker build -t django-app .
-
-# Run migrations
-docker-compose exec web python manage.py migrate
-
-# Create superuser
-docker-compose exec web python manage.py createsuperuser
-
-# Stop containers
-docker-compose down
+pip install -r requirements.txt
 ```
 
-## File Structure
+4. Apply database migrations.
+
+```bash
+python manage.py migrate
 ```
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── manage.py
+
+5. Start the development server.
+
+```bash
+python manage.py runserver
+```
+
+## Access the App
+- Application: http://127.0.0.1:8000/
+- Admin panel: http://127.0.0.1:8000/admin/
+
+## Common Commands
+
+Create a superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+Run tests:
+
+```bash
+python manage.py test
+```
+
+Collect static files (if needed):
+
+```bash
+python manage.py collectstatic
+```
+
+## Main Structure
+
+```text
+accounts/
+config/
+home/
+messaging/
+organization/
+scheduling/
+teams/
+templates/
+requirements.txt
+manage.py
 ```
