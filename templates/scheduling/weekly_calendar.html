@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Weekly Calendar - Scheduling{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Calendar Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Week: {{ week_start|date:"M d" }} - {{ week_end|date:"M d, Y" }}</h2>
+                <div class="btn-group" role="group">
+                    <a href="?week={{ prev_week|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                        <i class="bi bi-chevron-left"></i> Previous Week
+                    </a>
+                    <a href="?" class="btn btn-outline-primary">
+                        This Week
+                    </a>
+                    <a href="?week={{ next_week|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                        Next Week <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+                <a href="{% url 'scheduling:schedule_meeting_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> New Meeting
+                </a>
+            </div>
+
+            <!-- Weekly View -->
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        {% for day in days %}
+                            <div class="col-auto border-end" style="min-width: 200px;">
+                                <!-- Day Header -->
+                                <div class="p-3 border-bottom {% if day.is_today %}bg-light-primary{% else %}bg-light{% endif %}">
+                                    <h5 class="mb-1">{{ day.day_name }}</h5>
+                                    <p class="mb-0 text-muted">{{ day.date|date:"M d, Y" }}</p>
+                                </div>
+
+                                <!-- Meetings for this day -->
+                                <div style="min-height: 300px; overflow-y: auto;">
+                                    {% for meeting in day.meetings %}
+                                        <div class="p-2 border-bottom">
+                                            <a href="{% url 'scheduling:meeting_detail' meeting.id %}" 
+                                               class="text-decoration-none">
+                                                <div class="card-text small fw-bold text-truncate">
+                                                    {{ meeting.scheduled_at|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}
+                                                </div>
+                                                <div class="card-text text-truncate">{{ meeting.title }}</div>
+                                                <div class="card-text small text-muted">
+                                                    <i class="bi bi-{{ meeting.get_platform_display|lower|slugify }}"></i>
+                                                    {{ meeting.get_platform_display }}
+                                                </div>
+                                            </a>
+                                        </div>
+                                    {% empty %}
+                                        <div class="p-3 text-center text-muted small">
+                                            No meetings scheduled
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alternative View Links -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <a href="{% url 'scheduling:calendar_month' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-calendar-month"></i> Monthly View
+                </a>
+                <a href="{% url 'scheduling:upcoming_schedules' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-list-ul"></i> Upcoming List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-primary {
+        background-color: #f0f8ff;
+    }
+
+    .card-body {
+        overflow-x: auto;
+    }
+</style>
+{% endblock %}

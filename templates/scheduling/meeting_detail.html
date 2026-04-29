@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ meeting.title }} - Scheduling{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Meeting Header -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h2 class="card-title">{{ meeting.title }}</h2>
+                            <p class="text-muted mb-0">
+                                Organized by <strong>{{ meeting.organiser.get_full_name }}</strong>
+                            </p>
+                        </div>
+                        <div>
+                            {% if meeting.status == 'scheduled' %}
+                                <span class="badge bg-success">Scheduled</span>
+                            {% elif meeting.status == 'completed' %}
+                                <span class="badge bg-info">Completed</span>
+                            {% else %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Meeting Details Grid -->
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted text-uppercase small">Date & Time</h6>
+                            <p class="mb-0">
+                                <i class="bi bi-calendar-event"></i> 
+                                {{ meeting.scheduled_at|date:"l, F d, Y" }}
+                            </p>
+                            <p class="mb-0">
+                                <i class="bi bi-clock"></i> 
+                                {{ meeting.scheduled_at|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }} ({{ meeting.duration_minutes }} min)
+                            </p>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted text-uppercase small">Platform</h6>
+                            <p class="mb-0">
+                                <span class="badge bg-secondary">{{ meeting.get_platform_display }}</span>
+                            </p>
+                            {% if meeting.meeting_link %}
+                                <p class="mb-0">
+                                    <a href="{{ meeting.meeting_link }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                                        <i class="bi bi-link-45deg"></i> Join Meeting
+                                    </a>
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        {% if meeting.team %}
+                            <div class="col-md-6 mb-3">
+                                <h6 class="text-muted text-uppercase small">Team</h6>
+                                <p class="mb-0">
+                                    <a href="{% url 'teams:team_detail' meeting.team.id %}" class="text-decoration-none">
+                                        {{ meeting.team.name }}
+                                    </a>
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted text-uppercase small">Timezone</h6>
+                            <p class="mb-0">{{ meeting.timezone }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    {% if meeting.description %}
+                        <hr>
+                        <h6 class="text-muted text-uppercase small">Description</h6>
+                        <p>{{ meeting.description|linebreaks }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Attendees Section -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people"></i> Attendees ({{ attendees.count }} invited)
+                    </h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Organizer -->
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ meeting.organiser.get_full_name }}</h6>
+                                    <p class="text-muted mb-0 small">{{ meeting.organiser.email }}</p>
+                                </div>
+                                <span class="badge bg-success">Organizer</span>
+                            </div>
+                        </div>
+
+                        <!-- Attendees by RSVP Status -->
+                        {% regroup attendees by rsvp_status as attendees_by_status %}
+                        {% for status_group in attendees_by_status %}
+                            {% for attendee in status_group.list %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ attendee.user.get_full_name }}</h6>
+                                            <p class="text-muted mb-0 small">{{ attendee.user.email }}</p>
+                                        </div>
+                                        <span class="badge 
+                                            {% if status_group.grouper == 'accepted' %}bg-success{% elif status_group.grouper == 'declined' %}bg-danger{% elif status_group.grouper == 'tentative' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                            {{ attendee.get_rsvp_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% empty %}
+                            <div class="list-group-item text-center text-muted py-4">
+                                No attendees yet.
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Actions -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+
+                <div class="card-body">
+                    {% if is_organiser %}
+                        <!-- Organizer Actions -->
+                        <a href="{% url 'scheduling:meeting_edit' meeting.id %}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-pencil-square"></i> Edit Meeting
+                        </a>
+                        <a href="{% url 'scheduling:meeting_cancel' meeting.id %}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-circle"></i> Cancel Meeting
+                        </a>
+                    {% endif %}
+
+                    {% if is_attendee %}
+                        <!-- Attendee Actions -->
+                        <form method="post" class="d-grid gap-2">
+                            {% csrf_token %}
+                            <button type="submit" name="rsvp_status" value="accepted" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Accept
+                            </button>
+                            <button type="submit" name="rsvp_status" value="tentative" class="btn btn-warning">
+                                <i class="bi bi-question-circle"></i> Maybe
+                            </button>
+                            <button type="submit" name="rsvp_status" value="declined" class="btn btn-danger">
+                                <i class="bi bi-x-circle"></i> Decline
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Meeting Summary -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Summary</h5>
+                </div>
+
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-6">Status</dt>
+                        <dd class="col-sm-6">
+                            {% if meeting.status == 'scheduled' %}
+                                <span class="badge bg-success">Scheduled</span>
+                            {% elif meeting.status == 'completed' %}
+                                <span class="badge bg-info">Completed</span>
+                            {% else %}
+                                <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </dd>
+
+                        <dt class="col-sm-6">Days Until</dt>
+                        <dd class="col-sm-6">{{ days_until }} days</dd>
+
+                        <dt class="col-sm-6">Attendees</dt>
+                        <dd class="col-sm-6">{{ meeting.attendee_count }}</dd>
+
+                        <dt class="col-sm-6">RSVP'd</dt>
+                        <dd class="col-sm-6">{{ meeting.accepted_count }}</dd>
+
+                        <dt class="col-sm-6">Recurrence</dt>
+                        <dd class="col-sm-6">{{ meeting.get_recurrence_display }}</dd>
+                    </dl>
+
+                    <hr>
+
+                    <!-- Created/Updated Info -->
+                    <small class="text-muted">
+                        <p>Created: {{ meeting.created_at|date:"M d, Y - H:i" }}</p>
+                        <p>Last Updated: {{ meeting.updated_at|date:"M d, Y - H:i" }}</p>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'scheduling:upcoming_schedules' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Upcoming
+            </a>
+            <a href="{% url 'scheduling:calendar_month' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-calendar-month"></i> Monthly View
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

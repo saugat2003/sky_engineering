@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cancel Meeting - Scheduling{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Cancel Meeting</h3>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Warning!</strong> Cancelling this meeting will notify all attendees.
+                    </div>
+
+                    <!-- Meeting Details -->
+                    <div class="mb-4">
+                        <h5 class="card-title">{{ meeting.title }}</h5>
+                        <p class="text-muted mb-1">
+                            <i class="bi bi-calendar-event"></i> 
+                            {{ meeting.scheduled_at|date:"l, F d, Y" }} at {{ meeting.scheduled_at|time:"H:i" }}
+                        </p>
+                        <p class="text-muted">
+                            <i class="bi bi-people"></i> 
+                            {{ meeting.attendee_count }} attendees
+                        </p>
+                    </div>
+
+                    <!-- Confirmation -->
+                    <p class="mb-4">
+                        Are you sure you want to cancel this meeting? All attendees will be notified of the cancellation.
+                    </p>
+
+                    <!-- Actions -->
+                    <form method="post" class="d-grid gap-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Yes, Cancel This Meeting
+                        </button>
+                        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Go Back
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

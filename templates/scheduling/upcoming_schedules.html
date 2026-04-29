@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Upcoming Schedules - Scheduling{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Upcoming Meetings</h2>
+                <a href="{% url 'scheduling:schedule_meeting_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Schedule Meeting
+                </a>
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="platform" class="form-label">Filter by Platform</label>
+                            <select name="platform" id="platform" class="form-select">
+                                <option value="">All Platforms</option>
+                                {% for value, label in platforms %}
+                                    <option value="{{ value }}" {% if selected_platform == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="team" class="form-label">Filter by Team</label>
+                            <select name="team" id="team" class="form-select">
+                                <option value="">All Teams</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}" {% if selected_team == team.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ team.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="days" class="form-label">Days Ahead</label>
+                            <select name="days" id="days" class="form-select">
+                                <option value="7" {% if days_ahead == 7 %}selected{% endif %}>Next 7 days</option>
+                                <option value="14" {% if days_ahead == 14 %}selected{% endif %}>Next 14 days</option>
+                                <option value="30" {% if days_ahead == 30 %}selected{% endif %}>Next 30 days</option>
+                                <option value="90" {% if days_ahead == 90 %}selected{% endif %}>Next 90 days</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel"></i> Apply Filters
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="alert alert-info">
+                <strong>Total Meetings:</strong> {{ total_meetings }}
+            </div>
+
+            <!-- Meetings List -->
+            {% for meeting_date, day_meetings in meetings_by_date %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-calendar-event"></i> 
+                            {{ meeting_date|date:"l, F d, Y" }}
+                        </h5>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for meeting in day_meetings %}
+                                <a href="{% url 'scheduling:meeting_detail' meeting.id %}" 
+                                   class="list-group-item list-group-item-action p-3">
+                                    <div class="row align-items-center">
+                                        <!-- Time & Title -->
+                                        <div class="col-md-5">
+                                            <h6 class="mb-1 fw-bold">
+                                                <i class="bi bi-clock"></i> 
+                                                {{ meeting.scheduled_at|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}
+                                            </h6>
+                                            <p class="mb-0">{{ meeting.title }}</p>
+                                        </div>
+
+                                        <!-- Platform & Team -->
+                                        <div class="col-md-3">
+                                            <span class="badge bg-secondary me-2">
+                                                {{ meeting.get_platform_display }}
+                                            </span>
+                                            {% if meeting.team %}
+                                                <span class="badge bg-info">
+                                                    {{ meeting.team.name }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Attendees -->
+                                        <div class="col-md-2 text-center">
+                                            <span class="badge bg-primary">
+                                                <i class="bi bi-people"></i> 
+                                                {{ meeting.attendee_count }} attendees
+                                            </span>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div class="col-md-2 text-end">
+                                            {% if meeting.status == 'scheduled' %}
+                                                <span class="badge bg-success">Scheduled</span>
+                                            {% elif meeting.status == 'completed' %}
+                                                <span class="badge bg-info">Completed</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle"></i> No upcoming meetings found.
+                    <a href="{% url 'scheduling:schedule_meeting_create' %}" class="alert-link">
+                        Create one now
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Calendar Links -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <a href="{% url 'scheduling:calendar_month' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-calendar-month"></i> Monthly View
+                </a>
+                <a href="{% url 'scheduling:calendar_week' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-calendar-week"></i> Weekly View
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
