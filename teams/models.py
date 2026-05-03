@@ -82,13 +82,22 @@ class Team(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'team'
+        db_table = 'teams'
         ordering = ['name']
 
     def __str__(self):
         return self.name
 
 class TeamMember(models.Model):
+    class RoleChoices(models.TextChoices):
+        ENGINEER = 'Software Engineer', 'Software Engineer'
+        SENIOR_ENGINEER = 'Senior Engineer', 'Senior Engineer'
+        LEAD = 'Team Lead', 'Team Lead'
+        PM = 'Product Manager', 'Product Manager'
+        AGILE_COACH = 'Agile Coach', 'Agile Coach'
+        QA = 'QA Engineer', 'QA Engineer'
+        DESIGNER = 'Designer', 'Designer'
+
     team = models.ForeignKey(
         'Team',
         on_delete=models.CASCADE,
@@ -101,7 +110,7 @@ class TeamMember(models.Model):
         related_name='team_memberships'
     )
 
-    role = models.CharField(max_length=100, blank=True, null=True)
+    role = models.CharField(max_length=100, choices=RoleChoices, default=RoleChoices.ENGINEER)
 
     joined_at = models.DateTimeField(auto_now_add=True)
     left_at = models.DateTimeField(blank=True, null=True)

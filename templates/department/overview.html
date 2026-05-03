@@ -28,7 +28,7 @@
             </div>
             <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Departments</p>
-                <p class="text-3xl font-black">4</p>
+                <p class="text-3xl font-black">{{total_department}}</p>
             </div>
         </div>
         <div
@@ -38,7 +38,7 @@
             </div>
             <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Active Teams</p>
-                <p class="text-3xl font-black">24</p>
+                <p class="text-3xl font-black">{{total_active_teams}}</p>
             </div>
         </div>
         <div
@@ -48,65 +48,74 @@
             </div>
             <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Engineers</p>
-                <p class="text-3xl font-black">142</p>
+                <p class="text-3xl font-black">{{total_engineers}}</p>
             </div>
         </div>
     </div>
     <!-- Department Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         <!-- Card 1: xTV_Web -->
-        <div
-            class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl">
-                            XW</div>
-                        <div>
-                            <h3 class="text-xl font-bold">xTV_Web</h3>
-                            <p class="text-sm text-slate-500">Streaming Web Platforms</p>
-                        </div>
-                    </div>
-                    <span
-                        class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Active</span>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-slate-500">Dept Head</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
-                                <img alt="Sebastian Holt" class="w-full h-full object-cover"
-                                    data-alt="Avatar of Sebastian Holt with a beard"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiOr9pSvdqC_1IrW5YABJ_VHE_UdHXBtGlZUeAx4Asg3OEuKPXnl7EALMtQ1crqZMW6W0bCnQINLoK2GnWvbis5v8XGSQCy0cWCE0dqwS2URHW0_m2mMl0c6XESu1DenVXmbr31VfFIdn9n2jr7wg-Mt5wXGhIKJFTWj3RsRc1ZfZ_Ltlv0imNpXbz4MiMaWru1C82CWAYoQdUNRAGbh_dW5QYX4XLzXd7JyGlep9Dm4cuVnnPnR_EePdRnnn7EcxMpyhViB-J_TEB" />
+        {% if departments %}
+            {% for dep in departments %}
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl">
+                                    XW</div>
+                                <div>
+                                    <h3 class="text-xl font-bold">{{dep.name}}</h3>
+                                    <p class="text-sm text-slate-500">{{dep.description}}</p>
+                                </div>
                             </div>
-                            <span class="font-semibold">Sebastian Holt</span>
+                            <span
+                                class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">{% if dep.is_active %}Active {% else %}Inactive{% endif %}</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-500">Dept Head</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
+                                        <img alt="Sebastian Holt" class="w-full h-full object-cover"
+                                            data-alt="Avatar of Sebastian Holt with a beard"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiOr9pSvdqC_1IrW5YABJ_VHE_UdHXBtGlZUeAx4Asg3OEuKPXnl7EALMtQ1crqZMW6W0bCnQINLoK2GnWvbis5v8XGSQCy0cWCE0dqwS2URHW0_m2mMl0c6XESu1DenVXmbr31VfFIdn9n2jr7wg-Mt5wXGhIKJFTWj3RsRc1ZfZ_Ltlv0imNpXbz4MiMaWru1C82CWAYoQdUNRAGbh_dW5QYX4XLzXd7JyGlep9Dm4cuVnnPnR_EePdRnnn7EcxMpyhViB-J_TEB" />
+                                    </div>
+                                    <span class="font-semibold">{{dep.head.first_name}} {{dep.head.last_name}}</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
+                                <div class="text-center">
+                                    <p class="text-2xl font-black text-primary">{{dep.total_teams}}</p>
+                                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
+                                    </p>
+                                </div>
+                                <div class="text-center border-l border-primary/5">
+                                    <p class="text-2xl font-black text-primary">{{dep.total_members}}</p>
+                                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                                        Engineers</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-primary">8</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
-                            </p>
-                        </div>
-                        <div class="text-center border-l border-primary/5">
-                            <p class="text-2xl font-black text-primary">42</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                                Engineers</p>
-                        </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
+                        <button
+                            class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
+                            View Teams
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
                     </div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
+                <p>Department Not found</p>
             </div>
-            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
-                <button
-                    class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-                    View Teams
-                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-            </div>
-        </div>
+        {% endif %}
         <!-- Card 2: Broadcast Ops -->
-        <div
+        {% comment %} <div
             class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-6">
@@ -155,9 +164,9 @@
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
             </div>
-        </div>
+        </div> {% endcomment %}
         <!-- Card 3: Media Services -->
-        <div
+        {% comment %} <div
             class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-6">
@@ -206,9 +215,9 @@
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
             </div>
-        </div>
+        </div> {% endcomment %}
         <!-- Card 4: Infrastructure -->
-        <div
+        {% comment %} <div
             class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-6">
@@ -257,7 +266,7 @@
                     <span class="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
             </div>
-        </div>
+        </div> {% endcomment %}
     </div>
     <!-- Footer / Status -->
     <div
