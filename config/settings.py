@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "home",
     "accounts",
     "messaging",
-    "organization",
+    "department",
     "scheduling",
     "teams"
 ]
