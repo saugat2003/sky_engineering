@@ -28,3 +28,7 @@ def department_overview(request):
         "departments": departments
     }
     return render(request, "department/overview.html", context=context)
+
+
+def department_detail(request, id):
+    return render(request, "department/department_detail.html" )
