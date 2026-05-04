@@ -36,3 +36,7 @@ def department_detail(request, id):
         "department": department
     }
     return render(request, "department/department_detail.html", context=context )
+
+
+def org_chart(request):
+    return render(request, "department/org_chart.html")

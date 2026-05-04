@@ -63,26 +63,38 @@
                         <div class="flex justify-between items-start mb-6">
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl">
-                                    XW</div>
+                                    class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl uppercase shadow-md shadow-primary/20">
+                                    {{ dep.name|make_list|first }}{% if dep.name|length > 1 %}{{ dep.name|make_list|slice:"1:2"|first }}{% endif %}
+                                </div>
                                 <div>
                                     <h3 class="text-xl font-bold">{{dep.name}}</h3>
-                                    <p class="text-sm text-slate-500">{{dep.description}}</p>
+                                    <p class="text-sm text-slate-500 line-clamp-1">{{dep.description|default:"No description available."}}</p>
                                 </div>
                             </div>
                             <span
-                                class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">{% if dep.is_active %}Active {% else %}Inactive{% endif %}</span>
+                                class="{% if dep.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %} text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">
+                                {% if dep.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-500">Dept Head</span>
+                                <span class="text-slate-500 font-medium">Dept Head</span>
                                 <div class="flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
-                                        <img alt="Sebastian Holt" class="w-full h-full object-cover"
-                                            data-alt="Avatar of Sebastian Holt with a beard"
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiOr9pSvdqC_1IrW5YABJ_VHE_UdHXBtGlZUeAx4Asg3OEuKPXnl7EALMtQ1crqZMW6W0bCnQINLoK2GnWvbis5v8XGSQCy0cWCE0dqwS2URHW0_m2mMl0c6XESu1DenVXmbr31VfFIdn9n2jr7wg-Mt5wXGhIKJFTWj3RsRc1ZfZ_Ltlv0imNpXbz4MiMaWru1C82CWAYoQdUNRAGbh_dW5QYX4XLzXd7JyGlep9Dm4cuVnnPnR_EePdRnnn7EcxMpyhViB-J_TEB" />
-                                    </div>
-                                    <span class="font-semibold">{{dep.head.first_name}} {{dep.head.last_name}}</span>
+                                    {% if dep.head %}
+                                        <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 dark:border-slate-700 text-slate-600 font-bold text-xs flex items-center justify-center overflow-hidden">
+                                            {% if dep.head.profile_picture %}
+                                                <img alt="{{ dep.head.get_full_name }}" class="w-full h-full object-cover" src="{{ dep.head.profile_picture.url }}" />
+                                            {% else %}
+                                                {{ dep.head.first_name|make_list|first|default:dep.head.username|make_list|first }}{{ dep.head.last_name|make_list|first|default:"" }}
+                                            {% endif %}
+                                        </div>
+                                        <span class="font-semibold text-slate-700 dark:text-slate-300">{{dep.head.get_full_name|default:dep.head.username}}</span>
+                                    {% else %}
+                                        <div class="flex items-center gap-1.5 text-slate-400">
+                                            <span class="material-symbols-outlined text-[16px]">person_off</span>
+                                            <span class="font-medium italic">Unassigned</span>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
@@ -115,159 +127,7 @@
                 <p>Department Not found</p>
             </div>
         {% endif %}
-        <!-- Card 2: Broadcast Ops -->
-        {% comment %} <div
-            class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-14 h-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-black text-xl">
-                            BO</div>
-                        <div>
-                            <h3 class="text-xl font-bold">Broadcast Ops</h3>
-                            <p class="text-sm text-slate-500">Live Transmission &amp; Logistics</p>
-                        </div>
-                    </div>
-                    <span
-                        class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Active</span>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-slate-500">Dept Head</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
-                                <img alt="Sarah Chen" class="w-full h-full object-cover"
-                                    data-alt="Avatar of Sarah Chen with long dark hair"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7VNdLdBpYSGIwD_H2lwo_DoOq3J6s6DFU-Amg-YVFTNiIUleO5_FgKWDWOZLOzoXD5gBWL8oTS3zbG9Hhnd6nrYdbMTGjBCB9Jn5_IVw2gSZHydeQ8jVQYEqTx6j3LM5uY3R3cmdqIwockPVniwA8D8FdtHr6TSBLG0lhFnUgslobrIQMbOCSWCvVQxVIQY02GBkiaFTZV4L96_iok42UE4XqwikeA6UImSHoigv0G9rqjdyV7htHfou1e-qjY-WKQuuuWt-tDpCT" />
-                            </div>
-                            <span class="font-semibold">Sarah Chen</span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-primary">6</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
-                            </p>
-                        </div>
-                        <div class="text-center border-l border-primary/5">
-                            <p class="text-2xl font-black text-primary">35</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                                Engineers</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
-                <button
-                    class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-                    View Teams
-                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-            </div>
-        </div> {% endcomment %}
-        <!-- Card 3: Media Services -->
-        {% comment %} <div
-            class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-14 h-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-black text-xl">
-                            MS</div>
-                        <div>
-                            <h3 class="text-xl font-bold">Media Services</h3>
-                            <p class="text-sm text-slate-500">Content Ingest &amp; Metadata</p>
-                        </div>
-                    </div>
-                    <span
-                        class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Active</span>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-slate-500">Dept Head</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
-                                <img alt="Marcus Wright" class="w-full h-full object-cover"
-                                    data-alt="Avatar of Marcus Wright with short hair"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy4TKH8m5K4tfiP3HIHpbiBNACBolKpltW-ZaunJFrQxbJZ-vft02SulAgkNxrMfh6Vn__AsOhx3jabtU-AzHY2sKBsuMh8qlvRTJBBch1RXnIRQEQmCvGz4WiRJh_U1jQaf5uwL-1GuCjZJnxlkaQf8A40GEmuSczcEtUnUVQkrCNOMxpuZOLsLuYQ9sS-dkGCKdRMAfUEyaW7Aqg0xSkc4y-JQ7ZTqHepcs9LFfatHSvwFZ8j3lV3B_IwmONe_UtQW5BMDNMQRTp" />
-                            </div>
-                            <span class="font-semibold">Marcus Wright</span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-primary">5</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
-                            </p>
-                        </div>
-                        <div class="text-center border-l border-primary/5">
-                            <p class="text-2xl font-black text-primary">30</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                                Engineers</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
-                <button
-                    class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-                    View Teams
-                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-            </div>
-        </div> {% endcomment %}
-        <!-- Card 4: Infrastructure -->
-        {% comment %} <div
-            class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-14 h-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-black text-xl">
-                            IF</div>
-                        <div>
-                            <h3 class="text-xl font-bold">Infrastructure</h3>
-                            <p class="text-sm text-slate-500">Cloud &amp; Data Systems</p>
-                        </div>
-                    </div>
-                    <span
-                        class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Active</span>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-slate-500">Dept Head</span>
-                        <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
-                                <img alt="Isabella Rossi" class="w-full h-full object-cover"
-                                    data-alt="Avatar of Isabella Rossi with glasses"
-                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxQWr3q107KDnNDZzZ51GghJmnO6ALNMzQ0pf1D1W4mOceoLzeBZOz3ha3ZjH9XcVPne20gDJfHdNCI0XG4K8MRFgw1qY0mnkXSYRlZAGoqwcRADjk7ZrI0lnT_g1IFaXkv5WXH-ZGkfiRaylwGiPp1g8O2EdUm2byQbzRa6jLKMyl2qh4W6m8GfFyuPvCXXwLfbRT-GyJtatX15Kq2wuJliMzvUMdc51a_dW2XqbYEqhuSXQTkv3paA_5WhN4WcHHARH_oGcEbTZ7" />
-                            </div>
-                            <span class="font-semibold">Isabella Rossi</span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-primary">5</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
-                            </p>
-                        </div>
-                        <div class="text-center border-l border-primary/5">
-                            <p class="text-2xl font-black text-primary">35</p>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                                Engineers</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
-                <button
-                    class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-                    View Teams
-                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-            </div>
-        </div> {% endcomment %}
+        
     </div>
     <!-- Footer / Status -->
     <div
