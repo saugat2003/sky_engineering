@@ -6,22 +6,22 @@
 {% block content %}
 <div class="max-w-7xl mx-auto">
   <!-- Header -->
-  <div class="mb-8">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+  <div class="mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
           Week of {{ week_start|date:"F d" }} - {{ week_end|date:"F d, Y" }}
         </h1>
         <p class="text-gray-600 dark:text-gray-400">Your weekly meeting schedule</p>
       </div>
-      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all">
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-4 py-2 rounded-lg transition-all">
         <span class="material-symbols-outlined inline mr-2">add_circle</span>
         New Meeting
       </a>
     </div>
 
     <!-- Navigation -->
-    <div class="flex gap-3 mt-6 flex-wrap">
+    <div class="flex gap-2 mt-4 flex-wrap">
       <a href="?week={{ prev_week|date:'Y-m-d' }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
         <span class="material-symbols-outlined inline mr-1">chevron_left</span> Previous Week
       </a>
@@ -36,21 +36,21 @@
 
   <!-- Weekly Grid -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
-    <div class="grid grid-cols-7 gap-0 min-w-[880px]">
+    <div class="grid grid-cols-7 gap-0 min-w-[780px]">
       <!-- Day Columns -->
       {% for day in days %}
         <div class="{% if day.is_today %}bg-blue-50 dark:bg-blue-950 border-b-4 border-primary{% else %}border-b border-gray-200 dark:border-gray-700{% endif %}">
           <!-- Day Header -->
-          <div class="px-4 py-4 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-gray-50 dark:bg-gray-700">
+          <div class="px-3 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 bg-gray-50 dark:bg-gray-700">
             <p class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">{{ day.day_name }}</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ day.date|date:"d" }}</p>
+            <p class="text-xl font-bold text-gray-900 dark:text-white mt-1">{{ day.date|date:"d" }}</p>
             {% if day.is_today %}
               <span class="inline-block text-xs mt-2 px-2 py-1 bg-primary text-white rounded-full font-bold">Today</span>
             {% endif %}
           </div>
 
           <!-- Meetings -->
-          <div class="min-h-96 p-3 border-r border-gray-200 dark:border-gray-700 last:border-r-0 space-y-2 overflow-y-auto">
+          <div class="min-h-72 p-2.5 border-r border-gray-200 dark:border-gray-700 last:border-r-0 space-y-2 overflow-y-auto">
             {% for meeting in day.meetings %}
               <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block group">
                 <div class="text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 p-3 rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-all border border-primary/30 dark:border-primary/50 hover:shadow-md">
@@ -74,7 +74,7 @@
   </div>
 
   <!-- Calendar Views Navigation -->
-  <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+  <div class="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
     <a href="{% url 'scheduling:calendar_month' %}" class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
       <span class="material-symbols-outlined">calendar_month</span>
       Monthly View

@@ -6,20 +6,20 @@
 {% block content %}
 <div class="max-w-7xl mx-auto">
   <!-- Header with Controls -->
-  <div class="mb-8">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+  <div class="mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ month_name }} {{ year }}</h1>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ month_name }} {{ year }}</h1>
         <p class="text-gray-600 dark:text-gray-400">View and manage all team meetings</p>
       </div>
-      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all">
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-4 py-2 rounded-lg transition-all">
         <span class="material-symbols-outlined inline mr-2">add_circle</span>
         New Meeting
       </a>
     </div>
 
     <!-- Navigation -->
-    <div class="flex gap-3 mt-6 flex-wrap">
+    <div class="flex gap-2 mt-4 flex-wrap">
       <a href="?year={{ prev_year }}&month={{ prev_month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
         <span class="material-symbols-outlined inline mr-1">chevron_left</span> Previous
       </a>
@@ -34,7 +34,7 @@
 
   <!-- Calendar Grid -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
-    <div class="min-w-[880px]">
+    <div class="min-w-[780px]">
     <!-- Day Headers -->
     <div class="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700">
       {% for day_name in day_names %}
@@ -48,10 +48,10 @@
     {% for week in weeks %}
       <div class="grid grid-cols-7 gap-0 auto-rows-fr">
         {% for day_info in week %}
-          <div class="min-h-32 p-4 border-b border-r border-gray-200 dark:border-gray-700 last:border-r-0 {% if day_info.date == today %}bg-blue-50 dark:bg-blue-950{% elif day_info.day == 0 %}bg-gray-50 dark:bg-gray-900{% else %}bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700{% endif %} transition-colors">
+          <div class="min-h-24 p-3 border-b border-r border-gray-200 dark:border-gray-700 last:border-r-0 {% if day_info.date == today %}bg-blue-50 dark:bg-blue-950{% elif day_info.day == 0 %}bg-gray-50 dark:bg-gray-900{% else %}bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700{% endif %} transition-colors">
             {% if day_info.day %}
-              <div class="mb-3">
-                <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ day_info.day }}</span>
+              <div class="mb-2">
+                <span class="text-xl font-bold text-gray-900 dark:text-white">{{ day_info.day }}</span>
                 {% if day_info.date == today %}
                   <span class="inline-block ml-2 bg-primary text-white text-xs px-2 py-1 rounded-full">Today</span>
                 {% endif %}
@@ -86,7 +86,7 @@
   </div>
 
   <!-- Legend -->
-  <div class="mt-8 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+  <div class="mt-5 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
     <p class="text-sm text-gray-700 dark:text-gray-300">
       <span class="inline-block w-3 h-3 bg-primary rounded mr-2"></span>
       <strong>Tip:</strong> Click on any meeting to view details, RSVP, or make changes.
@@ -94,7 +94,7 @@
   </div>
 
   <!-- Calendar Views Navigation -->
-  <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
+  <div class="mt-5 flex flex-col sm:flex-row gap-3">
     <a href="{% url 'scheduling:calendar_week' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
       <span class="material-symbols-outlined">calendar_view_week</span>
       Weekly View

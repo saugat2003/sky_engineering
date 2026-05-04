@@ -5,18 +5,18 @@
 
 {% block content %}
 <div class="max-w-xl mx-auto">
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border-2 border-red-200 dark:border-red-800">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-red-200 dark:border-red-800">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-red-500 to-red-600 px-8 py-8">
+    <div class="bg-red-600 px-5 sm:px-6 py-5">
       <div class="flex items-center gap-3 text-white">
-        <span class="material-symbols-outlined text-5xl">warning</span>
-        <h1 class="text-3xl font-bold">Cancel Meeting</h1>
+        <span class="material-symbols-outlined text-4xl">warning</span>
+        <h1 class="text-2xl font-bold">Cancel Meeting</h1>
       </div>
     </div>
 
     <!-- Content -->
-    <div class="p-8">
-      <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
+    <div class="p-5 sm:p-6">
+      <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-5">
         <p class="text-red-700 dark:text-red-300 font-semibold">
           <span class="material-symbols-outlined inline mr-2">info</span>
           This action cannot be undone. All attendees will be notified of the cancellation.
@@ -24,8 +24,8 @@
       </div>
 
       <!-- Meeting Details -->
-      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">{{ meeting.title }}</h3>
+      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-5">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ meeting.title }}</h3>
         
         <div class="space-y-3">
           <div class="flex items-center gap-3">
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Confirmation Message -->
-      <p class="text-center text-gray-700 dark:text-gray-300 mb-8 text-lg">
+      <p class="text-center text-gray-700 dark:text-gray-300 mb-5">
         Are you absolutely sure you want to cancel this meeting? <br>
         <strong>All attendees will receive a cancellation notification.</strong>
       </p>
@@ -54,11 +54,11 @@
       <!-- Action Buttons -->
       <form method="post" class="space-y-3">
         {% csrf_token %}
-        <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+        <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2">
           <span class="material-symbols-outlined">cancel</span>
           Yes, Cancel This Meeting
         </button>
-        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-bold py-4 rounded-lg transition-all text-center">
+        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-bold py-3 rounded-lg transition-all text-center">
           <span class="material-symbols-outlined inline mr-2">arrow_back</span>
           Keep Meeting
         </a>
