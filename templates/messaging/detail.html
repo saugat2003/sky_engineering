@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto flex flex-col gap-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+        {{ message_obj.subject|default:"(no subject)" }}
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        From <span class="font-bold text-gray-700 dark:text-gray-200">{{ message_obj.sender.get_full_name|default:message_obj.sender.username }}</span>
+        to <span class="font-bold text-gray-700 dark:text-gray-200">{{ message_obj.recipient.get_full_name|default:message_obj.recipient.username }}</span>
+        · {{ message_obj.display_timestamp|date:"Y-m-d H:i" }}
+      </p>
+    </div>
+
+    <div class="flex gap-2">
+      <a href="{% url 'messages_compose' %}?to={{ message_obj.sender.username|urlencode }}&subject={{ 'Re: '|add:message_obj.subject|urlencode }}&parent={{ message_obj.id }}"
+         class="px-4 py-2 rounded-lg bg-purple-600 text-white font-bold text-sm hover:bg-purple-700">
+        Reply
+      </a>
+      <form method="post" action="{% url 'messages_delete' message_obj.id %}">
+        {% csrf_token %}
+        <button class="px-4 py-2 rounded-lg bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+    <div class="prose prose-sm max-w-none dark:prose-invert">
+      <pre class="whitespace-pre-wrap font-sans text-sm text-gray-800 dark:text-gray-100">{{ message_obj.body }}</pre>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+    <h2 class="text-sm font-extrabold uppercase tracking-wide text-gray-500 mb-3">Quick reply</h2>
+    <form method="post" action="{% url 'messages_reply' message_obj.id %}" class="space-y-3">
+      {% csrf_token %}
+      <textarea name="body" rows="4" class="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" placeholder="Write a reply..."></textarea>
+      <div class="flex justify-end">
+        <button class="inline-flex items-center px-5 py-2.5 rounded-lg bg-purple-600 text-white font-bold text-sm hover:bg-purple-700">
+          Send Reply
+          <span class="material-symbols-outlined text-[18px] ml-2">send</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+

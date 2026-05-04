@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+        {% if mailbox == "inbox" %}Inbox{% elif mailbox == "sent" %}Sent{% else %}Drafts{% endif %}
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {% if mailbox == "inbox" %}Messages you’ve received.{% elif mailbox == "sent" %}Messages you’ve sent.{% else %}Messages saved but not sent.{% endif %}
+      </p>
+    </div>
+
+    <div class="flex gap-2">
+      <a href="{% url 'messages_compose' %}" class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg font-semibold text-sm hover:opacity-95 transition">
+        <span class="material-symbols-outlined text-[18px]">edit_square</span>
+        New Message
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-7 gap-3 items-end">
+      <div class="md:col-span-2">
+        <label class="text-xs font-bold text-gray-500">Search</label>
+        <input name="q" value="{{ request.GET.q }}" placeholder="Sender, subject, keyword..." class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">Sender</label>
+        <input name="sender" value="{{ request.GET.sender }}" placeholder="Name/email..." class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">Subject</label>
+        <input name="subject" value="{{ request.GET.subject }}" placeholder="Subject..." class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">From</label>
+        <input type="date" name="from" value="{{ request.GET.from }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">To</label>
+        <input type="date" name="to" value="{{ request.GET.to }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div class="flex gap-2">
+        <button class="w-full inline-flex justify-center items-center bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700 transition">
+          Filter
+        </button>
+        <a href="{% if mailbox == 'inbox' %}{% url 'messages_inbox' %}{% elif mailbox == 'sent' %}{% url 'messages_sent' %}{% else %}{% url 'messages_drafts' %}{% endif %}"
+          class="w-full inline-flex justify-center items-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+          Reset
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex gap-2 flex-wrap">
+    <a href="{% url 'messages_inbox' %}" class="px-3 py-1 rounded-full text-xs font-bold border {% if mailbox == 'inbox' %}bg-purple-50 text-purple-700 border-purple-100{% else %}bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100{% endif %}">Inbox</a>
+    <a href="{% url 'messages_sent' %}" class="px-3 py-1 rounded-full text-xs font-bold border {% if mailbox == 'sent' %}bg-purple-50 text-purple-700 border-purple-100{% else %}bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100{% endif %}">Sent</a>
+    <a href="{% url 'messages_drafts' %}" class="px-3 py-1 rounded-full text-xs font-bold border {% if mailbox == 'drafts' %}bg-purple-50 text-purple-700 border-purple-100{% else %}bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100{% endif %}">Drafts</a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 dark:bg-gray-950 text-gray-500">
+          <tr>
+            <th class="text-left px-4 py-3 font-extrabold uppercase text-[11px] tracking-wide">From</th>
+            <th class="text-left px-4 py-3 font-extrabold uppercase text-[11px] tracking-wide">Subject</th>
+            <th class="text-left px-4 py-3 font-extrabold uppercase text-[11px] tracking-wide">Date</th>
+            <th class="text-right px-4 py-3 font-extrabold uppercase text-[11px] tracking-wide">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+          {% for m in messages_list %}
+          <tr class="{% if mailbox == 'inbox' and not m.is_read %}bg-purple-50/40{% endif %} hover:bg-gray-50 dark:hover:bg-gray-950 transition">
+            <td class="px-4 py-3 whitespace-nowrap">
+              <div class="font-bold text-gray-900 dark:text-white">
+                {% if mailbox == "sent" %}To: {{ m.recipient.get_full_name|default:m.recipient.username }}{% else %}{{ m.sender.get_full_name|default:m.sender.username }}{% endif %}
+              </div>
+              <div class="text-xs text-gray-500">
+                {% if mailbox == "sent" %}{{ m.recipient.email }}{% else %}{{ m.sender.email }}{% endif %}
+              </div>
+            </td>
+            <td class="px-4 py-3">
+              <a href="{% url 'messages_detail' m.id %}" class="font-semibold text-gray-900 dark:text-white hover:text-purple-600">
+                {{ m.subject|default:"(no subject)"|truncatechars:80 }}
+              </a>
+              <div class="text-xs text-gray-500 mt-1 line-clamp-1">{{ m.body|truncatechars:120 }}</div>
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-gray-500">
+              {{ m.display_timestamp|date:"Y-m-d H:i" }}
+            </td>
+            <td class="px-4 py-3 whitespace-nowrap text-right">
+              <div class="inline-flex gap-2">
+                <a href="{% url 'messages_detail' m.id %}" class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold text-xs hover:bg-gray-200 dark:hover:bg-gray-700">Open</a>
+                {% if mailbox == "drafts" %}
+                  <form method="post" action="{% url 'messages_send_draft' m.id %}">
+                    {% csrf_token %}
+                    <button class="px-3 py-1.5 rounded-lg bg-purple-600 text-white font-bold text-xs hover:bg-purple-700">Send</button>
+                  </form>
+                {% endif %}
+                <form method="post" action="{% url 'messages_delete' m.id %}">
+                  {% csrf_token %}
+                  <button class="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 font-bold text-xs hover:bg-red-100">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+              No messages found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+

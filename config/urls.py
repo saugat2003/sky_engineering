@@ -26,5 +26,6 @@ urlpatterns = [
     path("auth/", include("accounts.urls")),
     path("department/", include("department.urls")),
     path("teams/", include("teams.urls")),
+    path("messages/", include("messaging.urls")),
     path("scheduling/", include("scheduling.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
