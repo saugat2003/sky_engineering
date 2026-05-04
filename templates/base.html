@@ -76,20 +76,25 @@
         </div>
       </div>
       <nav class="flex-1 px-4 py-4 space-y-1">
+        <!-- Dashboard -->
         <a
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'dashboard' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="{% url "dashboard" %}"
+          href="{% url 'dashboard' %}"
         >
           <span class="material-symbols-outlined">dashboard</span>
           <span class="text-sm font-medium">Dashboard</span>
         </a>
+
+        <!-- Departments -->
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'depertment_overview' or request.resolver_match.url_name == 'depertment_detail' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name in 'depertment_overview,depertment_detail' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'depertment_overview' %}"
         >
           <span class="material-symbols-outlined">corporate_fare</span>
           <span class="text-sm font-medium">Departments</span>
         </a>
+
+        <!-- Teams -->
         <a
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'team_list' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'team_list' %}"
@@ -97,29 +102,19 @@
           <span class="material-symbols-outlined">groups</span>
           <span class="text-sm font-medium">Teams</span>
         </a>
-        <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/engineers.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="engineers.html"
-        >
-          <span class="material-symbols-outlined">engineering</span>
-          <span class="text-sm font-medium">Engineers</span>
-        </a>
+
+        <!-- Org Chart -->
         <a
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'org_chart' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="{% url "org_chart" %}"
+          href="{% url 'org_chart' %}"
         >
           <span class="material-symbols-outlined">account_tree</span>
           <span class="text-sm font-medium">Org Chart</span>
         </a>
+
+        <!-- Calendar -->
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/message.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="message.html"
-        >
-          <span class="material-symbols-outlined">chat</span>
-          <span class="text-sm font-medium">Messages</span>
-        </a>
-        <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if 'scheduling' in request.resolver_match.app_names %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.app_name == 'scheduling' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'scheduling:calendar_month' %}"
         >
           <span class="material-symbols-outlined">calendar_month</span>
