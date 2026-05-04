@@ -1,0 +1,661 @@
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Registry Portal - Calendar</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6467f2",
+            },
+            fontFamily: {
+              headline: ["Public Sans"],
+              body: ["Public Sans"],
+              label: ["Public Sans"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      body {
+        font-family: "Public Sans", sans-serif;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased overflow-hidden"
+  >
+    <!-- SideNavBar Shell -->
+    <aside
+      class="w-64 border-r border-primary/10 bg-white dark:bg-gray-900 flex flex-col fixed h-full z-50"
+    >
+      <div class="p-6 flex items-center gap-3">
+        <div
+          class="size-10 rounded-xl bg-primary flex items-center justify-center text-white"
+        >
+          <span class="material-symbols-outlined">broadcast_on_personal</span>
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-900 dark:text-white leading-tight">
+            Broadcast Co.
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Engineering Registry
+          </p>
+        </div>
+      </div>
+      <nav class="flex-1 px-4 py-4 space-y-1">
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="dashboard_team_registry.html"
+        >
+          <span class="material-symbols-outlined">dashboard</span>
+          <span class="text-sm font-medium">Dashboard</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="department_overview.html"
+        >
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span class="text-sm font-medium">Departments</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="team_search_results.html"
+        >
+          <span class="material-symbols-outlined">groups</span>
+          <span class="text-sm font-medium">Teams</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="engineers.html"
+        >
+          <span class="material-symbols-outlined">engineering</span>
+          <span class="text-sm font-medium">Engineers</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="org_chart_dependency_view.html"
+        >
+          <span class="material-symbols-outlined">account_tree</span>
+          <span class="text-sm font-medium">Org Chart</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="message.html"
+        >
+          <span class="material-symbols-outlined">chat</span>
+          <span class="text-sm font-medium">Messages</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white transition-colors"
+          href="calender.html"
+        >
+          <span class="material-symbols-outlined">calendar_month</span>
+          <span class="text-sm font-medium">Calendar</span>
+        </a>
+      </nav>
+      <div class="px-4 py-6 border-t border-primary/10 space-y-1">
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors"
+          href="user_profile_settings.html"
+        >
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="text-sm font-medium">Profile</span>
+        </a>
+        <a
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+          href="login_broadcast_engineering.html"
+        >
+          <span class="material-symbols-outlined">logout</span>
+          <span class="text-sm font-medium">Logout</span>
+        </a>
+      </div>
+    </aside>
+    <!-- TopNavBar Shell -->
+    <header
+      class="flex justify-between items-center ml-64 px-8 h-16 w-[calc(100%-16rem)] bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40"
+    >
+      <div class="flex items-center flex-1 max-w-xl">
+        <div class="relative w-full group">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-500 transition-colors"
+            >search</span
+          >
+          <input
+            class="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+            placeholder="Search events, engineers, or systems..."
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors"
+        >
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <p class="text-sm font-semibold leading-none">Alex Rivera</p>
+            <p class="text-xs text-gray-500 mt-1">Lead Engineer</p>
+          </div>
+          <img
+            alt="User Profile"
+            class="w-9 h-9 rounded-full bg-gray-200"
+            data-alt="Portrait of a professional software engineer"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbaiokcHRkgg052rgq8cM6Lu6eQrI-e94CC1sJDkVV2YiKy1Qf_7SYXnsZgBtcqvChvDPYxt88tCH8_D02_yHQT2eAY1PWImPtGBcZtQt1EJuRqLfep91RivJ2Ul85AXdcXKqIhsvCzr3S-lWkINcAPzRc1AovQC3hOCLvQevueNJ_z_Esl2ZAJyQhGYdwJTktQpRGzw1cmbM-JM80sH0sNkiquh9dF4s8qlCy1km3xB9xtlOdrXQOawzWOGTG1MgatMS2zrcZ2O5D"
+          />
+        </div>
+      </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="ml-64 flex flex-col h-[calc(100vh-4rem)]">
+      <!-- Calendar Controls -->
+      <div
+        class="flex items-center justify-between px-8 py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
+      >
+        <div class="flex items-center gap-4">
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            October 2024
+          </h2>
+          <div
+            class="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1"
+          >
+            <button
+              class="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-md transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-gray-600 dark:text-gray-300"
+                >chevron_left</span
+              >
+            </button>
+            <button
+              class="px-4 py-1 text-sm font-medium hover:bg-white dark:hover:bg-gray-700 rounded-md transition-all"
+            >
+              Today
+            </button>
+            <button
+              class="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-md transition-all"
+            >
+              <span
+                class="material-symbols-outlined text-gray-600 dark:text-gray-300"
+                >chevron_right</span
+              >
+            </button>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1"
+        >
+          <button
+            class="px-4 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-all"
+          >
+            Day
+          </button>
+          <button
+            class="px-4 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 transition-all"
+          >
+            Week
+          </button>
+          <button
+            class="px-4 py-1.5 text-sm font-bold bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-300 rounded-md shadow-sm"
+          >
+            Month
+          </button>
+        </div>
+      </div>
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Calendar Grid -->
+        <div class="flex-1 overflow-auto bg-white dark:bg-gray-900">
+          <div
+            class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-800"
+          >
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Sun
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Mon
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Tue
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Wed
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Thu
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Fri
+            </div>
+            <div
+              class="py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-widest"
+            >
+              Sat
+            </div>
+          </div>
+          <div class="grid grid-cols-7 grid-rows-5 h-full min-h-[700px]">
+            <!-- Sample Month Rendering -->
+            <!-- Week 1 -->
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 opacity-40"
+            >
+              29
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 opacity-40"
+            >
+              30
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              1
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              2
+              <div class="mt-2 space-y-1">
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded border-l-2 border-purple-600 font-medium truncate"
+                >
+                  System Maintenance
+                </button>
+              </div>
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              3
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              4
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              5
+            </div>
+            <!-- Week 2 -->
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              6
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              7
+              <div class="mt-2 space-y-1">
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 rounded border-l-2 border-emerald-600 font-medium truncate"
+                >
+                  Team Sprint Planning
+                </button>
+              </div>
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              8
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              9
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 bg-purple-50/50 dark:bg-purple-900/10"
+            >
+              10
+              <div class="mt-2 space-y-1">
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded border-l-2 border-blue-600 font-medium truncate"
+                >
+                  Deployment Window
+                </button>
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded border-l-2 border-amber-600 font-medium truncate"
+                >
+                  QA Review
+                </button>
+              </div>
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              11
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              12
+            </div>
+            <!-- Week 3 (Today highlighted) -->
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              13
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              14
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 relative bg-purple-50/30 dark:bg-purple-900/10"
+            >
+              <span
+                class="inline-flex items-center justify-center w-7 h-7 bg-purple-600 text-white rounded-full font-bold"
+                >15</span
+              >
+              <div class="mt-2 space-y-1">
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded border-l-2 border-purple-600 font-medium truncate"
+                >
+                  DB Migration
+                </button>
+              </div>
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              16
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              17
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              18
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              19
+            </div>
+            <!-- Week 4 -->
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              20
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              21
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              22
+              <div class="mt-2 space-y-1">
+                <button
+                  class="w-full text-left px-2 py-1 text-[11px] bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded border-l-2 border-red-600 font-medium truncate"
+                >
+                  Security Patching
+                </button>
+              </div>
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              23
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              24
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              25
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              26
+            </div>
+            <!-- Week 5 -->
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              27
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              28
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              29
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              30
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2"
+            >
+              31
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 opacity-40"
+            >
+              1
+            </div>
+            <div
+              class="border-r border-b border-gray-100 dark:border-gray-800 p-2 opacity-40"
+            >
+              2
+            </div>
+          </div>
+        </div>
+        <!-- Upcoming Events Sidebar -->
+        <aside
+          class="w-80 bg-gray-50 dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800 p-6 overflow-auto"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold">Upcoming Events</h3>
+            <button class="text-purple-600 dark:text-purple-400">
+              <span class="material-symbols-outlined">add_circle</span>
+            </button>
+          </div>
+          <div class="space-y-4">
+            <div class="group cursor-pointer">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex flex-col items-center justify-center w-12 h-14 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm group-hover:border-purple-300 transition-colors"
+                >
+                  <span class="text-[10px] uppercase font-bold text-gray-400"
+                    >Oct</span
+                  >
+                  <span
+                    class="text-xl font-bold text-gray-800 dark:text-gray-100"
+                    >10</span
+                  >
+                </div>
+                <div class="flex-1">
+                  <h4
+                    class="text-sm font-bold group-hover:text-purple-600 transition-colors"
+                  >
+                    Deployment Window
+                  </h4>
+                  <p class="text-xs text-gray-500 mt-1">2:00 PM - 4:00 PM</p>
+                  <div class="flex items-center gap-1 mt-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-[10px] text-gray-400 font-medium"
+                      >Core API Service</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="group cursor-pointer">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex flex-col items-center justify-center w-12 h-14 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm group-hover:border-purple-300 transition-colors"
+                >
+                  <span class="text-[10px] uppercase font-bold text-gray-400"
+                    >Oct</span
+                  >
+                  <span
+                    class="text-xl font-bold text-gray-800 dark:text-gray-100"
+                    >15</span
+                  >
+                </div>
+                <div class="flex-1">
+                  <h4
+                    class="text-sm font-bold group-hover:text-purple-600 transition-colors"
+                  >
+                    DB Migration
+                  </h4>
+                  <p class="text-xs text-gray-500 mt-1">11:30 PM - 01:00 AM</p>
+                  <div class="flex items-center gap-1 mt-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span class="text-[10px] text-gray-400 font-medium"
+                      >Production Database</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="group cursor-pointer">
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex flex-col items-center justify-center w-12 h-14 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm group-hover:border-purple-300 transition-colors"
+                >
+                  <span class="text-[10px] uppercase font-bold text-gray-400"
+                    >Oct</span
+                  >
+                  <span
+                    class="text-xl font-bold text-gray-800 dark:text-gray-100"
+                    >22</span
+                  >
+                </div>
+                <div class="flex-1">
+                  <h4
+                    class="text-sm font-bold group-hover:text-purple-600 transition-colors"
+                  >
+                    Security Patching
+                  </h4>
+                  <p class="text-xs text-gray-500 mt-1">09:00 AM - 12:00 PM</p>
+                  <div class="flex items-center gap-1 mt-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span class="text-[10px] text-gray-400 font-medium"
+                      >Infra-Security</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-10">
+            <h3
+              class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4"
+            >
+              On Call Today
+            </h3>
+            <div class="space-y-3">
+              <div
+                class="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800"
+              >
+                <img
+                  alt="Engineer"
+                  class="w-8 h-8 rounded-full"
+                  data-alt="Profile picture of an engineer on call"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt8A9oKnsPa2u49ErG5L0ozh5eq_j6PgypQTeLFUifJFdv5E-eiBZLu4DbPMe46ylcYX8BxLmvpBX5Fm0oZwjaLW23uh61qSPVRgp-_mf6aG9jBS0UN16tek3SFPHOGyu6EsFKiT-2UhW37XqExGIQ6pgEcb0jFDIFVOAa53jjfRoD3A0bbk6UU8dA0J1YEGaxHxwhTx-vCqOg5Y9ZmgflUQmN17EqWssXsyk3LuOQN1e9DoMZ0RY6S6bd-e5wgVMNDh_8ZManh0il"
+                />
+                <div>
+                  <p class="text-xs font-bold">Sarah Jenkins</p>
+                  <p
+                    class="text-[10px] text-emerald-500 font-medium flex items-center gap-1"
+                  >
+                    <span
+                      class="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    ></span>
+                    Primary
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800"
+              >
+                <img
+                  alt="Engineer"
+                  class="w-8 h-8 rounded-full"
+                  data-alt="Profile picture of secondary engineer on call"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4zg7wjviPo5afbPlOaI5wuSqk2ELNgRVAbxK5hKHo21NBUb8F-JeRAMOxtbUPRkHHnhgUE3F3sUZ51ILalVMJoc6StNi-kdy5t6HhjSNLn16fRuNyOFNPW3NEgThKQLZeqFlFtXXFtgrkohmTuXdoC33iY4bOHx6Lv08tyUtIwLRE3SCYOj_hNRe3W82jWz6eKw5K9IA77RKbgZpP8JLTRG9V7gF-uiSveYIcmqk6P8HOHwF1XN3ealJVHGRjkCJNs13LLIePKGQb"
+                />
+                <div>
+                  <p class="text-xs font-bold">Marcus Thorne</p>
+                  <p
+                    class="text-[10px] text-blue-500 font-medium flex items-center gap-1"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    Secondary
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
