@@ -119,8 +119,8 @@
           <span class="text-sm font-medium">Messages</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/calender.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="calender.html"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if 'scheduling' in request.resolver_match.app_names %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          href="{% url 'scheduling:calendar_month' %}"
         >
           <span class="material-symbols-outlined">calendar_month</span>
           <span class="text-sm font-medium">Calendar</span>
