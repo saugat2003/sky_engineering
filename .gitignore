@@ -7,6 +7,9 @@ __pycache__
 db.sqlite3
 media
 migrations/
+!teams/migrations/
+teams/migrations/*
+!teams/migrations/0005_teamdependency.py
 
 # Backup files # 
 *.bak 

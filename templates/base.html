@@ -91,8 +91,8 @@
           <span class="text-sm font-medium">Departments</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/team_search_results.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="team_search_results.html"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name == 'team_list' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          href="{% url 'team_list' %}"
         >
           <span class="material-symbols-outlined">groups</span>
           <span class="text-sm font-medium">Teams</span>

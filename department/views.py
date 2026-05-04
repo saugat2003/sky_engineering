@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Count
 from department.models import Department
-from teams.models import Team, TeamMember
+from teams.models import Team, TeamDependency, TeamMember
 
 # Create your views here.
 def department_overview(request):
@@ -31,7 +31,13 @@ def department_overview(request):
 
 
 def department_detail(request, id):
-    department = Department.objects.get(id=id)
+    department = get_object_or_404(Department.objects.prefetch_related(
+        'teams',
+        'teams__team_type',
+        'teams__manager',
+        'teams__downstream_dependencies__to_team',
+        'teams__upstream_dependencies__from_team',
+    ), id=id)
     context = {
         "department": department
     }
@@ -44,7 +50,17 @@ def org_chart(request):
         total_members=Count("teams__members__user", distinct=True)
     ).prefetch_related('teams', 'teams__manager')
 
+    dependencies = TeamDependency.objects.select_related(
+        'from_team',
+        'from_team__department',
+        'from_team__team_type',
+        'to_team',
+        'to_team__department',
+        'to_team__team_type',
+    )
+
     context = {
-        "departments": departments
+        "departments": departments,
+        "dependencies": dependencies,
     }
     return render(request, "department/org_chart.html", context=context)
