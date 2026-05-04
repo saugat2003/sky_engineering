@@ -114,8 +114,6 @@
 
         <!-- Calendar -->
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.app_name == 'scheduling' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
-          href="{% url 'scheduling:calendar_month' %}"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name|default:''|slice:':9' == 'messages_' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'messages_inbox' %}"
         >
@@ -188,8 +186,6 @@
     <!-- Main Content Area -->
     <main class="ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
         <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}m-8 pb-8{% endif %}">
-    <main class="md:ml-64 ml-0 flex flex-col h-[calc(100vh-4rem)]">
-        <div class="m-4 sm:m-8">
           {% block content %}{% endblock content %}
           
         </div>
