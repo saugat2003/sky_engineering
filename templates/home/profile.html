@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-1.5 text-sm font-medium text-slate-500 mb-6">
+  <a class="hover:text-primary transition-colors" href="{% url 'dashboard' %}">Home</a>
+  <span class="material-symbols-outlined text-xs text-slate-400">chevron_right</span>
+  <span class="text-slate-900 dark:text-slate-100">Profile &amp; Settings</span>
+</nav>
+
+<h1 class="text-2xl font-black tracking-tight mb-6 text-slate-900 dark:text-white">User Profile &amp; Settings</h1>
+
+<!-- Flash messages -->
+{% if messages %}
+<div class="mb-6 flex flex-col gap-2">
+  {% for message in messages %}
+  <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+    {% if message.tags == 'success' %}bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800
+    {% else %}bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800{% endif %}">
+    <span class="material-symbols-outlined text-[18px]">{% if message.tags == 'success' %}check_circle{% else %}error{% endif %}</span>
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="grid gap-6 max-w-3xl">
+
+  <!-- Personal Information -->
+  <section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-white">Personal Information</h2>
+      <p class="text-sm text-slate-500 mt-0.5">Update your personal details and how others see you on the platform.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="p-6">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="profile">
+
+      <!-- Avatar row -->
+      <div class="flex items-center gap-5 mb-6">
+        <div class="relative shrink-0">
+          {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="Avatar"
+               class="w-16 h-16 rounded-full object-cover border-2 border-primary/30">
+          {% else %}
+          <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-violet-500 flex items-center justify-center text-white text-xl font-black">
+            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+          </div>
+          {% endif %}
+          <label for="avatar-input"
+                 class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/80 transition-colors shadow">
+            <span class="material-symbols-outlined text-white" style="font-size:14px">photo_camera</span>
+          </label>
+          <input id="avatar-input" type="file" name="avatar" accept="image/*" class="hidden">
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Profile Photo</p>
+          <p class="text-xs text-slate-400 mt-0.5">Click the camera icon to upload a new photo.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">First Name</label>
+          <input name="first_name" type="text" value="{{ user.first_name }}"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Last Name</label>
+          <input name="last_name" type="text" value="{{ user.last_name }}"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5 md:col-span-2">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
+          <input name="email" type="email" value="{{ user.email }}"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Username</label>
+          <input type="text" value="{{ user.username }}" disabled
+                 class="w-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed">
+          <p class="text-xs text-slate-400">Username cannot be changed.</p>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Phone</label>
+          <input name="phone" type="tel" value="{{ profile.phone }}"
+                 placeholder="+1 555 000 0000"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5 md:col-span-2">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Bio</label>
+          <textarea name="bio" rows="3" placeholder="Tell your team a bit about yourself..."
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all resize-none">{{ profile.bio }}</textarea>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button type="submit"
+                class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md shadow-primary/20 text-sm">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Security / Password -->
+  <section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+    <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-white">Security</h2>
+      <p class="text-sm text-slate-500 mt-0.5">Manage your password and account security settings.</p>
+    </div>
+
+    <form method="post" class="p-6">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="password">
+
+      <div class="grid grid-cols-1 gap-5 max-w-md">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Current Password</label>
+          <input name="{{ password_form.old_password.html_name }}" type="password" placeholder="••••••••"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">New Password</label>
+          <input name="{{ password_form.new_password1.html_name }}" type="password" placeholder="Enter new password"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Confirm New Password</label>
+          <input name="{{ password_form.new_password2.html_name }}" type="password" placeholder="Confirm new password"
+                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary px-4 py-2.5 text-sm outline-none transition-all">
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button type="submit"
+                class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md shadow-primary/20 text-sm">
+          Update Password
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Danger Zone -->
+  <section class="bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/30 p-6 flex flex-col sm:flex-row items-center justify-between gap-5">
+    <div>
+      <h3 class="text-base font-bold text-red-900 dark:text-red-400">Account Session</h3>
+      <p class="text-sm text-red-700/70 dark:text-red-300/60 mt-0.5">Securely sign out and clear your local session data.</p>
+    </div>
+    <a href="{% url 'logout' %}"
+       class="shrink-0 px-6 py-2.5 bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-bold rounded-lg hover:bg-red-600 hover:text-white dark:hover:bg-red-600 transition-all text-sm">
+      Logout of Registry
+    </a>
+  </section>
+
+</div>
+{% endblock content %}
