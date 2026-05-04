@@ -70,9 +70,15 @@ def _apply_filters(request: HttpRequest, qs):
         qs = qs.filter(subject__icontains=subject)
 
     if date_from:
-        qs = qs.filter(created_at__date__gte=date_from)
+        qs = qs.filter(
+            Q(sent_at__date__gte=date_from)
+            | Q(sent_at__isnull=True, created_at__date__gte=date_from)
+        )
     if date_to:
-        qs = qs.filter(created_at__date__lte=date_to)
+        qs = qs.filter(
+            Q(sent_at__date__lte=date_to)
+            | Q(sent_at__isnull=True, created_at__date__lte=date_to)
+        )
 
     return qs
 

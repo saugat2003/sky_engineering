@@ -21,7 +21,7 @@
   </div>
 
   <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-    <form method="get" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-7 gap-3 items-end">
       <div class="md:col-span-2">
         <label class="text-xs font-bold text-gray-500">Search</label>
         <input name="q" value="{{ request.GET.q }}" placeholder="Sender, subject, keyword..." class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
@@ -33,6 +33,14 @@
       <div>
         <label class="text-xs font-bold text-gray-500">Subject</label>
         <input name="subject" value="{{ request.GET.subject }}" placeholder="Subject..." class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">From</label>
+        <input type="date" name="from" value="{{ request.GET.from }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500">To</label>
+        <input type="date" name="to" value="{{ request.GET.to }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" />
       </div>
       <div class="flex gap-2">
         <button class="w-full inline-flex justify-center items-center bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-purple-700 transition">
