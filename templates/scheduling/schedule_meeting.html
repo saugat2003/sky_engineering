@@ -6,19 +6,32 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
   <!-- Page Header -->
-  <div class="mb-8">
-    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ title }}</h1>
-    <p class="text-gray-600 dark:text-gray-400">Create and manage team meetings with ease</p>
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ title }}</h1>
+      <p class="text-gray-600 dark:text-gray-400">
+        {% if meeting %}Update the meeting details and invited attendees.{% else %}Create and manage team meetings with ease.{% endif %}
+      </p>
+    </div>
+    <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Back
+    </a>
   </div>
 
   <!-- Form Card -->
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
-    <div class="bg-gradient-to-r from-primary to-purple-600 px-8 py-6">
-      <h2 class="text-2xl font-bold text-white">New Meeting</h2>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div class="bg-primary px-5 sm:px-8 py-5 sm:py-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-white">{% if meeting %}Edit Meeting{% else %}New Meeting{% endif %}</h2>
     </div>
 
-    <form method="post" class="p-8">
+    <form method="post" class="p-5 sm:p-8">
       {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+          {{ form.non_field_errors.0 }}
+        </div>
+      {% endif %}
 
       <!-- Title & Description -->
       <div class="space-y-6 mb-8">
@@ -127,26 +140,25 @@
         <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-4">
           Add Attendees
         </label>
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 max-h-64 overflow-y-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {{ form.attendees }}
-          </div>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 p-4 sm:p-5 max-h-72 overflow-y-auto">
+          {{ form.attendees }}
         </div>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Team meetings require at least one attendee.</p>
         {% if form.attendees.errors %}
           <p class="text-red-500 text-sm mt-2">{{ form.attendees.errors.0 }}</p>
         {% endif %}
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <button type="submit" class="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all transform hover:scale-105">
-          <span class="material-symbols-outlined inline mr-2">check_circle</span>
-          Save Meeting
-        </button>
-        <a href="{% url 'scheduling:upcoming_schedules' %}" class="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-lg transition-all text-center">
+      <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="sm:flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-lg transition-all text-center">
           <span class="material-symbols-outlined inline mr-2">cancel</span>
           Cancel
         </a>
+        <button type="submit" class="sm:flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all">
+          <span class="material-symbols-outlined inline mr-2">check_circle</span>
+          {% if meeting %}Save Changes{% else %}Save Meeting{% endif %}
+        </button>
       </div>
     </form>
   </div>
@@ -160,15 +172,56 @@
   input[type="number"],
   textarea,
   select {
-    @apply w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
+    width: 100%;
+    border-radius: 0.5rem;
   }
 
-  label input[type="checkbox"] {
-    @apply mr-3 rounded;
+  #id_attendees {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
   }
 
-  label {
-    @apply flex items-center cursor-pointer text-gray-700 dark:text-gray-300 hover:text-primary transition-colors;
+  #id_attendees li {
+    list-style: none;
+  }
+
+  #id_attendees label {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: #ffffff;
+    color: #374151;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+
+  #id_attendees input[type="checkbox"] {
+    margin-right: 0.75rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  #id_attendees label:hover {
+    border-color: #6467f2;
+    color: #6467f2;
+  }
+
+  .dark #id_attendees label {
+    border-color: #4b5563;
+    background: #1f2937;
+    color: #d1d5db;
+  }
+
+  @media (min-width: 640px) {
+    #id_attendees {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 </style>
 {% endblock %}

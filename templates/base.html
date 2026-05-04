@@ -54,7 +54,7 @@
     </style>
   </head>
 <body
-    class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased overflow-hidden"
+    class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased"
   >
     <!-- SideNavBar Shell -->
     <aside
@@ -177,8 +177,8 @@
       </div>
     </header>
     <!-- Main Content Area -->
-    <main class="ml-64 flex flex-col h-[calc(100vh-4rem)]">
-        <div class="m-8">
+    <main class="ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
+        <div class="m-8 pb-8">
           {% block content %}{% endblock content %}
           
         </div>

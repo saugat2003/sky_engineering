@@ -34,7 +34,7 @@ def schedule_meeting(request):
 
             transaction.on_commit(lambda: notify_meeting_created(meeting))
 
-            return redirect('meeting_detail', pk=meeting.id)
+            return redirect('scheduling:meeting_detail', pk=meeting.id)
     else:
         form = MeetingForm()
     
@@ -227,7 +227,7 @@ def meeting_detail(request, pk):
         if attendee:
             attendee.rsvp_status = rsvp_status
             attendee.save()
-            return redirect('meeting_detail', pk=meeting.id)
+            return redirect('scheduling:meeting_detail', pk=meeting.id)
     
     context = {
         'meeting': meeting,
@@ -247,7 +247,7 @@ def edit_meeting(request, pk):
     
     # Check permissions
     if meeting.organiser != request.user:
-        return redirect('meeting_detail', pk=pk)
+        return redirect('scheduling:meeting_detail', pk=pk)
     
     if request.method == 'POST':
         previous_attendees = list(meeting.attendees.select_related('user').all())
@@ -289,7 +289,7 @@ def edit_meeting(request, pk):
                 )
             )
             
-            return redirect('meeting_detail', pk=meeting.id)
+            return redirect('scheduling:meeting_detail', pk=meeting.id)
     else:
         form = MeetingForm(instance=meeting)
     
@@ -313,13 +313,13 @@ def cancel_meeting(request, pk):
     meeting = get_object_or_404(Meeting, pk=pk)
     
     if meeting.organiser != request.user:
-        return redirect('meeting_detail', pk=pk)
+        return redirect('scheduling:meeting_detail', pk=pk)
     
     if request.method == 'POST':
         meeting.status = 'cancelled'
         meeting.save()
         transaction.on_commit(lambda: notify_meeting_cancelled(meeting))
-        return redirect('upcoming_schedules')
+        return redirect('scheduling:upcoming_schedules')
     
     context = {'meeting': meeting}
     return render(request, 'scheduling/cancel_meeting.html', context)

@@ -68,8 +68,10 @@ class MeetingForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Make team optional
         self.fields['team'].required = False
-        # Set default values
-        self.fields['timezone'].initial = 'UTC'
+        if self.instance and self.instance.pk:
+            self.fields['attendees'].initial = self.instance.attendees.values_list('user_id', flat=True)
+        else:
+            self.fields['timezone'].initial = 'UTC'
 
     def clean_title(self):
         """Validate meeting title."""

@@ -12,7 +12,7 @@
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Upcoming Meetings</h1>
         <p class="text-gray-600 dark:text-gray-400">Stay organized with your scheduled meetings</p>
       </div>
-      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105">
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all">
         <span class="material-symbols-outlined inline mr-2">add_circle</span>
         Schedule Meeting
       </a>
@@ -20,7 +20,7 @@
   </div>
 
   <!-- Filters Card -->
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 sm:p-6 mb-8 border border-gray-200 dark:border-gray-700">
     <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">Filter Meetings</h3>
     <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Platform Filter -->
@@ -71,7 +71,7 @@
 
       <!-- Submit Button -->
       <div class="flex items-end">
-        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2 rounded-lg transition-all transform hover:scale-105">
+        <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-2 rounded-lg transition-all">
           <span class="material-symbols-outlined inline mr-1">tune</span>
           Apply Filters
         </button>
@@ -106,7 +106,7 @@
           <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200 dark:border-gray-700 overflow-hidden group hover:border-primary/50 dark:hover:border-primary/50">
             <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block">
               <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <!-- Left Column: Title & Details -->
                   <div>
                     <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary transition-colors">
@@ -125,7 +125,7 @@
                   </div>
 
                   <!-- Right Column: Meta Info -->
-                  <div class="grid grid-cols-3 gap-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <!-- Platform -->
                     <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">Platform</p>
@@ -158,7 +158,7 @@
                 </div>
 
                 <!-- Status Bar -->
-                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     {% if meeting.status == 'scheduled' %}
                       <span class="inline-block px-3 py-1 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold rounded-full">
@@ -192,7 +192,7 @@
         <span class="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mx-auto block mb-4">event_busy</span>
         <h3 class="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-2">No upcoming meetings found</h3>
         <p class="text-gray-500 dark:text-gray-500 mb-6">Try adjusting your filters or</p>
-        <a href="{% url 'scheduling:schedule_meeting_create' %}" class="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105">
+        <a href="{% url 'scheduling:schedule_meeting_create' %}" class="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all">
           <span class="material-symbols-outlined inline mr-2">add_circle</span>
           Create First Meeting
         </a>
@@ -201,7 +201,7 @@
   </div>
 
   <!-- Calendar Views Navigation -->
-  <div class="mt-12 flex gap-4 justify-center">
+  <div class="mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
     <a href="{% url 'scheduling:calendar_month' %}" class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
       <span class="material-symbols-outlined">calendar_month</span>
       Monthly View

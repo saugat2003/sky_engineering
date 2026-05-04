@@ -12,7 +12,7 @@
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ month_name }} {{ year }}</h1>
         <p class="text-gray-600 dark:text-gray-400">View and manage all team meetings</p>
       </div>
-      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105">
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg transition-all">
         <span class="material-symbols-outlined inline mr-2">add_circle</span>
         New Meeting
       </a>
@@ -33,7 +33,8 @@
   </div>
 
   <!-- Calendar Grid -->
-  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
+    <div class="min-w-[880px]">
     <!-- Day Headers -->
     <div class="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700">
       {% for day_name in day_names %}
@@ -58,7 +59,7 @@
 
               <!-- Meetings for this day -->
               <div class="space-y-2">
-                {% for meeting in day_info.meetings %}
+                {% for meeting in day_info.meetings|slice:":2" %}
                   <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block group">
                     <div class="text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 p-2 rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-all border border-primary/30 dark:border-primary/50">
                       <p class="font-bold truncate">{{ meeting.scheduled_at|time:"H:i" }}</p>
@@ -81,6 +82,7 @@
         {% endfor %}
       </div>
     {% endfor %}
+    </div>
   </div>
 
   <!-- Legend -->
@@ -92,7 +94,7 @@
   </div>
 
   <!-- Calendar Views Navigation -->
-  <div class="mt-8 flex gap-4">
+  <div class="mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
     <a href="{% url 'scheduling:calendar_week' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
       <span class="material-symbols-outlined">calendar_view_week</span>
       Weekly View
@@ -104,11 +106,4 @@
   </div>
 </div>
 
-<style>
-  @media (max-width: 768px) {
-    .grid.grid-cols-7 {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    }
-  }
-</style>
 {% endblock %}
