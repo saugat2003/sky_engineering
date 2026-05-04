@@ -39,4 +39,12 @@ def department_detail(request, id):
 
 
 def org_chart(request):
-    return render(request, "department/org_chart.html")
+    departments = Department.objects.annotate(
+        total_teams=Count("teams", distinct=True),
+        total_members=Count("teams__members__user", distinct=True)
+    ).prefetch_related('teams', 'teams__manager')
+
+    context = {
+        "departments": departments
+    }
+    return render(request, "department/org_chart.html", context=context)
