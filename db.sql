@@ -254,6 +254,53 @@ CREATE TABLE IF NOT EXISTS audit_log (
     FOREIGN KEY (user_id) REFERENCES auth_user (id) ON DELETE SET NULL
 );
 
+-- ============================================================
+-- TEAM REGISTRY EXTENSIONS
+-- Django source of truth: teams/models.py
+-- ============================================================
+
+ALTER TABLE team ADD COLUMN email_address VARCHAR(254);
+ALTER TABLE team ADD COLUMN slack_channel VARCHAR(120);
+ALTER TABLE team ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT 1;
+
+CREATE TABLE IF NOT EXISTS skills (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    name                VARCHAR(100) NOT NULL UNIQUE,
+    description         TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS teams_team_skills (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_id             INTEGER NOT NULL,
+    skill_id            INTEGER NOT NULL,
+    UNIQUE (team_id, skill_id),
+    FOREIGN KEY (team_id) REFERENCES team (id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES skills (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS team_audit_trails (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_id             INTEGER NOT NULL,
+    edited_by_id        INTEGER,
+    edit_description    TEXT NOT NULL,
+    timestamp           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (team_id) REFERENCES team (id) ON DELETE CASCADE,
+    FOREIGN KEY (edited_by_id) REFERENCES auth_user (id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS team_emails (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_id             INTEGER NOT NULL,
+    sender_id           INTEGER,
+    recipient           VARCHAR(255) NOT NULL,
+    subject             VARCHAR(255) NOT NULL,
+    message             TEXT NOT NULL,
+    sent_at             DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    delivered           BOOLEAN NOT NULL DEFAULT 1,
+    FOREIGN KEY (team_id) REFERENCES team (id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES auth_user (id) ON DELETE SET NULL
+);
+
 
 -- ============================================================
 -- 13. NOTIFICATIONS
