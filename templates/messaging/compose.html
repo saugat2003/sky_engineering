@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="flex items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">New Message</h1>
+      <p class="text-sm text-gray-500 mt-1">Send a message to another user, or save it as a draft.</p>
+    </div>
+    <a href="{% url 'messages_inbox' %}" class="text-sm font-bold text-gray-600 hover:text-purple-600">Back to Inbox</a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500">To (username or email)</label>
+        <input name="to" value="{{ form.data.to|default_if_none:'' }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" placeholder="e.g. jane or jane@company.com" />
+        {% if form.errors.to %}<p class="mt-2 text-xs text-red-600 font-semibold">{{ form.errors.to.0 }}</p>{% endif %}
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500">Subject</label>
+        <input name="subject" value="{{ form.data.subject|default_if_none:'' }}" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" placeholder="Subject (optional)" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500">Message</label>
+        <textarea name="body" rows="8" class="mt-1 w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none" placeholder="Write your message...">{{ form.data.body|default_if_none:'' }}</textarea>
+        {% if form.errors.body %}<p class="mt-2 text-xs text-red-600 font-semibold">{{ form.errors.body.0 }}</p>{% endif %}
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-end">
+        <button type="submit" name="action" value="draft" class="inline-flex justify-center items-center px-5 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-bold text-sm hover:bg-gray-200 dark:hover:bg-gray-700">
+          Save Draft
+        </button>
+        <button type="submit" name="action" value="send" class="inline-flex justify-center items-center px-5 py-2.5 rounded-lg bg-purple-600 text-white font-bold text-sm hover:bg-purple-700">
+          Send
+          <span class="material-symbols-outlined text-[18px] ml-2">send</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
