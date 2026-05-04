@@ -6,6 +6,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView, D
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.db import transaction
 from django.http import JsonResponse
 from datetime import datetime, timedelta, date
 from calendar import monthcalendar, month_name
@@ -13,6 +14,7 @@ import json
 
 from .models import Meeting, MeetingAttendee
 from .forms import MeetingForm, MeetingAttendeeForm
+from .utils import notify_meeting_created, notify_meeting_updated, notify_meeting_cancelled
 
 
 @login_required
@@ -24,18 +26,14 @@ def schedule_meeting(request):
             meeting = form.save(commit=False)
             meeting.organiser = request.user
             meeting.save()
-            
-            # Add attendees
-            attendees = request.POST.getlist('attendees')
-            for attendee_id in attendees:
-                try:
-                    MeetingAttendee.objects.create(
-                        meeting=meeting,
-                        user_id=int(attendee_id)
-                    )
-                except:
-                    pass
-            
+
+            attendees = form.cleaned_data.get('attendees', [])
+            attendee_users = list(attendees)
+            for attendee in attendee_users:
+                MeetingAttendee.objects.create(meeting=meeting, user=attendee)
+
+            transaction.on_commit(lambda: notify_meeting_created(meeting))
+
             return redirect('meeting_detail', pk=meeting.id)
     else:
         form = MeetingForm()
@@ -252,6 +250,7 @@ def edit_meeting(request, pk):
         return redirect('meeting_detail', pk=pk)
     
     if request.method == 'POST':
+        previous_attendees = list(meeting.attendees.select_related('user').all())
         form = MeetingForm(request.POST, instance=meeting)
         if form.is_valid():
             form.save()
@@ -263,14 +262,32 @@ def edit_meeting(request, pk):
             new_attendees = set(
                 int(aid) for aid in request.POST.getlist('attendees')
             )
+
+            added_attendees = []
+            removed_attendees = []
             
             # Add new attendees
             for attendee_id in new_attendees - current_attendees:
+                from django.contrib.auth.models import User
+                attendee_user = User.objects.filter(pk=attendee_id).first()
                 MeetingAttendee.objects.create(meeting=meeting, user_id=attendee_id)
+                if attendee_user:
+                    added_attendees.append(attendee_user)
             
             # Remove attendees
             for attendee_id in current_attendees - new_attendees:
+                attendee_user = next((item.user for item in previous_attendees if item.user_id == attendee_id), None)
                 meeting.attendees.filter(user_id=attendee_id).delete()
+                if attendee_user:
+                    removed_attendees.append(attendee_user)
+
+            transaction.on_commit(
+                lambda: notify_meeting_updated(
+                    meeting,
+                    added_users=added_attendees,
+                    removed_users=removed_attendees,
+                )
+            )
             
             return redirect('meeting_detail', pk=meeting.id)
     else:
@@ -301,6 +318,7 @@ def cancel_meeting(request, pk):
     if request.method == 'POST':
         meeting.status = 'cancelled'
         meeting.save()
+        transaction.on_commit(lambda: notify_meeting_cancelled(meeting))
         return redirect('upcoming_schedules')
     
     context = {'meeting': meeting}
