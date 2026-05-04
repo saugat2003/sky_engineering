@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+    <a class="hover:text-primary" href="{% url 'team_list' %}">Teams</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="font-medium text-slate-900 dark:text-slate-200">{{ team.name }}</span>
+</nav>
+
+<header class="mb-6 rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div class="flex gap-4">
+            <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <span class="material-symbols-outlined text-4xl">groups</span>
+            </div>
+            <div>
+                <div class="mb-1 flex flex-wrap items-center gap-3">
+                    <h2 class="text-3xl font-black tracking-tight">{{ team.name }}</h2>
+                    <span class="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase {% if team.status == 'active' %}bg-green-100 text-green-700{% elif team.status == 'restructured' %}bg-amber-100 text-amber-700{% else %}bg-slate-100 text-slate-500{% endif %}">{{ team.get_status_display }}</span>
+                </div>
+                <p class="text-sm text-slate-500">{{ team.department.name }}{% if team.team_type %} · {{ team.team_type.name }}{% endif %}</p>
+                <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Manager: <span class="font-bold">{% if team.manager %}{{ team.manager.get_full_name|default:team.manager.username }}{% else %}Unassigned{% endif %}</span>{% if team.manager.email %} · {{ team.manager.email }}{% endif %}</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'team_email' team.pk %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white">
+                <span class="material-symbols-outlined text-sm">mail</span>
+                Email Team
+            </a>
+            <a href="{% url 'team_schedule' team.pk %}" class="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/10 dark:bg-slate-900">
+                <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+                Schedule Meeting
+            </a>
+        </div>
+    </div>
+</header>
+
+<section class="mb-6 rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+    <h3 class="mb-3 text-xs font-black uppercase tracking-wider text-primary">Mission and Responsibilities</h3>
+    <p class="text-base leading-7 text-slate-700 dark:text-slate-300">{{ team.mission|default:team.description|default:"No mission statement recorded for this team." }}</p>
+    {% if team.development_focus %}
+    <p class="mt-4 text-sm leading-6 text-slate-500">{{ team.development_focus }}</p>
+    {% endif %}
+</section>
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+    <div class="space-y-6 xl:col-span-2">
+        <section class="overflow-hidden rounded-xl border border-primary/10 bg-white shadow-sm dark:bg-slate-900">
+            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800">
+                <h3 class="font-bold">Team Members</h3>
+                <span class="text-xs text-slate-500">{{ team.member_count }} active members</span>
+            </div>
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 dark:bg-slate-800/60">
+                    <tr><th class="px-6 py-3">Name</th><th class="px-6 py-3">Role</th><th class="px-6 py-3 text-right">Status</th></tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    {% for membership in team.members.all %}
+                    <tr>
+                        <td class="px-6 py-4 text-sm font-semibold">{{ membership.user.get_full_name|default:membership.user.username }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">{{ membership.role }}</td>
+                        <td class="px-6 py-4 text-right"><span class="inline-flex rounded-full px-2 py-1 text-xs font-bold {% if membership.is_active %}bg-green-100 text-green-700{% else %}bg-slate-100 text-slate-500{% endif %}">{{ membership.is_active|yesno:"Active,Inactive" }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="px-6 py-8 text-center text-sm text-slate-500">No members recorded.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+            <h3 class="mb-4 flex items-center gap-2 font-bold"><span class="material-symbols-outlined text-primary">code</span> Code Repositories</h3>
+            <div class="space-y-3">
+                {% for repository in team.repositories.all %}
+                <a href="{{ repository.url }}" class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 p-4 hover:border-primary dark:border-slate-700 dark:bg-slate-800/60">
+                    <div>
+                        <p class="font-bold">{{ repository.name }}</p>
+                        <p class="text-xs text-slate-500">{{ repository.platform }}{% if repository.is_primary %} · Primary{% endif %}</p>
+                    </div>
+                    <span class="material-symbols-outlined text-primary">open_in_new</span>
+                </a>
+                {% empty %}
+                <p class="text-sm text-slate-500">No repositories recorded.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+            <h3 class="mb-4 font-bold">Recent Audit Trail</h3>
+            <div class="space-y-3">
+                {% for audit in audit_trails %}
+                <div class="rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-800/60">
+                    <p class="font-semibold">{{ audit.edit_description }}</p>
+                    <p class="text-xs text-slate-500">{{ audit.timestamp|date:"M j, Y H:i" }}{% if audit.edited_by %} by {{ audit.edited_by.get_full_name|default:audit.edited_by.username }}{% endif %}</p>
+                </div>
+                {% empty %}
+                <p class="text-sm text-slate-500">No audit entries recorded.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <aside class="space-y-6">
+        <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+            <h3 class="mb-4 font-bold">Channels</h3>
+            <div class="space-y-3 text-sm">
+                {% if team.primary_contact %}<a class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 hover:text-primary dark:bg-slate-800/60" href="mailto:{{ team.primary_contact }}"><span class="material-symbols-outlined text-primary">alternate_email</span>{{ team.primary_contact }}</a>{% endif %}
+                {% if team.primary_slack %}<div class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60"><span class="material-symbols-outlined text-primary">chat</span>{{ team.primary_slack }}</div>{% endif %}
+                {% for channel in team.contact_channels.all %}<div class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60"><span class="material-symbols-outlined text-primary">tag</span>{{ channel.value }}</div>{% endfor %}
+            </div>
+        </section>
+
+        <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="font-bold">Skills</h3>
+                <a class="text-xs font-bold text-primary" href="{% url 'team_skills' team.pk %}">View all</a>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {% for skill in team.skills.all %}
+                <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{{ skill.name }}</span>
+                {% empty %}
+                <p class="text-sm text-slate-500">No skills recorded.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="font-bold">Dependencies</h3>
+                <a class="text-xs font-bold text-primary" href="{% url 'team_dependencies' team.pk %}">Open view</a>
+            </div>
+            <p class="mb-2 text-xs font-black uppercase tracking-wider text-slate-400">Upstream</p>
+            {% for dependency in upstream_dependencies %}
+            <a class="mb-2 block rounded-lg bg-amber-50 p-3 text-sm font-bold text-amber-800" href="{% url 'team_detail' dependency.to_team.pk %}">{{ dependency.to_team.name }}</a>
+            {% empty %}<p class="mb-4 text-sm text-slate-500">No upstream dependencies.</p>{% endfor %}
+            <p class="mb-2 mt-4 text-xs font-black uppercase tracking-wider text-slate-400">Downstream</p>
+            {% for dependency in downstream_dependencies %}
+            <a class="mb-2 block rounded-lg bg-emerald-50 p-3 text-sm font-bold text-emerald-800" href="{% url 'team_detail' dependency.from_team.pk %}">{{ dependency.from_team.name }}</a>
+            {% empty %}<p class="text-sm text-slate-500">No downstream teams.</p>{% endfor %}
+        </section>
+    </aside>
+</div>
+{% endblock content %}

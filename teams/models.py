@@ -64,6 +64,8 @@ class Team(models.Model):
     versioning_approach = models.TextField(blank=True, null=True)
 
     # Communication
+    email_address = models.EmailField(blank=True, null=True)
+    slack_channel = models.CharField(max_length=120, blank=True, null=True)
     slack_channels = models.TextField(blank=True, null=True)
     daily_standup_link = models.URLField(blank=True, null=True)
     team_wiki_url = models.URLField(blank=True, null=True)
@@ -77,12 +79,40 @@ class Team(models.Model):
     )
 
     disbanded_at = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    skills = models.ManyToManyField('Skill', related_name='teams', blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'teams'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def primary_contact(self):
+        if self.email_address:
+            return self.email_address
+        channel = self.contact_channels.filter(channel_type='email').order_by('-is_primary').first()
+        return channel.value if channel else ''
+
+    @property
+    def primary_slack(self):
+        if self.slack_channel:
+            return self.slack_channel
+        channel = self.contact_channels.filter(channel_type__in=['slack', 'teams']).order_by('-is_primary').first()
+        return channel.value if channel else ''
+
+
+class Skill(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'skills'
         ordering = ['name']
 
     def __str__(self):
@@ -234,3 +264,54 @@ class ContactChannel(models.Model):
 
     class Meta:
         db_table = 'contact_channels'
+
+
+class AuditTrail(models.Model):
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='audit_trails'
+    )
+    edited_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='team_audit_entries'
+    )
+    edit_description = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'team_audit_trails'
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.team.name}: {self.edit_description[:60]}"
+
+
+class TeamEmail(models.Model):
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='emails'
+    )
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='sent_team_emails'
+    )
+    recipient = models.CharField(max_length=255)
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+    delivered = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'team_emails'
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return f"{self.subject} -> {self.recipient}"

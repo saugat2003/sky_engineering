@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+    <a class="hover:text-primary" href="{% url 'team_detail' team.pk %}">{{ team.name }}</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="font-medium text-slate-900 dark:text-slate-200">Dependencies</span>
+</nav>
+
+<div class="mb-6 flex items-end justify-between">
+    <div>
+        <h2 class="text-3xl font-black tracking-tight">Dependency View</h2>
+        <p class="text-slate-500">Upstream teams are required by {{ team.name }}. Downstream teams rely on {{ team.name }}.</p>
+    </div>
+    <a class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white" href="{% url 'team_detail' team.pk %}">Team Detail</a>
+</div>
+
+<section class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="rounded-xl border border-amber-100 bg-amber-50 p-5">
+        <p class="text-xs font-black uppercase tracking-wider text-amber-700">Upstream</p>
+        <p class="text-3xl font-black text-amber-900">{{ upstream_dependencies|length }}</p>
+    </div>
+    <div class="rounded-xl border-2 border-primary bg-white p-5 text-center shadow-sm dark:bg-slate-900">
+        <p class="text-xs font-black uppercase tracking-wider text-primary">This Team</p>
+        <p class="text-xl font-black">{{ team.name }}</p>
+    </div>
+    <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-5">
+        <p class="text-xs font-black uppercase tracking-wider text-emerald-700">Downstream</p>
+        <p class="text-3xl font-black text-emerald-900">{{ downstream_dependencies|length }}</p>
+    </div>
+</section>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+        <h3 class="mb-4 flex items-center gap-2 font-bold"><span class="material-symbols-outlined text-amber-600">arrow_upward</span> Upstream Teams</h3>
+        <div class="space-y-3">
+            {% for dependency in upstream_dependencies %}
+            <a class="block rounded-lg border border-amber-100 bg-amber-50 p-4 hover:border-amber-300" href="{% url 'team_detail' dependency.to_team.pk %}">
+                <p class="font-bold text-amber-900">{{ dependency.to_team.name }}</p>
+                <p class="text-sm text-amber-700">{{ dependency.dependency_type|default:"General dependency" }}</p>
+                {% if dependency.description %}<p class="mt-1 text-xs text-amber-700">{{ dependency.description }}</p>{% endif %}
+            </a>
+            {% empty %}
+            <p class="text-sm text-slate-500">No upstream dependencies recorded.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+        <h3 class="mb-4 flex items-center gap-2 font-bold"><span class="material-symbols-outlined text-emerald-600">arrow_downward</span> Downstream Teams</h3>
+        <div class="space-y-3">
+            {% for dependency in downstream_dependencies %}
+            <a class="block rounded-lg border border-emerald-100 bg-emerald-50 p-4 hover:border-emerald-300" href="{% url 'team_detail' dependency.from_team.pk %}">
+                <p class="font-bold text-emerald-900">{{ dependency.from_team.name }}</p>
+                <p class="text-sm text-emerald-700">{{ dependency.dependency_type|default:"General dependency" }}</p>
+                {% if dependency.description %}<p class="mt-1 text-xs text-emerald-700">{{ dependency.description }}</p>{% endif %}
+            </a>
+            {% empty %}
+            <p class="text-sm text-slate-500">No downstream dependencies recorded.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock content %}
