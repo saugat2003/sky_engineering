@@ -4,97 +4,111 @@
 {% block title %}Monthly Calendar - Scheduling{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-5">
-    <div class="row">
-        <div class="col-12">
-            <!-- Calendar Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>{{ month_name }} {{ year }}</h2>
-                <div class="btn-group" role="group">
-                    <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn btn-outline-primary">
-                        <i class="bi bi-chevron-left"></i> Previous
-                    </a>
-                    <a href="?year={{ today.year }}&month={{ today.month }}" class="btn btn-outline-primary">
-                        Today
-                    </a>
-                    <a href="?year={{ next_year }}&month={{ next_month }}" class="btn btn-outline-primary">
-                        Next <i class="bi bi-chevron-right"></i>
-                    </a>
-                </div>
-                <a href="{% url 'scheduling:schedule_meeting_create' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> New Meeting
-                </a>
-            </div>
-
-            <!-- Calendar Grid -->
-            <div class="card shadow-sm">
-                <div class="card-body p-0">
-                    <table class="table table-bordered table-hover mb-0" style="background: white;">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="text-center" style="width: 14.28%;">Monday</th>
-                                <th class="text-center" style="width: 14.28%;">Tuesday</th>
-                                <th class="text-center" style="width: 14.28%;">Wednesday</th>
-                                <th class="text-center" style="width: 14.28%;">Thursday</th>
-                                <th class="text-center" style="width: 14.28%;">Friday</th>
-                                <th class="text-center" style="width: 14.28%;">Saturday</th>
-                                <th class="text-center" style="width: 14.28%;">Sunday</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for week in weeks %}
-                                <tr style="height: 120px;">
-                                    {% for day_info in week %}
-                                        <td class="align-top" 
-                                            {% if day_info.date == today %}style="background-color: #f0f8ff;"{% elif day_info.day == 0 %}style="background-color: #f8f9fa;"{% endif %}>
-                                            {% if day_info.day %}
-                                                <div class="fw-bold mb-2">{{ day_info.day }}</div>
-                                                <div class="small">
-                                                    {% for meeting in day_info.meetings %}
-                                                        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" 
-                                                           class="badge bg-info d-inline-block mb-1" 
-                                                           title="{{ meeting.title }}">
-                                                            {{ meeting.scheduled_at|time:"H:i" }}<br>
-                                                            <span class="text-truncate">{{ meeting.title|truncatewords:2 }}</span>
-                                                        </a>
-                                                    {% endfor %}
-                                                    {% if day_info.meetings|length > 2 %}
-                                                        <small class="text-muted">+{{ day_info.meetings|length|add:"-2" }} more</small>
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-                                        </td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<div class="max-w-7xl mx-auto">
+  <!-- Header with Controls -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ month_name }} {{ year }}</h1>
+        <p class="text-gray-600 dark:text-gray-400">View and manage all team meetings</p>
+      </div>
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-lg transition-all transform hover:scale-105">
+        <span class="material-symbols-outlined inline mr-2">add_circle</span>
+        New Meeting
+      </a>
     </div>
 
-    <!-- Legend -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="alert alert-info">
-                <strong>Legend:</strong> 
-                <span class="badge bg-info">Meeting</span> - Click to view details
-            </div>
-        </div>
+    <!-- Navigation -->
+    <div class="flex gap-3 mt-6 flex-wrap">
+      <a href="?year={{ prev_year }}&month={{ prev_month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
+        <span class="material-symbols-outlined inline mr-1">chevron_left</span> Previous
+      </a>
+      <a href="?year={{ today.year }}&month={{ today.month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
+        Today
+      </a>
+      <a href="?year={{ next_year }}&month={{ next_month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
+        Next <span class="material-symbols-outlined inline ml-1">chevron_right</span>
+      </a>
     </div>
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+    <!-- Day Headers -->
+    <div class="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700">
+      {% for day_name in "Mon Tue Wed Thu Fri Sat Sun"|split:" " %}
+        <div class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-4 py-4 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+          <p class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">{{ day_name }}</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Calendar Days -->
+    {% for week in weeks %}
+      <div class="grid grid-cols-7 gap-0 auto-rows-fr">
+        {% for day_info in week %}
+          <div class="min-h-32 p-4 border-b border-r border-gray-200 dark:border-gray-700 last:border-r-0 {% if day_info.date == today %}bg-blue-50 dark:bg-blue-950{% elif day_info.day == 0 %}bg-gray-50 dark:bg-gray-900{% else %}bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700{% endif %} transition-colors">
+            {% if day_info.day %}
+              <div class="mb-3">
+                <span class="text-2xl font-bold text-gray-900 dark:text-white">{{ day_info.day }}</span>
+                {% if day_info.date == today %}
+                  <span class="inline-block ml-2 bg-primary text-white text-xs px-2 py-1 rounded-full">Today</span>
+                {% endif %}
+              </div>
+
+              <!-- Meetings for this day -->
+              <div class="space-y-2">
+                {% for meeting in day_info.meetings %}
+                  <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block group">
+                    <div class="text-xs bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary/90 p-2 rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-all border border-primary/30 dark:border-primary/50">
+                      <p class="font-bold truncate">{{ meeting.scheduled_at|time:"H:i" }}</p>
+                      <p class="text-xs truncate font-medium group-hover:text-primary/80">{{ meeting.title }}</p>
+                      <span class="inline-block mt-1 text-xs px-2 py-0.5 bg-primary/20 rounded text-primary/80">
+                        {{ meeting.get_platform_display|truncatewords:1 }}
+                      </span>
+                    </div>
+                  </a>
+                {% endfor %}
+
+                {% if day_info.meetings|length > 2 %}
+                  <p class="text-xs text-gray-500 dark:text-gray-400 px-2 font-semibold">
+                    +{{ day_info.meetings|length|add:"-2" }} more meeting{{ day_info.meetings|length|add:"-2"|pluralize }}
+                  </p>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Legend -->
+  <div class="mt-8 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+    <p class="text-sm text-gray-700 dark:text-gray-300">
+      <span class="inline-block w-3 h-3 bg-primary rounded mr-2"></span>
+      <strong>Tip:</strong> Click on any meeting to view details, RSVP, or make changes.
+    </p>
+  </div>
+
+  <!-- Calendar Views Navigation -->
+  <div class="mt-8 flex gap-4">
+    <a href="{% url 'scheduling:calendar_week' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
+      <span class="material-symbols-outlined">calendar_view_week</span>
+      Weekly View
+    </a>
+    <a href="{% url 'scheduling:upcoming_schedules' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
+      <span class="material-symbols-outlined">list</span>
+      Upcoming List
+    </a>
+  </div>
 </div>
 
 <style>
-    table td {
-        overflow: hidden;
-        position: relative;
+  @media (max-width: 768px) {
+    .grid.grid-cols-7 {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     }
-
-    .badge {
-        font-size: 0.75rem;
-        max-width: 100%;
-        white-space: normal;
-    }
+  }
 </style>
 {% endblock %}

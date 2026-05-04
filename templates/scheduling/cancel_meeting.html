@@ -4,50 +4,66 @@
 {% block title %}Cancel Meeting - Scheduling{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <div class="card shadow-sm border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="mb-0">Cancel Meeting</h3>
-                </div>
-
-                <div class="card-body">
-                    <div class="alert alert-warning" role="alert">
-                        <strong>Warning!</strong> Cancelling this meeting will notify all attendees.
-                    </div>
-
-                    <!-- Meeting Details -->
-                    <div class="mb-4">
-                        <h5 class="card-title">{{ meeting.title }}</h5>
-                        <p class="text-muted mb-1">
-                            <i class="bi bi-calendar-event"></i> 
-                            {{ meeting.scheduled_at|date:"l, F d, Y" }} at {{ meeting.scheduled_at|time:"H:i" }}
-                        </p>
-                        <p class="text-muted">
-                            <i class="bi bi-people"></i> 
-                            {{ meeting.attendee_count }} attendees
-                        </p>
-                    </div>
-
-                    <!-- Confirmation -->
-                    <p class="mb-4">
-                        Are you sure you want to cancel this meeting? All attendees will be notified of the cancellation.
-                    </p>
-
-                    <!-- Actions -->
-                    <form method="post" class="d-grid gap-2">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-x-circle"></i> Yes, Cancel This Meeting
-                        </button>
-                        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Go Back
-                        </a>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="max-w-xl mx-auto">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden border-2 border-red-200 dark:border-red-800">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-red-500 to-red-600 px-8 py-8">
+      <div class="flex items-center gap-3 text-white">
+        <span class="material-symbols-outlined text-5xl">warning</span>
+        <h1 class="text-3xl font-bold">Cancel Meeting</h1>
+      </div>
     </div>
+
+    <!-- Content -->
+    <div class="p-8">
+      <div class="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
+        <p class="text-red-700 dark:text-red-300 font-semibold">
+          <span class="material-symbols-outlined inline mr-2">info</span>
+          This action cannot be undone. All attendees will be notified of the cancellation.
+        </p>
+      </div>
+
+      <!-- Meeting Details -->
+      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">{{ meeting.title }}</h3>
+        
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">calendar_today</span>
+            <span class="text-gray-700 dark:text-gray-300">{{ meeting.scheduled_at|date:"l, F d, Y" }} at {{ meeting.scheduled_at|time:"H:i" }}</span>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">people</span>
+            <span class="text-gray-700 dark:text-gray-300">{{ meeting.attendee_count }} attendee{{ meeting.attendee_count|pluralize }}</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">videocam</span>
+            <span class="text-gray-700 dark:text-gray-300">{{ meeting.get_platform_display }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Message -->
+      <p class="text-center text-gray-700 dark:text-gray-300 mb-8 text-lg">
+        Are you absolutely sure you want to cancel this meeting? <br>
+        <strong>All attendees will receive a cancellation notification.</strong>
+      </p>
+
+      <!-- Action Buttons -->
+      <form method="post" class="space-y-3">
+        {% csrf_token %}
+        <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">cancel</span>
+          Yes, Cancel This Meeting
+        </button>
+        <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block w-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-bold py-4 rounded-lg transition-all text-center">
+          <span class="material-symbols-outlined inline mr-2">arrow_back</span>
+          Keep Meeting
+        </a>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

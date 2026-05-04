@@ -4,176 +4,171 @@
 {% block title %}{{ title }} - Scheduling{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">{{ title }}</h3>
-                </div>
+<div class="max-w-4xl mx-auto">
+  <!-- Page Header -->
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">{{ title }}</h1>
+    <p class="text-gray-600 dark:text-gray-400">Create and manage team meetings with ease</p>
+  </div>
 
-                <div class="card-body">
-                    <form method="post" id="meeting-form">
-                        {% csrf_token %}
-
-                        <!-- Title -->
-                        <div class="mb-3">
-                            <label for="{{ form.title.id_for_label }}" class="form-label">
-                                Meeting Title <span class="text-danger">*</span>
-                            </label>
-                            {{ form.title }}
-                            {% if form.title.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.title.errors.0 }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Description -->
-                        <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label">
-                                Description/Agenda
-                            </label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.description.errors.0 }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Date & Time -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.scheduled_at.id_for_label }}" class="form-label">
-                                    Date & Time <span class="text-danger">*</span>
-                                </label>
-                                {{ form.scheduled_at }}
-                                {% if form.scheduled_at.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.scheduled_at.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">
-                                    Duration (minutes)
-                                </label>
-                                {{ form.duration_minutes }}
-                                {% if form.duration_minutes.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.duration_minutes.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Platform & Link -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.platform.id_for_label }}" class="form-label">
-                                    Platform
-                                </label>
-                                {{ form.platform }}
-                                {% if form.platform.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.platform.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.meeting_link.id_for_label }}" class="form-label">
-                                    Meeting Link (URL)
-                                </label>
-                                {{ form.meeting_link }}
-                                {% if form.meeting_link.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.meeting_link.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Team & Timezone -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.team.id_for_label }}" class="form-label">
-                                    Associated Team
-                                </label>
-                                {{ form.team }}
-                                {% if form.team.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.team.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.timezone.id_for_label }}" class="form-label">
-                                    Timezone
-                                </label>
-                                {{ form.timezone }}
-                                {% if form.timezone.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.timezone.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <!-- Recurrence -->
-                        <div class="mb-3">
-                            <label for="{{ form.recurrence.id_for_label }}" class="form-label">
-                                Recurrence
-                            </label>
-                            {{ form.recurrence }}
-                            {% if form.recurrence.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.recurrence.errors.0 }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Attendees -->
-                        <div class="mb-4">
-                            <label class="form-label">Add Attendees</label>
-                            <div class="attendees-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #dee2e6; padding: 15px; border-radius: 4px;">
-                                {{ form.attendees }}
-                            </div>
-                            {% if form.attendees.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.attendees.errors.0 }}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <!-- Form Actions -->
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Save Meeting
-                            </button>
-                            <a href="{% url 'upcoming_schedules' %}" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+  <!-- Form Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+    <div class="bg-gradient-to-r from-primary to-purple-600 px-8 py-6">
+      <h2 class="text-2xl font-bold text-white">New Meeting</h2>
     </div>
+
+    <form method="post" class="p-8">
+      {% csrf_token %}
+
+      <!-- Title & Description -->
+      <div class="space-y-6 mb-8">
+        <div>
+          <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Meeting Title <span class="text-red-500">*</span>
+          </label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.title.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.description.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Description / Agenda
+          </label>
+          {{ form.description }}
+          {% if form.description.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.description.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Date, Time, Duration -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div>
+          <label for="{{ form.scheduled_at.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Date & Time <span class="text-red-500">*</span>
+          </label>
+          {{ form.scheduled_at }}
+          {% if form.scheduled_at.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.scheduled_at.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.duration_minutes.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Duration (minutes)
+          </label>
+          {{ form.duration_minutes }}
+          {% if form.duration_minutes.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.duration_minutes.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.timezone.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Timezone
+          </label>
+          {{ form.timezone }}
+          {% if form.timezone.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.timezone.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Platform & Meeting Link -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+          <label for="{{ form.platform.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Meeting Platform
+          </label>
+          {{ form.platform }}
+          {% if form.platform.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.platform.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.meeting_link.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Meeting Link
+          </label>
+          {{ form.meeting_link }}
+          {% if form.meeting_link.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.meeting_link.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Team & Recurrence -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+          <label for="{{ form.team.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Associated Team
+          </label>
+          {{ form.team }}
+          {% if form.team.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.team.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.recurrence.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            Recurrence
+          </label>
+          {{ form.recurrence }}
+          {% if form.recurrence.errors %}
+            <p class="text-red-500 text-sm mt-2">{{ form.recurrence.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Attendees -->
+      <div class="mb-8">
+        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-4">
+          Add Attendees
+        </label>
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 max-h-64 overflow-y-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{ form.attendees }}
+          </div>
+        </div>
+        {% if form.attendees.errors %}
+          <p class="text-red-500 text-sm mt-2">{{ form.attendees.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <button type="submit" class="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 text-white font-semibold py-3 rounded-lg transition-all transform hover:scale-105">
+          <span class="material-symbols-outlined inline mr-2">check_circle</span>
+          Save Meeting
+        </button>
+        <a href="{% url 'scheduling:upcoming_schedules' %}" class="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-lg transition-all text-center">
+          <span class="material-symbols-outlined inline mr-2">cancel</span>
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
 </div>
 
 <style>
-    .attendees-list label {
-        display: block;
-        margin-bottom: 10px;
-        cursor: pointer;
-    }
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  input[type="datetime-local"],
+  input[type="number"],
+  textarea,
+  select {
+    @apply w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
+  }
 
-    .attendees-list input[type="checkbox"] {
-        margin-right: 8px;
-    }
+  label input[type="checkbox"] {
+    @apply mr-3 rounded;
+  }
+
+  label {
+    @apply flex items-center cursor-pointer text-gray-700 dark:text-gray-300 hover:text-primary transition-colors;
+  }
 </style>
 {% endblock %}
