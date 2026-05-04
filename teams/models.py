@@ -88,6 +88,38 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+
+class TeamDependency(models.Model):
+    from_team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='downstream_dependencies'
+    )
+
+    to_team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name='upstream_dependencies'
+    )
+
+    dependency_type = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'team_dependency'
+        unique_together = ('from_team', 'to_team')
+        constraints = [
+            models.CheckConstraint(
+                condition=~models.Q(from_team=models.F('to_team')),
+                name='team_dependency_no_self_reference',
+            )
+        ]
+        ordering = ['from_team__name', 'to_team__name']
+
+    def __str__(self):
+        return f"{self.from_team.name} depends on {self.to_team.name}"
+
 class TeamMember(models.Model):
     class RoleChoices(models.TextChoices):
         ENGINEER = 'Software Engineer', 'Software Engineer'

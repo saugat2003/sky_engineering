@@ -100,6 +100,20 @@
                                 No manager
                             {% endif %}
                         </p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            {% for dependency in team.downstream_dependencies.all %}
+                            <span class="inline-flex items-center gap-1 rounded bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
+                                <span class="material-symbols-outlined text-[14px]">north_east</span>
+                                Depends on {{ dependency.to_team.name }}
+                            </span>
+                            {% endfor %}
+                            {% for dependency in team.upstream_dependencies.all %}
+                            <span class="inline-flex items-center gap-1 rounded bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700">
+                                <span class="material-symbols-outlined text-[14px]">south_west</span>
+                                Supports {{ dependency.from_team.name }}
+                            </span>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
