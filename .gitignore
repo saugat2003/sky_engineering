@@ -10,6 +10,7 @@ migrations/
 !teams/migrations/
 teams/migrations/*
 !teams/migrations/0005_teamdependency.py
+!teams/migrations/0002_skill_team_email_address_team_is_active_and_more.py
 
 # Backup files # 
 *.bak 

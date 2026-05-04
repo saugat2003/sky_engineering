@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+    <a class="hover:text-primary" href="{% url 'team_detail' team.pk %}">{{ team.name }}</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="font-medium text-slate-900 dark:text-slate-200">Email Team</span>
+</nav>
+
+<div class="max-w-3xl rounded-xl border border-primary/10 bg-white p-6 shadow-sm dark:bg-slate-900">
+    <div class="mb-6">
+        <h2 class="text-2xl font-black tracking-tight">Email {{ team.name }}</h2>
+        <p class="text-sm text-slate-500">Sender: {{ request.user.get_full_name|default:request.user.username }}{% if request.user.email %} · {{ request.user.email }}{% endif %}</p>
+    </div>
+    <form method="post" class="space-y-5">
+        {% csrf_token %}
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="{{ form.recipient.id_for_label }}">Recipient</label>
+            {{ form.recipient }}
+            {{ form.recipient.errors }}
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="{{ form.subject.id_for_label }}">Subject</label>
+            {{ form.subject }}
+            {{ form.subject.errors }}
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="{{ form.message.id_for_label }}">Message</label>
+            {{ form.message }}
+            {{ form.message.errors }}
+        </div>
+        <div class="flex justify-end gap-2 border-t border-slate-100 pt-5 dark:border-slate-800">
+            <a class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 dark:border-slate-700" href="{% url 'team_detail' team.pk %}">Cancel</a>
+            <button class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white" type="submit">
+                <span class="material-symbols-outlined text-sm">send</span>
+                Send Email
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

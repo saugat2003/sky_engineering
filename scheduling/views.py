@@ -36,7 +36,14 @@ def schedule_meeting(request):
 
             return redirect('meeting_detail', pk=meeting.id)
     else:
-        form = MeetingForm()
+        initial = {}
+        team_id = request.GET.get('team')
+        team_name = request.GET.get('title')
+        if team_id:
+            initial['team'] = team_id
+        if team_name:
+            initial['title'] = f'{team_name} team meeting'
+        form = MeetingForm(initial=initial)
     
     context = {
         'form': form,
