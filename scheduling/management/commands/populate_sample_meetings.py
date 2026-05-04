@@ -115,7 +115,6 @@ class Command(BaseCommand):
 
             # Duration between 30 and 120 minutes
             duration = random.randint(3, 12) * 10
-            end_time = meeting_date + timedelta(minutes=duration)
 
             # Status based on date
             if days_offset < -1:
@@ -130,7 +129,7 @@ class Command(BaseCommand):
                 title=random.choice(meeting_titles),
                 description=random.choice(meeting_descriptions),
                 scheduled_at=meeting_date,
-                end_time=end_time,
+                duration_minutes=duration,
                 platform=random.choice(platforms),
                 meeting_link='https://zoom.us/j/' + str(random.randint(1000000000, 9999999999)) if random.random() > 0.3 else None,
                 organiser=organizer,

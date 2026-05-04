@@ -12,8 +12,8 @@ class MeetingAttendeeInline(admin.TabularInline):
     """Inline admin for managing meeting attendees"""
     model = MeetingAttendee
     extra = 1
-    fields = ('user', 'rsvp_status', 'created_at')
-    readonly_fields = ('created_at',)
+    fields = ('user', 'rsvp_status', 'added_at')
+    readonly_fields = ('added_at',)
     ordering = ('-rsvp_status',)
 
     def get_queryset(self, request):
@@ -263,7 +263,7 @@ class MeetingAttendeeAdmin(admin.ModelAdmin):
     list_filter = (
         'rsvp_status',
         ('meeting__scheduled_at', admin.DateFieldListFilter),
-        'created_at',
+        'added_at',
     )
     
     search_fields = (
@@ -273,7 +273,7 @@ class MeetingAttendeeAdmin(admin.ModelAdmin):
         'meeting__title',
     )
     
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('added_at', 'updated_at')
     
     fieldsets = (
         ('Attendee Information', {
@@ -283,7 +283,7 @@ class MeetingAttendeeAdmin(admin.ModelAdmin):
             'fields': ('rsvp_status',)
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
+            'fields': ('added_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
@@ -323,7 +323,7 @@ class MeetingAttendeeAdmin(admin.ModelAdmin):
     
     def responded_at(self, obj):
         """Display response time"""
-        if obj.created_at == obj.updated_at:
+        if obj.added_at == obj.updated_at:
             return "Not yet responded"
         return obj.updated_at.strftime('%b %d, %Y - %I:%M %p')
     responded_at.short_description = 'Responded'
