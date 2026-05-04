@@ -1,235 +1,466 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-            <p class="text-xs font-black uppercase tracking-[0.3em] text-primary/70">Organization Map</p>
-            <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">Org Chart & Dependencies</h1>
-            <p class="mt-1 text-sm text-slate-500">Track departments, teams, and how work flows across your org.</p>
-        </div>
-        <div class="inline-flex items-center bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur p-1 rounded-xl w-fit border border-slate-200/70 dark:border-slate-700">
-        <button
-            id="tab-hierarchy"
-            onclick="showTab('hierarchy')"
-            class="px-4 py-1.5 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white transition-colors"
-        >
-            Organizational Hierarchy
-        </button>
-        <button
-            id="tab-dependencies"
-            onclick="showTab('dependencies')"
-            class="px-4 py-1.5 text-xs font-medium rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-        >
-            Service Dependencies
-        </button>
-        </div>
+<style>
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .55; transform: scale(1.5); }
+  }
+  @keyframes flowArrow {
+    0%   { transform: translateX(-4px); opacity: .4; }
+    100% { transform: translateX(4px);  opacity: 1;  }
+  }
+
+  .dept-card  { animation: fadeSlideDown 0.45s cubic-bezier(.22,1,.36,1) both; }
+  .team-card  { animation: fadeSlideUp  0.38s cubic-bezier(.22,1,.36,1) both; }
+  .dep-row    { animation: fadeSlideUp  0.32s cubic-bezier(.22,1,.36,1) both; }
+  .pulse-dot  { animation: pulseDot 2.2s ease-in-out infinite; }
+  .flow-arrow { animation: flowArrow .7s ease-in-out infinite alternate; }
+
+  #chart-viewport { transform-origin: top center; transition: transform .22s cubic-bezier(.22,1,.36,1); }
+
+  /* Grid dot background */
+  .dot-grid {
+    background-image: radial-gradient(circle, #6467f215 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .dark .dot-grid {
+    background-image: radial-gradient(circle, #6467f220 1px, transparent 1px);
+  }
+
+  /* Connector lines */
+  .conn-v {
+    width: 2px;
+    background: linear-gradient(to bottom, #6467f270, #cbd5e1);
+    border-radius: 1px;
+  }
+  .dark .conn-v { background: linear-gradient(to bottom, #6467f270, #334155); }
+
+  .conn-h {
+    height: 2px;
+    background: linear-gradient(to right, #cbd5e1, #6467f255, #cbd5e1);
+    border-radius: 1px;
+  }
+  .dark .conn-h { background: linear-gradient(to right, #334155, #6467f255, #334155); }
+
+  /* Tab active indicator */
+  #tab-indicator {
+    transition: left .22s cubic-bezier(.22,1,.36,1), width .22s cubic-bezier(.22,1,.36,1);
+  }
+</style>
+
+<!-- ─── Page Header ───────────────────────────────────────── -->
+<div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+  <div>
+    <p class="text-xs font-black uppercase tracking-[0.3em] text-primary/70">Organization Map</p>
+    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">Org Chart &amp; Dependencies</h1>
+    <p class="mt-1 text-sm text-slate-500">Track departments, teams, and how work flows across your org.</p>
+  </div>
+
+  <!-- Stats pills -->
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+      <span class="material-symbols-outlined text-[14px]">apartment</span>
+      {{ departments|length }} Department{{ departments|length|pluralize }}
     </div>
+    <div class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+      <span class="material-symbols-outlined text-[14px]">groups</span>
+      Teams
+    </div>
+    <div class="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-600 dark:text-violet-400">
+      <span class="material-symbols-outlined text-[14px]">account_tree</span>
+      {{ dependencies|length }} Dependenc{{ dependencies|length|pluralize:"y,ies" }}
+    </div>
+  </div>
+</div>
 
-    <!-- Hierarchy Tab -->
-    <div id="panel-hierarchy" class="flex-1 relative overflow-auto p-10 sm:p-12">
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950"></div>
-        <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl"></div>
-        <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl"></div>
+<!-- ─── Tab bar ───────────────────────────────────────────── -->
+<div class="mb-5 inline-flex relative items-center bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur p-1 rounded-xl w-fit border border-slate-200/70 dark:border-slate-700">
+  <!-- sliding pill indicator -->
+  <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 rounded-lg bg-white dark:bg-slate-700 shadow-sm pointer-events-none"></div>
+  <button id="tab-hierarchy"
+    onclick="showTab('hierarchy')"
+    class="relative z-10 px-4 py-1.5 text-xs font-bold rounded-lg text-slate-900 dark:text-white transition-colors">
+    <span class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[14px]">account_tree</span>
+      Organizational Hierarchy
+    </span>
+  </button>
+  <button id="tab-dependencies"
+    onclick="showTab('dependencies')"
+    class="relative z-10 px-4 py-1.5 text-xs font-medium rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+    <span class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-[14px]">sync_alt</span>
+      Service Dependencies
+    </span>
+  </button>
+</div>
 
-        <div class="relative flex gap-24 items-start justify-center min-w-max">
-            {% for dept in departments %}
-            <div class="relative flex flex-col items-center">
-                <!-- Department Card -->
-                <a href="{% url 'depertment_detail' dept.id %}" class="group block w-64 bg-white/90 dark:bg-slate-900/80 border {% if dept.is_active %}border-primary/60{% else %}border-slate-200/70 dark:border-slate-800{% endif %} rounded-2xl p-4 shadow-lg text-center z-10 hover:shadow-2xl hover:-translate-y-0.5 transition-all">
-                    <div class="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <span class="material-symbols-outlined text-lg">apartment</span>
-                    </div>
-                    <span class="text-[10px] font-black uppercase tracking-[0.25em] {% if dept.is_active %}text-primary{% else %}text-slate-400{% endif %} mb-1 block">Department</span>
-                    <h3 class="text-base font-black text-slate-900 dark:text-white">{{ dept.name }}</h3>
-                    <p class="text-xs text-slate-500 mt-1">
-                        {{ dept.total_teams }} Team{{ dept.total_teams|pluralize }} &bull; {{ dept.total_members }} Engineer{{ dept.total_members|pluralize }}
-                    </p>
-                    {% if dept.head %}
-                    <p class="text-[11px] text-slate-400 mt-1">Head: {{ dept.head.get_full_name|default:dept.head.username }}</p>
-                    {% endif %}
-                    <div class="mt-3 flex items-center justify-center gap-2 text-[10px] font-semibold text-slate-500">
-                        <span class="h-1.5 w-1.5 rounded-full {% if dept.is_active %}bg-primary{% else %}bg-slate-400{% endif %}"></span>
-                        {% if dept.is_active %}Active division{% else %}Inactive division{% endif %}
-                    </div>
-                </a>
+<!-- ═══════════════════════════════════════════════════════════
+     HIERARCHY PANEL
+═══════════════════════════════════════════════════════════ -->
+<div id="panel-hierarchy" class="relative overflow-auto rounded-2xl border border-slate-200/70 dark:border-slate-800 min-h-[560px] p-10 sm:p-14 dot-grid bg-gradient-to-br from-slate-50 via-white to-slate-100/80 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
 
-                {% if dept.teams.all %}
-                <!-- Vertical connector from department to team row -->
-                <div class="w-px h-16 bg-gradient-to-b from-primary/40 to-slate-200 dark:to-slate-700"></div>
+  <!-- Ambient glows -->
+  <div class="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-violet-400/5 blur-3xl"></div>
 
-                <!-- Teams row -->
-                <div class="relative flex gap-8">
-                    {% if dept.teams.all|length > 1 %}
-                    <!-- Horizontal connector spanning teams -->
-                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-80px)] h-px bg-gradient-to-r from-slate-200 via-primary/40 to-slate-200 dark:from-slate-700 dark:via-primary/60 dark:to-slate-700"></div>
-                    {% endif %}
+  <!-- Zoomable viewport -->
+  <div id="chart-viewport" class="relative flex gap-20 items-start justify-center min-w-max">
 
-                    {% for team in dept.teams.all %}
-                    <div class="flex flex-col items-center">
-                        <!-- Vertical drop to team card -->
-                        <div class="w-px h-8 bg-gradient-to-b from-primary/30 to-slate-200 dark:to-slate-700"></div>
-                        <!-- Team Card -->
-                        <div class="group w-48 bg-white/95 dark:bg-slate-900/90
-                            {% if team.status == 'active' %}border-l-4 border-green-500
-                            {% elif team.status == 'restructured' %}border-l-4 border-orange-400
-                            {% else %}border-l-4 border-slate-400{% endif %}
-                            rounded-xl p-3 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer">
-                            <div class="flex justify-between items-start mb-2">
-                                {% if team.status == 'active' %}
-                                <span class="text-[9px] font-bold text-green-600 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded uppercase">Active</span>
-                                {% elif team.status == 'restructured' %}
-                                <span class="text-[9px] font-bold text-orange-600 bg-orange-100 dark:bg-orange-900/30 px-1.5 py-0.5 rounded uppercase">Restructuring</span>
-                                {% else %}
-                                <span class="text-[9px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded uppercase">Disbanded</span>
-                                {% endif %}
-                                <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">groups</span>
-                            </div>
-                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">{{ team.name }}</h4>
-                            {% if team.manager %}
-                            <p class="text-[11px] text-slate-500 mt-1">Lead: {{ team.manager.get_full_name|default:team.manager.username }}</p>
-                            {% else %}
-                            <p class="text-[11px] text-slate-400 mt-1">No lead assigned</p>
-                            {% endif %}
-                            <div class="mt-3 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-slate-700"></div>
-                            <div class="mt-2 text-[10px] font-semibold text-slate-400">Team unit</div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+    {% for dept in departments %}
+    <div class="relative flex flex-col items-center dept-card" style="animation-delay: {{ forloop.counter0 }}00ms">
+
+      <!-- ── Department Card ───────────────────────── -->
+      <a href="{% url 'depertment_detail' dept.id %}"
+         class="group block w-64 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 z-10 ring-1 ring-black/5 dark:ring-white/5">
+
+        <!-- Gradient header band -->
+        <div class="{% if dept.is_active %}bg-gradient-to-r from-primary to-violet-500{% else %}bg-gradient-to-r from-slate-400 to-slate-500{% endif %} px-4 pt-4 pb-6 relative overflow-hidden">
+          <div class="absolute inset-0 opacity-20">
+            <div class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-white/30 blur-xl"></div>
+            <div class="absolute bottom-0 left-0 h-12 w-full bg-black/10"></div>
+          </div>
+          <div class="relative flex items-center justify-between">
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
+              <span class="material-symbols-outlined text-white text-lg">apartment</span>
+            </div>
+            <div class="flex items-center gap-1.5 rounded-full bg-black/20 px-2 py-0.5">
+              <span class="pulse-dot h-1.5 w-1.5 rounded-full {% if dept.is_active %}bg-emerald-300{% else %}bg-slate-300{% endif %}"></span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-white/90">{% if dept.is_active %}Active{% else %}Inactive{% endif %}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card body -->
+        <div class="bg-white dark:bg-slate-900 -mt-3 rounded-t-2xl px-4 pb-4 pt-3">
+          <span class="text-[9px] font-black uppercase tracking-[0.25em] {% if dept.is_active %}text-primary{% else %}text-slate-400{% endif %} block mb-0.5">Department</span>
+          <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug group-hover:text-primary transition-colors">{{ dept.name }}</h3>
+
+          {% if dept.head %}
+          <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px] text-slate-400">person</span>
+            {{ dept.head.get_full_name|default:dept.head.username }}
+          </p>
+          {% endif %}
+
+          <div class="mt-3 flex gap-3">
+            <div class="flex-1 rounded-lg bg-slate-50 dark:bg-slate-800 p-2 text-center">
+              <p class="text-base font-black {% if dept.is_active %}text-primary{% else %}text-slate-400{% endif %}">{{ dept.total_teams }}</p>
+              <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Team{{ dept.total_teams|pluralize }}</p>
+            </div>
+            <div class="flex-1 rounded-lg bg-slate-50 dark:bg-slate-800 p-2 text-center">
+              <p class="text-base font-black text-emerald-600 dark:text-emerald-400">{{ dept.total_members }}</p>
+              <p class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">Member{{ dept.total_members|pluralize }}</p>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      {% if dept.teams.all %}
+      <!-- Vertical connector dept → teams -->
+      <div class="conn-v" style="height:52px"></div>
+
+      <!-- Teams row -->
+      <div class="relative flex gap-6">
+        {% if dept.teams.all|length > 1 %}
+        <div class="conn-h absolute top-0 left-[40px] right-[40px]"></div>
+        {% endif %}
+
+        {% for team in dept.teams.all %}
+        <div class="flex flex-col items-center team-card" style="animation-delay: {{ forloop.counter0 }}50ms">
+          <!-- Drop connector -->
+          <div class="conn-v" style="height:28px"></div>
+
+          <!-- ── Team Card ──────────────────────────── -->
+          <div class="group w-48 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer ring-1 ring-black/5 dark:ring-white/5">
+
+            <!-- Status stripe -->
+            <div class="h-1 w-full
+              {% if team.status == 'active' %}bg-gradient-to-r from-emerald-400 to-green-500
+              {% elif team.status == 'restructured' %}bg-gradient-to-r from-amber-400 to-orange-500
+              {% else %}bg-slate-300 dark:bg-slate-600{% endif %}">
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 p-3">
+              <div class="flex items-start justify-between mb-2">
+                {% if team.status == 'active' %}
+                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-1.5 py-0.5 rounded-md uppercase tracking-wide">
+                  <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 pulse-dot"></span>Active
+                </span>
+                {% elif team.status == 'restructured' %}
+                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-amber-700 bg-amber-100 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded-md uppercase tracking-wide">
+                  <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>Restructuring
+                </span>
                 {% else %}
-                <div class="mt-4 text-xs text-slate-400 italic">No teams assigned</div>
+                <span class="inline-flex items-center gap-1 text-[9px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md uppercase tracking-wide">
+                  <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>Disbanded
+                </span>
                 {% endif %}
-            </div>
-            {% empty %}
-            <div class="text-slate-400 text-sm">No departments found.</div>
-            {% endfor %}
-        </div>
+                <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors text-lg">groups</span>
+              </div>
 
-        <!-- Floating Controls -->
-        <div class="absolute bottom-8 right-8">
-            <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur p-2 rounded-2xl shadow-xl border border-slate-200/70 dark:border-slate-800 flex flex-col gap-1">
-                <button class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
-                    <span class="material-symbols-outlined">add</span>
-                </button>
-                <div class="h-px bg-slate-100 dark:bg-slate-800 mx-2"></div>
-                <button class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
-                    <span class="material-symbols-outlined">remove</span>
-                </button>
-                <div class="h-px bg-slate-100 dark:bg-slate-800 mx-2"></div>
-                <button class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400 transition-colors">
-                    <span class="material-symbols-outlined">fullscreen</span>
-                </button>
-            </div>
-        </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">{{ team.name }}</h4>
 
-        <!-- Legend -->
-        <div class="absolute bottom-8 left-8">
-            <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur p-4 rounded-2xl shadow-xl border border-slate-200/70 dark:border-slate-800">
-                <h5 class="text-xs font-bold uppercase tracking-wider mb-3 text-slate-500">View Legend</h5>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                        <span class="text-xs font-medium">Active Team</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-orange-400"></div>
-                        <span class="text-xs font-medium">Restructuring</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 rounded-full bg-slate-400"></div>
-                        <span class="text-xs font-medium">Disbanded</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-0 border-t-2 border-slate-300 dark:border-slate-600"></div>
-                        <span class="text-xs font-medium">Direct Hierarchy</span>
-                    </div>
-                </div>
+              {% if team.manager %}
+              <p class="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[11px] text-slate-400">manage_accounts</span>
+                {{ team.manager.get_full_name|default:team.manager.username }}
+              </p>
+              {% else %}
+              <p class="text-[11px] text-slate-400 mt-1.5 italic">No lead assigned</p>
+              {% endif %}
+
+              <div class="mt-2.5 h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent"></div>
+              <p class="mt-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Team unit</p>
             </div>
+          </div>
         </div>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <div class="mt-4 flex items-center gap-1.5 text-xs text-slate-400 italic">
+        <span class="material-symbols-outlined text-sm text-slate-300">info</span>
+        No teams assigned
+      </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="flex flex-col items-center gap-3 text-slate-400 py-12">
+      <span class="material-symbols-outlined text-5xl text-slate-300">corporate_fare</span>
+      <p class="text-sm font-medium">No departments found.</p>
+    </div>
+    {% endfor %}
+  </div><!-- /chart-viewport -->
+
+  <!-- ── Floating Zoom Controls ──────────────────────── -->
+  <div class="absolute bottom-8 right-8 z-20">
+    <div class="flex flex-col gap-1 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-200/70 dark:border-slate-800 p-2 shadow-2xl">
+      <button onclick="chartZoom(1)"
+        class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary transition-colors" title="Zoom in">
+        <span class="material-symbols-outlined text-lg">add</span>
+      </button>
+      <div class="h-px mx-2 bg-slate-100 dark:bg-slate-800"></div>
+      <button onclick="chartZoom(-1)"
+        class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary transition-colors" title="Zoom out">
+        <span class="material-symbols-outlined text-lg">remove</span>
+      </button>
+      <div class="h-px mx-2 bg-slate-100 dark:bg-slate-800"></div>
+      <button onclick="chartZoom(0)"
+        class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary transition-colors" title="Reset zoom">
+        <span class="material-symbols-outlined text-lg">center_focus_strong</span>
+      </button>
+    </div>
+    <!-- Zoom level badge -->
+    <div id="zoom-badge" class="mt-2 text-center text-[10px] font-bold text-slate-400 bg-white/80 dark:bg-slate-900/80 rounded-lg py-0.5 px-2 border border-slate-200/60 dark:border-slate-800">
+      100%
+    </div>
+  </div>
+
+  <!-- ── Legend ──────────────────────────────────────── -->
+  <div class="absolute bottom-8 left-8 z-20">
+    <div class="rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-slate-200/70 dark:border-slate-800 p-4 shadow-2xl">
+      <h5 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3">Legend</h5>
+      <div class="space-y-2.5">
+        <div class="flex items-center gap-2.5">
+          <span class="h-3 w-3 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 shadow-sm"></span>
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Active Team</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <span class="h-3 w-3 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-sm"></span>
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Restructuring</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <span class="h-3 w-3 rounded-full bg-slate-400 shadow-sm"></span>
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Disbanded</span>
+        </div>
+        <div class="flex items-center gap-2.5">
+          <div class="flex items-center gap-0.5">
+            <div class="h-0.5 w-5 bg-primary/50 rounded"></div>
+            <div class="h-0.5 w-1.5 bg-primary/30 rounded"></div>
+          </div>
+          <span class="text-xs font-medium text-slate-600 dark:text-slate-300">Hierarchy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /panel-hierarchy -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     DEPENDENCIES PANEL
+═══════════════════════════════════════════════════════════ -->
+<div id="panel-dependencies" class="hidden relative overflow-auto rounded-2xl border border-slate-200/70 dark:border-slate-800 min-h-[560px] p-10 sm:p-12 dot-grid bg-gradient-to-br from-slate-50 via-white to-slate-100/80 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+
+  <div class="pointer-events-none absolute -top-32 -right-32 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-primary/10 blur-3xl"></div>
+
+  <div class="relative max-w-5xl mx-auto">
+    <!-- Sub-header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-black tracking-tight text-slate-900 dark:text-white">Team Dependencies</h2>
+        <p class="text-sm text-slate-500 mt-0.5">Downstream teams depend on upstream teams for services, support, or delivery.</p>
+      </div>
+      {% if dependencies %}
+      <div class="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 px-3 py-1 text-xs font-bold text-violet-600 dark:text-violet-400">
+        <span class="material-symbols-outlined text-[14px]">account_tree</span>
+        {{ dependencies|length }} relationship{{ dependencies|length|pluralize }}
+      </div>
+      {% endif %}
     </div>
 
-    <!-- Service Dependencies Tab -->
-    <div id="panel-dependencies" class="hidden flex-1 relative overflow-auto p-10 sm:p-12">
-        <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950"></div>
-        <div class="max-w-6xl mx-auto">
-            <div class="mb-8">
-                <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">Team Dependencies</h2>
-                <p class="text-sm text-slate-500 mt-1">Downstream teams depend on upstream teams for services, support, or delivery.</p>
+    {% if dependencies %}
+    <div class="grid grid-cols-1 gap-4">
+      {% for dependency in dependencies %}
+      <div class="dep-row group rounded-2xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/70 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+           style="animation-delay: {{ forloop.counter0 }}60ms">
+
+        <!-- Colored top stripe by dep type -->
+        <div class="h-1 bg-gradient-to-r from-primary/60 via-violet-400/60 to-primary/40 group-hover:from-primary group-hover:via-violet-400 group-hover:to-primary transition-all"></div>
+
+        <div class="p-5">
+          <!-- From / Arrow / To layout -->
+          <div class="grid grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
+
+            <!-- Downstream (from) -->
+            <div class="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 p-4">
+              <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Downstream</p>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">{{ dependency.from_team.name }}</h3>
+              <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[12px]">apartment</span>
+                {{ dependency.from_team.department.name }}
+              </p>
+              {% if dependency.from_team.team_type %}
+              <span class="inline-flex mt-2.5 px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wide border border-slate-200 dark:border-slate-700">
+                {{ dependency.from_team.team_type.name }}
+              </span>
+              {% endif %}
             </div>
 
-            {% if dependencies %}
-            <div class="grid grid-cols-1 gap-5">
-                {% for dependency in dependencies %}
-                <div class="bg-white/95 dark:bg-slate-900/90 border border-primary/10 rounded-2xl shadow-sm p-5 hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                    <div class="grid grid-cols-[1fr_auto_1fr] gap-5 items-center">
-                        <div class="rounded-xl border border-slate-200/70 dark:border-slate-800 p-4">
-                            <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Downstream</p>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ dependency.from_team.name }}</h3>
-                            <p class="text-xs text-slate-500 mt-1">{{ dependency.from_team.department.name }}</p>
-                            {% if dependency.from_team.team_type %}
-                            <span class="inline-flex mt-3 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 uppercase">
-                                {{ dependency.from_team.team_type.name }}
-                            </span>
-                            {% endif %}
-                        </div>
-
-                        <div class="flex flex-col items-center gap-2 text-primary">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                            <span class="text-[10px] font-black uppercase tracking-wider">depends on</span>
-                        </div>
-
-                        <div class="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                            <p class="text-[10px] font-black uppercase tracking-wider text-primary mb-1">Upstream</p>
-                            <h3 class="text-base font-bold text-slate-900 dark:text-white">{{ dependency.to_team.name }}</h3>
-                            <p class="text-xs text-slate-500 mt-1">{{ dependency.to_team.department.name }}</p>
-                            {% if dependency.to_team.team_type %}
-                            <span class="inline-flex mt-3 px-2 py-0.5 rounded text-[10px] font-bold bg-white text-primary dark:bg-slate-900 uppercase">
-                                {{ dependency.to_team.team_type.name }}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Dependency Type</p>
-                            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300 mt-1">{{ dependency.dependency_type|default:"General dependency" }}</p>
-                        </div>
-                        <p class="text-sm text-slate-500 max-w-2xl text-right">{{ dependency.description|default:"No description provided." }}</p>
-                    </div>
-                </div>
-                {% endfor %}
+            <!-- Arrow -->
+            <div class="flex flex-col items-center justify-center gap-1.5 px-1">
+              <div class="flex flex-col items-center gap-1">
+                <span class="material-symbols-outlined text-primary text-2xl flow-arrow">arrow_forward</span>
+                <div class="h-4 w-px bg-primary/20"></div>
+                <span class="text-[9px] font-black uppercase tracking-wider text-slate-400 [writing-mode:vertical-lr] rotate-180">depends on</span>
+              </div>
             </div>
-            {% else %}
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 p-10 text-center text-slate-500">
-                <span class="material-symbols-outlined text-4xl mb-3 text-slate-300">account_tree</span>
-                <p class="text-sm font-medium">No team dependencies have been recorded yet.</p>
+
+            <!-- Upstream (to) -->
+            <div class="rounded-xl border border-primary/25 bg-primary/5 dark:bg-primary/10 p-4">
+              <p class="text-[9px] font-black uppercase tracking-widest text-primary mb-2">Upstream</p>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">{{ dependency.to_team.name }}</h3>
+              <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[12px]">apartment</span>
+                {{ dependency.to_team.department.name }}
+              </p>
+              {% if dependency.to_team.team_type %}
+              <span class="inline-flex mt-2.5 px-2 py-0.5 rounded-md text-[9px] font-bold bg-white dark:bg-slate-900 text-primary uppercase tracking-wide border border-primary/20">
+                {{ dependency.to_team.team_type.name }}
+              </span>
+              {% endif %}
             </div>
-            {% endif %}
+          </div>
+
+          <!-- Footer meta -->
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 px-2.5 py-1 text-[10px] font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wide">
+                <span class="material-symbols-outlined text-[12px]">label</span>
+                {{ dependency.dependency_type|default:"General" }}
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 sm:text-right max-w-xl leading-relaxed">
+              {{ dependency.description|default:"No description provided." }}
+            </p>
+          </div>
         </div>
+      </div>
+      {% endfor %}
     </div>
 
-    <script>
-        function showTab(tab) {
-            const hierarchy = document.getElementById('panel-hierarchy');
-            const dependencies = document.getElementById('panel-dependencies');
-            const tabHierarchy = document.getElementById('tab-hierarchy');
-            const tabDependencies = document.getElementById('tab-dependencies');
+    {% else %}
+    <!-- Empty state -->
+    <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 p-16 text-center">
+      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
+        <span class="material-symbols-outlined text-4xl text-slate-300">account_tree</span>
+      </div>
+      <h3 class="text-sm font-bold text-slate-600 dark:text-slate-400">No dependencies recorded</h3>
+      <p class="text-xs text-slate-400 mt-1">Team service dependencies will appear here once added.</p>
+    </div>
+    {% endif %}
+  </div>
+</div><!-- /panel-dependencies -->
 
-            if (tab === 'hierarchy') {
-                hierarchy.classList.remove('hidden');
-                dependencies.classList.add('hidden');
-                tabHierarchy.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-bold', 'text-slate-900', 'dark:text-white');
-                tabHierarchy.classList.remove('text-slate-500');
-                tabDependencies.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-bold', 'text-slate-900', 'dark:text-white');
-                tabDependencies.classList.add('text-slate-500');
-            } else {
-                dependencies.classList.remove('hidden');
-                hierarchy.classList.add('hidden');
-                tabDependencies.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-bold', 'text-slate-900', 'dark:text-white');
-                tabDependencies.classList.remove('text-slate-500');
-                tabHierarchy.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'font-bold', 'text-slate-900', 'dark:text-white');
-                tabHierarchy.classList.add('text-slate-500');
-            }
-        }
-    </script>
+<!-- ─── Scripts ───────────────────────────────────────────── -->
+<script>
+  /* ── Tab switching with sliding indicator ── */
+  const tabHierarchy    = document.getElementById('tab-hierarchy');
+  const tabDependencies = document.getElementById('tab-dependencies');
+  const indicator       = document.getElementById('tab-indicator');
+
+  function positionIndicator(btn) {
+    const bar  = btn.parentElement;
+    const barL = bar.getBoundingClientRect().left;
+    const btnR = btn.getBoundingClientRect();
+    indicator.style.left  = (btnR.left - barL) + 'px';
+    indicator.style.width = btnR.width + 'px';
+  }
+
+  function showTab(tab) {
+    const hierarchy    = document.getElementById('panel-hierarchy');
+    const dependencies = document.getElementById('panel-dependencies');
+
+    if (tab === 'hierarchy') {
+      hierarchy.classList.remove('hidden');
+      dependencies.classList.add('hidden');
+      tabHierarchy.classList.add('font-bold', 'text-slate-900', 'dark:text-white');
+      tabHierarchy.classList.remove('text-slate-500');
+      tabDependencies.classList.remove('font-bold', 'text-slate-900', 'dark:text-white');
+      tabDependencies.classList.add('text-slate-500');
+      positionIndicator(tabHierarchy);
+    } else {
+      dependencies.classList.remove('hidden');
+      hierarchy.classList.add('hidden');
+      tabDependencies.classList.add('font-bold', 'text-slate-900', 'dark:text-white');
+      tabDependencies.classList.remove('text-slate-500');
+      tabHierarchy.classList.remove('font-bold', 'text-slate-900', 'dark:text-white');
+      tabHierarchy.classList.add('text-slate-500');
+      positionIndicator(tabDependencies);
+    }
+  }
+
+  /* Initial indicator position */
+  window.addEventListener('DOMContentLoaded', () => positionIndicator(tabHierarchy));
+  window.addEventListener('resize', () => {
+    const active = document.getElementById('panel-hierarchy').classList.contains('hidden')
+      ? tabDependencies : tabHierarchy;
+    positionIndicator(active);
+  });
+
+  /* ── Zoom controls ── */
+  let zoomLevel = 1;
+  const ZOOM_STEP = 0.15;
+  const ZOOM_MIN  = 0.4;
+  const ZOOM_MAX  = 1.8;
+
+  function chartZoom(dir) {
+    if (dir === 0) {
+      zoomLevel = 1;
+    } else {
+      zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, zoomLevel + dir * ZOOM_STEP));
+    }
+    document.getElementById('chart-viewport').style.transform = `scale(${zoomLevel})`;
+    document.getElementById('zoom-badge').textContent = Math.round(zoomLevel * 100) + '%';
+  }
+</script>
 {% endblock content %}
