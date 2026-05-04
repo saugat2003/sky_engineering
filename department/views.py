@@ -31,4 +31,8 @@ def department_overview(request):
 
 
 def department_detail(request, id):
-    return render(request, "department/department_detail.html" )
+    department = Department.objects.get(id=id)
+    context = {
+        "department": department
+    }
+    return render(request, "department/department_detail.html", context=context )

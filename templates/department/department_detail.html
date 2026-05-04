@@ -1,1 +1,126 @@
-Hello 
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-sm text-slate-500 my-3">
+        <a class="hover:text-primary" href="{% url "dashboard" %}">Home</a>
+        <span class="material-symbols-outlined text-sm">chevron_right</span>
+        <a href="{% url "depertment_overview" %}" class="hover:text-primary">Departments</a>
+        <span class="material-symbols-outlined text-sm">chevron_right</span>
+        <a href="{% url "depertment_detail" department.id %}" class="text-slate-900 dark:text-slate-200 font-medium">{{department.name}}</a>
+    </nav>
+
+<div class="max-w-8xl mx-auto space-y-6">
+    <!-- Department Header -->
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex items-start gap-6">
+        <div class="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-3xl text-purple-600 dark:text-purple-400">domain</span>
+        </div>
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ department.name }}</h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">{{ department.description }}</p>
+            
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-sm font-medium">
+                <span class="material-symbols-outlined text-[18px]">lightbulb</span>
+                Specialisation: {{ department.specialisation|default:"General Engineering" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Leader & Stats Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Leader Info -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex flex-col">
+            <h2 class="text-sm uppercase tracking-wider font-semibold text-gray-500 mb-4">Department Leader</h2>
+            {% if department.head %}
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-lg font-bold text-gray-600 overflow-hidden">
+                    {% if department.head.profile_picture %}
+                        <img src="{{ department.head.profile_picture.url }}" alt="{{ department.head.get_full_name }}" class="w-full h-full object-cover" />
+                    {% else %}
+                        {{ department.head.first_name|make_list|first }}{{ department.head.last_name|make_list|first }}
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="font-bold text-gray-900 dark:text-white">{{ department.head.get_full_name|default:department.head.username }}</p>
+                    <p class="text-sm text-gray-500 mt-0.5">{{ department.head.email }}</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="flex items-center gap-3 text-gray-500">
+                <span class="material-symbols-outlined">person_off</span>
+                <p>No leader appointed yet</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex flex-col justify-center">
+            <div class="flex items-center gap-6">
+                <div>
+                    <p class="text-sm uppercase tracking-wider font-semibold text-gray-500 mb-1">Total Teams</p>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ department.teams.count }}</p>
+                </div>
+                <div class="h-10 w-px bg-gray-200 dark:bg-gray-800"></div>
+                <div>
+                    <p class="text-sm uppercase tracking-wider font-semibold text-gray-500 mb-1">Status</p>
+                    <p class="text-lg font-medium {% if department.is_active %}text-emerald-500{% else %}text-red-500{% endif %}">
+                        {% if department.is_active %}Active{% else %}Inactive{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teams List -->
+    <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Teams in {{ department.name }}</h2>
+        </div>
+        <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            {% for team in department.teams.all %}
+            <div class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">groups</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                            {{ team.name }}
+                            {% if team.team_type %}
+                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 uppercase tracking-wider">
+                                {{ team.team_type.name }}
+                            </span>
+                            {% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-500">
+                            {% if team.manager %}
+                                Managed by {{ team.manager.get_full_name|default:team.manager.username }}
+                            {% else %}
+                                No manager
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                        {% if team.status == 'active' %}bg-green-100 text-green-800
+                        {% elif team.status == 'restructured' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ team.get_status_display|default:team.status }}
+                    </span>
+                    <button class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="px-6 py-8 text-center text-gray-500">
+                <span class="material-symbols-outlined text-4xl mb-2 opacity-50">group_off</span>
+                <p>No teams assigned to this department yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
