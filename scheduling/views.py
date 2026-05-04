@@ -106,6 +106,7 @@ def monthly_calendar(request):
         'next_year': next_year,
         'next_month': next_month,
         'today': datetime.now().date(),
+        'day_names': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     }
     
     return render(request, 'scheduling/monthly_calendar.html', context)
