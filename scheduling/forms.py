@@ -123,7 +123,7 @@ class MeetingForm(forms.ModelForm):
     def clean_meeting_link(self):
         """Validate meeting link format for remote platforms."""
         platform = self.cleaned_data.get('platform')
-        meeting_link = self.cleaned_data.get('meeting_link', '').strip()
+        meeting_link = (self.cleaned_data.get('meeting_link') or '').strip()
         
         remote_platforms = ['zoom', 'teams', 'slack', 'google_meet']
         
