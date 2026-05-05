@@ -6,6 +6,8 @@ from . import views
 app_name = 'scheduling'
 
 urlpatterns = [
+    path('', views.upcoming_schedules, name='scheduling_home'),
+
     # Meeting management
     path('create/', views.schedule_meeting, name='schedule_meeting_create'),
     path('<int:pk>/', views.meeting_detail, name='meeting_detail'),
