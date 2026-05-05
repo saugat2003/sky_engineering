@@ -4,34 +4,24 @@
 {% block title %}Upcoming Schedules - Scheduling{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
+<div class="max-w-6xl mx-auto">
   <!-- Page Header -->
-  <div class="mb-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
-    <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+  <div class="mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary dark:bg-primary/20">
-          <span class="material-symbols-outlined text-[16px]">event_available</span>
-          Scheduling
-        </div>
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Upcoming Meetings</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Plan, scan, and join the meetings ahead.</p>
+        <p class="text-gray-600 dark:text-gray-400">Stay organized with your scheduled meetings</p>
       </div>
-      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        {% include "scheduling/_view_switcher.html" with current_view="upcoming" %}
-        <a href="{% url 'scheduling:schedule_meeting_create' %}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary/90">
-          <span class="material-symbols-outlined text-[20px]">add_circle</span>
-          Schedule Meeting
-        </a>
-      </div>
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-4 py-2 rounded-lg transition-all">
+        <span class="material-symbols-outlined inline mr-2">add_circle</span>
+        Schedule Meeting
+      </a>
     </div>
   </div>
 
   <!-- Filters Card -->
-  <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 mb-5 border border-gray-200 dark:border-gray-800">
-    <div class="mb-4 flex items-center justify-between gap-3">
-      <h3 class="text-base font-bold text-gray-900 dark:text-white">Filter Meetings</h3>
-      <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ total_meetings }} found</span>
-    </div>
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 mb-5 border border-gray-200 dark:border-gray-700">
+    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-4">Filter Meetings</h3>
     <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Platform Filter -->
       <div>
@@ -39,7 +29,7 @@
           <span class="material-symbols-outlined inline text-lg mr-1">devices</span>
           Platform
         </label>
-        <select name="platform" id="platform" class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <select name="platform" id="platform" class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">All Platforms</option>
           {% for value, label in platforms %}
             <option value="{{ value }}" {% if selected_platform == value %}selected{% endif %}>
@@ -55,7 +45,7 @@
           <span class="material-symbols-outlined inline text-lg mr-1">groups</span>
           Team
         </label>
-        <select name="team" id="team" class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <select name="team" id="team" class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">All Teams</option>
           {% for team in teams %}
             <option value="{{ team.id }}" {% if selected_team == team.id|stringformat:"s" %}selected{% endif %}>
@@ -71,7 +61,7 @@
           <span class="material-symbols-outlined inline text-lg mr-1">date_range</span>
           Time Range
         </label>
-        <select name="days" id="days" class="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+        <select name="days" id="days" class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="7" {% if days_ahead == 7 %}selected{% endif %}>Next 7 days</option>
           <option value="14" {% if days_ahead == 14 %}selected{% endif %}>Next 14 days</option>
           <option value="30" {% if days_ahead == 30 %}selected{% endif %}>Next 30 days</option>
@@ -89,12 +79,20 @@
     </form>
   </div>
 
+  <!-- Results Summary -->
+  <div class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-5">
+    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+      <span class="material-symbols-outlined inline mr-2">event_note</span>
+      <strong>{{ total_meetings }}</strong> meeting{{ total_meetings|pluralize }} found
+    </p>
+  </div>
+
   <!-- Meetings List -->
   <div class="space-y-4">
     {% for meeting_date, day_meetings in meetings_by_date %}
       <!-- Date Header -->
       <div class="sticky top-20 z-10 mb-4">
-        <div class="bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-800 border-l-4 border-l-primary px-4 py-3 rounded-lg shadow-sm backdrop-blur">
+        <div class="bg-gradient-to-r from-primary/20 to-purple-600/20 dark:from-primary/10 dark:to-purple-600/10 border-l-4 border-primary px-4 py-3 rounded-lg">
           <h3 class="text-lg font-bold text-gray-900 dark:text-white">
             <span class="material-symbols-outlined inline mr-2">calendar_today</span>
             {{ meeting_date|date:"l, F d, Y" }}
@@ -105,7 +103,7 @@
       <!-- Meetings for this date -->
       <div class="grid gap-4">
         {% for meeting in day_meetings %}
-          <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-800 overflow-hidden group hover:border-primary/50 dark:hover:border-primary/50">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200 dark:border-gray-700 overflow-hidden group hover:border-primary/50 dark:hover:border-primary/50">
             <a href="{% url 'scheduling:meeting_detail' meeting.id %}" class="block">
               <div class="p-4">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -129,7 +127,7 @@
                   <!-- Right Column: Meta Info -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <!-- Platform -->
-                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-950 rounded-lg border border-gray-100 dark:border-gray-800">
+                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">Platform</p>
                       <span class="inline-block px-3 py-1 bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary/90 text-sm font-bold rounded-full">
                         {{ meeting.get_platform_display }}
@@ -137,7 +135,7 @@
                     </div>
 
                     <!-- Team -->
-                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-950 rounded-lg border border-gray-100 dark:border-gray-800">
+                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">Team</p>
                       {% if meeting.team %}
                         <span class="inline-block px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-sm font-bold rounded-full">
@@ -149,7 +147,7 @@
                     </div>
 
                     <!-- Attendees -->
-                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-950 rounded-lg border border-gray-100 dark:border-gray-800">
+                    <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase mb-2">Attendees</p>
                       <span class="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-sm font-bold rounded-full">
                         <span class="material-symbols-outlined inline text-lg mr-0.5">people</span>
@@ -190,7 +188,7 @@
       </div>
     {% empty %}
       <!-- Empty State -->
-      <div class="text-center py-10 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+      <div class="text-center py-10 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl">
         <span class="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-600 mx-auto block mb-4">event_busy</span>
         <h3 class="text-xl font-bold text-gray-600 dark:text-gray-400 mb-2">No upcoming meetings found</h3>
         <p class="text-gray-500 dark:text-gray-500 mb-6">Try adjusting your filters or</p>
@@ -202,5 +200,16 @@
     {% endfor %}
   </div>
 
+  <!-- Calendar Views Navigation -->
+  <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+    <a href="{% url 'scheduling:calendar_month' %}" class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+      <span class="material-symbols-outlined">calendar_month</span>
+      Monthly View
+    </a>
+    <a href="{% url 'scheduling:calendar_week' %}" class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+      <span class="material-symbols-outlined">calendar_view_week</span>
+      Weekly View
+    </a>
+  </div>
 </div>
 {% endblock %}

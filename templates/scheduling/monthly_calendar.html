@@ -6,46 +6,39 @@
 {% block content %}
 <div class="max-w-7xl mx-auto">
   <!-- Header with Controls -->
-  <div class="mb-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
-    <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+  <div class="mb-5">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary dark:bg-primary/20">
-          <span class="material-symbols-outlined text-[16px]">calendar_month</span>
-          Monthly View
-        </div>
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ month_name }} {{ year }}</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400">View and manage all team meetings.</p>
+        <p class="text-gray-600 dark:text-gray-400">View and manage all team meetings</p>
       </div>
-      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        {% include "scheduling/_view_switcher.html" with current_view="month" %}
-        <a href="{% url 'scheduling:schedule_meeting_create' %}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-primary/90">
-          <span class="material-symbols-outlined text-[20px]">add_circle</span>
-          New Meeting
-        </a>
-      </div>
+      <a href="{% url 'scheduling:schedule_meeting_create' %}" class="bg-primary hover:bg-primary/90 text-white font-semibold px-4 py-2 rounded-lg transition-all">
+        <span class="material-symbols-outlined inline mr-2">add_circle</span>
+        New Meeting
+      </a>
     </div>
 
     <!-- Navigation -->
     <div class="flex gap-2 mt-4 flex-wrap">
-      <a href="?year={{ prev_year }}&month={{ prev_month }}" class="bg-gray-50 dark:bg-gray-950 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 transition-all">
+      <a href="?year={{ prev_year }}&month={{ prev_month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
         <span class="material-symbols-outlined inline mr-1">chevron_left</span> Previous
       </a>
-      <a href="?year={{ today.year }}&month={{ today.month }}" class="bg-gray-50 dark:bg-gray-950 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 transition-all">
+      <a href="?year={{ today.year }}&month={{ today.month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
         Today
       </a>
-      <a href="?year={{ next_year }}&month={{ next_month }}" class="bg-gray-50 dark:bg-gray-950 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 transition-all">
+      <a href="?year={{ next_year }}&month={{ next_month }}" class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 transition-all">
         Next <span class="material-symbols-outlined inline ml-1">chevron_right</span>
       </a>
     </div>
   </div>
 
   <!-- Calendar Grid -->
-  <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm overflow-x-auto border border-gray-200 dark:border-gray-800">
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
     <div class="min-w-[780px]">
     <!-- Day Headers -->
     <div class="grid grid-cols-7 gap-0 border-b border-gray-200 dark:border-gray-700">
       {% for day_name in day_names %}
-        <div class="bg-gray-50 dark:bg-gray-950 px-4 py-4 text-center border-r border-gray-200 dark:border-gray-800 last:border-r-0">
+        <div class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-4 py-4 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0">
           <p class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">{{ day_name }}</p>
         </div>
       {% endfor %}
@@ -55,7 +48,7 @@
     {% for week in weeks %}
       <div class="grid grid-cols-7 gap-0 auto-rows-fr">
         {% for day_info in week %}
-          <div class="min-h-24 p-3 border-b border-r border-gray-200 dark:border-gray-800 last:border-r-0 {% if day_info.date == today %}bg-blue-50 dark:bg-blue-950{% elif day_info.day == 0 %}bg-gray-50 dark:bg-gray-950{% else %}bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800{% endif %} transition-colors">
+          <div class="min-h-24 p-3 border-b border-r border-gray-200 dark:border-gray-700 last:border-r-0 {% if day_info.date == today %}bg-blue-50 dark:bg-blue-950{% elif day_info.day == 0 %}bg-gray-50 dark:bg-gray-900{% else %}bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700{% endif %} transition-colors">
             {% if day_info.day %}
               <div class="mb-2">
                 <span class="text-xl font-bold text-gray-900 dark:text-white">{{ day_info.day }}</span>
@@ -98,6 +91,18 @@
       <span class="inline-block w-3 h-3 bg-primary rounded mr-2"></span>
       <strong>Tip:</strong> Click on any meeting to view details, RSVP, or make changes.
     </p>
+  </div>
+
+  <!-- Calendar Views Navigation -->
+  <div class="mt-5 flex flex-col sm:flex-row gap-3">
+    <a href="{% url 'scheduling:calendar_week' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
+      <span class="material-symbols-outlined">calendar_view_week</span>
+      Weekly View
+    </a>
+    <a href="{% url 'scheduling:upcoming_schedules' %}" class="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
+      <span class="material-symbols-outlined">list</span>
+      Upcoming List
+    </a>
   </div>
 </div>
 
