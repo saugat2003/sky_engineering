@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from department.models import Department
-from teams.models import ContactChannel, Skill, Team, TeamEmail, TeamMember, TeamType
+from teams.models import AuditTrail, ContactChannel, Skill, Team, TeamEmail, TeamMember, TeamType
 
 
 class TeamViewsTest(TestCase):
@@ -31,6 +31,7 @@ class TeamViewsTest(TestCase):
     def test_team_pages_render_for_logged_in_user(self):
         urls = [
             reverse('team_list'),
+            reverse('team_create'),
             reverse('team_search'),
             reverse('team_detail', args=[self.team.pk]),
             reverse('team_email', args=[self.team.pk]),
@@ -61,6 +62,35 @@ class TeamViewsTest(TestCase):
 
         self.assertRedirects(response, reverse('team_detail', args=[self.team.pk]))
         self.assertTrue(TeamEmail.objects.filter(team=self.team, subject='Release update').exists())
+
+    def test_create_team_form_adds_registry_record(self):
+        response = self.client.post(
+            reverse('team_create'),
+            {
+                'name': 'Signal Reliability',
+                'department': self.department.pk,
+                'team_type': self.team_type.pk,
+                'manager': self.user.pk,
+                'status': 'active',
+                'mission': 'Owns signal monitoring and alerting.',
+                'description': 'Keeps broadcast reliability visible.',
+                'workstream': 'Broadcast Operations',
+                'development_focus': 'Observability and incident response.',
+                'key_skills': 'Django, monitoring',
+                'email_address': 'signal@example.com',
+                'slack_channel': '#signal-reliability',
+                'daily_standup_link': '',
+                'team_wiki_url': '',
+                'jira_project_name': 'SIG',
+                'jira_board_link': '',
+                'skills': [Skill.objects.get(name='Django').pk],
+            },
+        )
+
+        team = Team.objects.get(name='Signal Reliability')
+        self.assertRedirects(response, reverse('team_detail', args=[team.pk]))
+        self.assertTrue(team.skills.filter(name='Django').exists())
+        self.assertTrue(AuditTrail.objects.filter(team=team, edit_description__icontains='created').exists())
 
     def test_schedule_button_redirects_with_team_prefill(self):
         response = self.client.get(reverse('team_schedule', args=[self.team.pk]))
