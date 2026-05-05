@@ -185,7 +185,7 @@
     </header>
     <!-- Main Content Area -->
     <main class="ml-0 md:ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
-        <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}m-8 pb-8{% endif %}">
+        <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}my-2 mx-6 pb-6{% endif %}">
           {% block content %}{% endblock content %}
           
         </div>
