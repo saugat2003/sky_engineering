@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Broadcast Co. Engineering Team Registry</title>
+    <title>{% block title %}Broadcast Co. Engineering Team Registry{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -121,7 +121,7 @@
           <span class="text-sm font-medium">Messages</span>
         </a>
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.path == '/calender.html' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.app_name == 'scheduling' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'scheduling:calendar_month' %}"
         >
           <span class="material-symbols-outlined">calendar_month</span>
@@ -184,7 +184,7 @@
       </div>
     </header>
     <!-- Main Content Area -->
-    <main class="ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
+    <main class="ml-0 md:ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
         <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}m-8 pb-8{% endif %}">
           {% block content %}{% endblock content %}
           
