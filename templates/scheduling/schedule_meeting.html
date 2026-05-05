@@ -4,164 +4,227 @@
 {% block title %}{{ title }} - Scheduling{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-  <!-- Page Header -->
-  <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ title }}</h1>
-      <p class="text-gray-600 dark:text-gray-400">
-        {% if meeting %}Update the meeting details and invited attendees.{% else %}Create and manage team meetings with ease.{% endif %}
-      </p>
+<div class="max-w-7xl mx-auto">
+  <div class="mb-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+    <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div>
+        <div class="mb-2 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary dark:bg-primary/20">
+          <span class="material-symbols-outlined text-[16px]">{% if meeting %}edit_calendar{% else %}add_circle{% endif %}</span>
+          {% if meeting %}Edit Meeting{% else %}New Meeting{% endif %}
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ title }}</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          {% if meeting %}Update the meeting, invite list, and joining details in one place.{% else %}Create a focused meeting invite with the right team, time, and access details.{% endif %}
+        </p>
+      </div>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+        {% include "scheduling/_view_switcher.html" with current_view="create" %}
+        <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-100 hover:text-primary dark:border-gray-800 dark:bg-gray-950 dark:text-gray-200 dark:hover:bg-gray-800">
+          <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+          Back
+        </a>
+      </div>
     </div>
-    <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
-      <span class="material-symbols-outlined">arrow_back</span>
-      Back
-    </a>
   </div>
 
-  <!-- Form Card -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-    <div class="bg-primary px-4 sm:px-6 py-4">
-      <h2 class="text-lg sm:text-xl font-bold text-white">{% if meeting %}Edit Meeting{% else %}New Meeting{% endif %}</h2>
-    </div>
+  <form method="post" class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    {% csrf_token %}
 
-    <form method="post" class="p-4 sm:p-6">
-      {% csrf_token %}
+    <div class="space-y-5">
       {% if form.non_field_errors %}
-        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+        <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
           {{ form.non_field_errors.0 }}
         </div>
       {% endif %}
 
-      <!-- Title & Description -->
-      <div class="space-y-4 mb-5">
-        <div>
-          <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Meeting Title <span class="text-red-500">*</span>
-          </label>
-          {{ form.title }}
-          {% if form.title.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.title.errors.0 }}</p>
-          {% endif %}
+      <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+        <div class="mb-4 flex items-start gap-3">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-primary/20">
+            <span class="material-symbols-outlined">subject</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Meeting Brief</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Use a clear title and agenda so attendees can scan the invite quickly.</p>
+          </div>
         </div>
 
-        <div>
-          <label for="{{ form.description.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Description / Agenda
-          </label>
-          {{ form.description }}
-          {% if form.description.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.description.errors.0 }}</p>
+        <div class="space-y-4">
+          <div>
+            <label for="{{ form.title.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Meeting Title <span class="text-red-500">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.title.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.description.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Description / Agenda
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.description.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+        <div class="mb-4 flex items-start gap-3">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+            <span class="material-symbols-outlined">schedule</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Time And Access</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Set when the meeting happens and how people join.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div>
+            <label for="{{ form.scheduled_at.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Date & Time <span class="text-red-500">*</span>
+            </label>
+            {{ form.scheduled_at }}
+            {% if form.scheduled_at.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.scheduled_at.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.duration_minutes.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Duration
+            </label>
+            {{ form.duration_minutes }}
+            {% if form.duration_minutes.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.duration_minutes.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.timezone.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Timezone
+            </label>
+            {{ form.timezone }}
+            {% if form.timezone.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.timezone.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.platform.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Meeting Platform
+            </label>
+            {{ form.platform }}
+            {% if form.platform.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.platform.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.meeting_link.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Meeting Link
+            </label>
+            {{ form.meeting_link }}
+            {% if form.meeting_link.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.meeting_link.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900 sm:p-5">
+        <div class="mb-4 flex items-start gap-3">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+            <span class="material-symbols-outlined">groups</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Team And Guests</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Attach a team, choose recurrence, and invite the people who need to attend.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label for="{{ form.team.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Associated Team
+            </label>
+            {{ form.team }}
+            {% if form.team.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.team.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.recurrence.id_for_label }}" class="mb-2 block text-sm font-bold text-gray-900 dark:text-white">
+              Recurrence
+            </label>
+            {{ form.recurrence }}
+            {% if form.recurrence.errors %}
+              <p class="mt-2 text-sm font-semibold text-red-600">{{ form.recurrence.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <label class="block text-sm font-bold text-gray-900 dark:text-white">Add Attendees</label>
+            <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-600 dark:bg-gray-800 dark:text-gray-300">Required for team meetings</span>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-950 sm:p-4">
+            {{ form.attendees }}
+          </div>
+          {% if form.attendees.errors %}
+            <p class="mt-2 text-sm font-semibold text-red-600">{{ form.attendees.errors.0 }}</p>
           {% endif %}
+        </div>
+      </section>
+    </div>
+
+    <aside class="lg:sticky lg:top-24 lg:self-start">
+      <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <div class="mb-4 flex items-start gap-3">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white">
+            <span class="material-symbols-outlined">event_upcoming</span>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-gray-900 dark:text-white">{% if meeting %}Save Update{% else %}Create Invite{% endif %}</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Review the essentials before saving.</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-950">
+          <div class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+            <span class="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+            <span>Title and start time are required.</span>
+          </div>
+          <div class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+            <span class="material-symbols-outlined text-[18px] text-primary">link</span>
+            <span>Remote platforms need a complete meeting URL.</span>
+          </div>
+          <div class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+            <span class="material-symbols-outlined text-[18px] text-primary">group_add</span>
+            <span>Team meetings need at least one attendee.</span>
+          </div>
+        </div>
+
+        <div class="mt-4 space-y-3">
+          <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary/90">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            {% if meeting %}Save Changes{% else %}Save Meeting{% endif %}
+          </button>
+          <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+            Cancel
+          </a>
         </div>
       </div>
-
-      <!-- Date, Time, Duration -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-        <div>
-          <label for="{{ form.scheduled_at.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Date & Time <span class="text-red-500">*</span>
-          </label>
-          {{ form.scheduled_at }}
-          {% if form.scheduled_at.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.scheduled_at.errors.0 }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ form.duration_minutes.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Duration (minutes)
-          </label>
-          {{ form.duration_minutes }}
-          {% if form.duration_minutes.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.duration_minutes.errors.0 }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ form.timezone.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Timezone
-          </label>
-          {{ form.timezone }}
-          {% if form.timezone.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.timezone.errors.0 }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Platform & Meeting Link -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div>
-          <label for="{{ form.platform.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Meeting Platform
-          </label>
-          {{ form.platform }}
-          {% if form.platform.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.platform.errors.0 }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ form.meeting_link.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Meeting Link
-          </label>
-          {{ form.meeting_link }}
-          {% if form.meeting_link.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.meeting_link.errors.0 }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Team & Recurrence -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div>
-          <label for="{{ form.team.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Associated Team
-          </label>
-          {{ form.team }}
-          {% if form.team.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.team.errors.0 }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="{{ form.recurrence.id_for_label }}" class="block text-sm font-semibold text-gray-900 dark:text-white mb-3">
-            Recurrence
-          </label>
-          {{ form.recurrence }}
-          {% if form.recurrence.errors %}
-            <p class="text-red-500 text-sm mt-2">{{ form.recurrence.errors.0 }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Attendees -->
-      <div class="mb-5">
-        <label class="block text-sm font-semibold text-gray-900 dark:text-white mb-4">
-          Add Attendees
-        </label>
-        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 p-4 sm:p-5 max-h-72 overflow-y-auto">
-          {{ form.attendees }}
-        </div>
-        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Team meetings require at least one attendee.</p>
-        {% if form.attendees.errors %}
-          <p class="text-red-500 text-sm mt-2">{{ form.attendees.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <a href="{% if meeting %}{% url 'scheduling:meeting_detail' meeting.id %}{% else %}{% url 'scheduling:upcoming_schedules' %}{% endif %}" class="sm:flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-3 rounded-lg transition-all text-center">
-          <span class="material-symbols-outlined inline mr-2">cancel</span>
-          Cancel
-        </a>
-        <button type="submit" class="sm:flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 rounded-lg transition-all">
-          <span class="material-symbols-outlined inline mr-2">check_circle</span>
-          {% if meeting %}Save Changes{% else %}Save Meeting{% endif %}
-        </button>
-      </div>
-    </form>
-  </div>
+    </aside>
+  </form>
 </div>
 
 <style>
@@ -181,6 +244,8 @@
     grid-template-columns: 1fr;
     gap: 0.75rem;
     margin: 0;
+    max-height: 18rem;
+    overflow-y: auto;
     padding: 0;
   }
 
@@ -197,8 +262,11 @@
     background: #ffffff;
     color: #374151;
     cursor: pointer;
-    padding: 0.5rem 0.75rem;
-    transition: border-color 150ms ease, color 150ms ease;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    padding: 0.625rem 0.75rem;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
   }
 
   #id_attendees input[type="checkbox"] {
@@ -208,14 +276,21 @@
   }
 
   #id_attendees label:hover {
+    background: #f9fafb;
     border-color: #6467f2;
     color: #6467f2;
   }
 
   .dark #id_attendees label {
-    border-color: #4b5563;
-    background: #1f2937;
+    border-color: #1f2937;
+    background: #111827;
     color: #d1d5db;
+  }
+
+  .dark #id_attendees label:hover {
+    background: #1f2937;
+    border-color: #6467f2;
+    color: #a5b4fc;
   }
 
   @media (min-width: 640px) {

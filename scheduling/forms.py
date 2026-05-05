@@ -27,40 +27,40 @@ class MeetingForm(forms.ModelForm):
                   'platform', 'meeting_link', 'team', 'timezone', 'recurrence']
         widgets = {
             'title': forms.TextInput(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'placeholder': 'Meeting title or subject',
             }),
             'description': forms.Textarea(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'rows': 4,
                 'placeholder': 'Add agenda or meeting details...',
             }),
             'scheduled_at': forms.DateTimeInput(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'type': 'datetime-local',
             }),
             'duration_minutes': forms.NumberInput(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'min': 15,
                 'max': 480,
                 'step': 15,
             }),
             'platform': forms.Select(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
             }),
             'meeting_link': forms.URLInput(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'placeholder': 'https://zoom.us/j/... (required for remote meetings)',
             }),
             'team': forms.Select(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
             }),
             'timezone': forms.TextInput(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
                 'placeholder': 'UTC, EST, PST, etc.',
             }),
             'recurrence': forms.Select(attrs={
-                'class': 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white dark:border-gray-600',
+                'class': 'px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-950 dark:text-white dark:border-gray-800',
             }),
         }
 
