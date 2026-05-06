@@ -13,6 +13,9 @@ class TeamType(models.Model):
     class Meta:
         db_table = 'team_types'
 
+    def __str__(self):
+        return self.name
+
 
 class Team(models.Model):
     STATUS_CHOICES = [

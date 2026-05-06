@@ -171,23 +171,116 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <button
-          class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors"
-        >
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
-        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
-        <div class="flex items-center gap-3">
-          <div class="text-right hidden sm:block">
-            <p class="text-sm font-semibold leading-none">{{user.first_name}} {{user.last_name}}</p>
-            <p class="text-xs text-gray-500 mt-1">{{user.email}}</p>
+        <!-- Notification Bell -->
+        <div class="relative" id="notif-wrapper">
+          <button
+            id="notif-btn"
+            onclick="toggleNotifDropdown()"
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors relative"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            {% if unread_notification_count > 0 %}
+            <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-0.5 leading-none">
+              {{ unread_notification_count }}
+            </span>
+            {% endif %}
+          </button>
+          <!-- Dropdown -->
+          <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+              <span class="text-sm font-bold text-slate-900 dark:text-white">Notifications</span>
+              {% if unread_notification_count > 0 %}
+              <button onclick="markAllRead()" class="text-xs text-primary font-semibold hover:underline">Mark all read</button>
+              {% endif %}
+            </div>
+            <ul class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+              {% if recent_notifications %}
+                {% for n in recent_notifications %}
+                <li class="{% if not n.is_read %}bg-primary/5{% endif %}">
+                  {% if n.link %}
+                  <a href="{{ n.link }}" class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  {% else %}
+                  <span class="flex items-start gap-3 px-4 py-3">
+                  {% endif %}
+                    <span class="material-symbols-outlined text-primary mt-0.5 text-base shrink-0">notifications</span>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm text-slate-700 dark:text-slate-300 leading-snug">{{ n.message }}</p>
+                      <p class="text-xs text-slate-400 mt-1">{{ n.created_at|timesince }} ago</p>
+                    </div>
+                    {% if not n.is_read %}
+                    <span class="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5"></span>
+                    {% endif %}
+                  {% if n.link %}</a>{% else %}</span>{% endif %}
+                </li>
+                {% endfor %}
+              {% else %}
+              <li class="px-4 py-6 text-center text-sm text-slate-400">No notifications yet</li>
+              {% endif %}
+            </ul>
           </div>
-          <img
-            alt="User Profile"
-            class="w-9 h-9 rounded-full bg-gray-200"
-            data-alt="Portrait of a professional software engineer"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbaiokcHRkgg052rgq8cM6Lu6eQrI-e94CC1sJDkVV2YiKy1Qf_7SYXnsZgBtcqvChvDPYxt88tCH8_D02_yHQT2eAY1PWImPtGBcZtQt1EJuRqLfep91RivJ2Ul85AXdcXKqIhsvCzr3S-lWkINcAPzRc1AovQC3hOCLvQevueNJ_z_Esl2ZAJyQhGYdwJTktQpRGzw1cmbM-JM80sH0sNkiquh9dF4s8qlCy1km3xB9xtlOdrXQOawzWOGTG1MgatMS2zrcZ2O5D"
-          />
+        </div>
+        <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
+        <!-- User Profile Dropdown -->
+        <div class="relative" id="profile-wrapper">
+          <button
+            id="profile-btn"
+            onclick="toggleProfileDropdown()"
+            class="flex items-center gap-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 transition-colors cursor-pointer"
+          >
+            <div class="text-right hidden sm:block">
+              <p class="text-sm font-semibold leading-none">{{user.first_name}} {{user.last_name}}</p>
+              <p class="text-xs text-gray-500 mt-1">{{user.email}}</p>
+            </div>
+            {% if current_profile and current_profile.avatar %}
+            <img
+              alt="{{ user.get_full_name|default:user.username }}"
+              class="w-9 h-9 rounded-full object-cover bg-gray-200"
+              src="{{ current_profile.avatar.url }}"
+            />
+            {% else %}
+            <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-xs font-black uppercase">
+              {{ user.first_name|first|default:user.username|first }}{{ user.last_name|first|upper }}
+            </div>
+            {% endif %}
+          </button>
+          <!-- Profile Dropdown Menu -->
+          <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+            <!-- Header with user info -->
+            <div class="px-4 py-4 border-b border-gray-100 dark:border-gray-800">
+              <div class="flex items-center gap-3">
+                {% if current_profile and current_profile.avatar %}
+                <img
+                  alt="{{ user.get_full_name|default:user.username }}"
+                  class="w-10 h-10 rounded-full object-cover bg-gray-200"
+                  src="{{ current_profile.avatar.url }}"
+                />
+                {% else %}
+                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-black uppercase">
+                  {{ user.first_name|first|default:user.username|first }}{{ user.last_name|first|upper }}
+                </div>
+                {% endif %}
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white">{{user.first_name}} {{user.last_name}}</p>
+                  <p class="text-xs text-gray-500">{{user.email}}</p>
+                </div>
+              </div>
+            </div>
+            <!-- Menu Items -->
+            <ul class="divide-y divide-gray-100 dark:divide-gray-800">
+              <li>
+                <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <span class="material-symbols-outlined text-base">person</span>
+                  Edit Profile
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-sm font-medium text-red-600 dark:text-red-400">
+                  <span class="material-symbols-outlined text-base">logout</span>
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </header>
@@ -208,6 +301,29 @@
           
         </div>
     </main>
-    
+    <script>
+      function toggleNotifDropdown() {
+        document.getElementById('notif-dropdown').classList.toggle('hidden');
+      }
+      function toggleProfileDropdown() {
+        document.getElementById('profile-dropdown').classList.toggle('hidden');
+      }
+      document.addEventListener('click', function(e) {
+        const notifWrapper = document.getElementById('notif-wrapper');
+        if (notifWrapper && !notifWrapper.contains(e.target)) {
+          document.getElementById('notif-dropdown').classList.add('hidden');
+        }
+        const profileWrapper = document.getElementById('profile-wrapper');
+        if (profileWrapper && !profileWrapper.contains(e.target)) {
+          document.getElementById('profile-dropdown').classList.add('hidden');
+        }
+      });
+      function markAllRead() {
+        fetch('{% url "notifications_mark_read" %}', {
+          method: 'POST',
+          headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        }).then(() => location.reload());
+      }
+    </script>
   </body>
 </html>

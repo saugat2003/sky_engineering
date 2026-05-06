@@ -70,6 +70,8 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "messaging.context_processors.unread_message_count",
+                "home.context_processors.notifications",
+                "home.context_processors.current_profile",
             ],
         },
     },
@@ -157,6 +159,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Email — prints to console in development; swap for SMTP in production
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@broadcast.co"
 
 
 

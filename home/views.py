@@ -8,11 +8,15 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.utils import timezone
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 from accounts.models import UserProfile
 from department.models import Department
 from messaging.models import Message
 from scheduling.models import Meeting
 from teams.models import AuditTrail, Team, TeamDependency, TeamMember
+from scheduling.models import Notification
 
 
 @login_required
@@ -109,3 +113,10 @@ def profile_view(request):
         'password_form': PasswordChangeForm(user),
     }
     return render(request, 'home/profile.html', context)
+
+
+@require_POST
+@login_required
+def mark_notifications_read(request):
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'ok'})
