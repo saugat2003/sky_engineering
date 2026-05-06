@@ -114,11 +114,19 @@
 
         <!-- Calendar -->
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name|default:''|slice:':9' == 'messages_' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          class="group relative flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name|default:''|slice:':9' == 'messages_' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'messages_inbox' %}"
         >
           <span class="material-symbols-outlined">chat</span>
           <span class="text-sm font-medium">Messages</span>
+          {% if unread_message_count %}
+          <span class="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-black leading-none text-white">
+            {{ unread_message_count }}
+          </span>
+          {% endif %}
+          <span class="pointer-events-none absolute left-full top-1/2 z-50 ml-3 hidden -translate-y-1/2 whitespace-nowrap rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-lg group-hover:block group-focus:block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+            {% if unread_message_count %}{{ unread_message_count }} unread message{{ unread_message_count|pluralize }}{% else %}No unread messages{% endif %}
+          </span>
         </a>
         <a
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.app_name == 'scheduling' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"

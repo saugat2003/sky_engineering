@@ -1,341 +1,220 @@
 {% extends "base.html" %}
+
 {% block content %}
-    <!-- Stats Bar -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
-          <span class="material-symbols-outlined">apartment</span>
+<div class="space-y-6">
+  <header class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+    <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+      <div>
+        <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-primary">
+          <span class="material-symbols-outlined text-sm">space_dashboard</span>
+          Operations Dashboard
         </div>
+        <h1 class="text-3xl font-black tracking-tight text-slate-950 dark:text-white">Engineering Command Center</h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">
+          Prioritized view of registry health, communication, scheduling, and team ownership across Broadcast Co. engineering.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <a href="{% url 'team_create' %}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-primary/90">
+          <span class="material-symbols-outlined text-sm">add_circle</span>
+          Add Team
+        </a>
+        <a href="{% url 'scheduling:schedule_meeting_create' %}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+          <span class="material-symbols-outlined text-sm">calendar_add_on</span>
+          Schedule
+        </a>
+        <a href="{% url 'messages_compose' %}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+          <span class="material-symbols-outlined text-sm">edit_square</span>
+          Message
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <a href="{% url 'depertment_overview' %}" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex items-center justify-between gap-4">
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            2
-          </p>
-          <p class="text-sm text-slate-500 font-medium">Departments</p>
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400">Departments</p>
+          <p class="mt-1 text-3xl font-black text-slate-950 dark:text-white">{{ total_departments }}</p>
+          <p class="mt-1 text-xs text-slate-500">{{ active_departments }} active divisions</p>
+        </div>
+        <div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span class="material-symbols-outlined">domain</span>
         </div>
       </div>
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
-          <span class="material-symbols-outlined">hub</span>
-        </div>
+    </a>
+    <a href="{% url 'team_list' %}" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex items-center justify-between gap-4">
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            6
-          </p>
-          <p class="text-sm text-slate-500 font-medium">Teams</p>
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400">Teams</p>
+          <p class="mt-1 text-3xl font-black text-slate-950 dark:text-white">{{ total_teams }}</p>
+          <p class="mt-1 text-xs text-slate-500">{{ active_teams }} active teams</p>
+        </div>
+        <div class="flex size-12 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+          <span class="material-symbols-outlined">groups</span>
         </div>
       </div>
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
+    </a>
+    <a href="{% url 'team_list' %}" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400">Engineers</p>
+          <p class="mt-1 text-3xl font-black text-slate-950 dark:text-white">{{ total_engineers }}</p>
+          <p class="mt-1 text-xs text-slate-500">Active memberships</p>
+        </div>
+        <div class="flex size-12 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
           <span class="material-symbols-outlined">engineering</span>
         </div>
+      </div>
+    </a>
+    <a href="{% url 'org_chart' %}" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex items-center justify-between gap-4">
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            35
-          </p>
-          <p class="text-sm text-slate-500 font-medium">Engineers</p>
+          <p class="text-xs font-black uppercase tracking-wider text-slate-400">Dependencies</p>
+          <p class="mt-1 text-3xl font-black text-slate-950 dark:text-white">{{ total_dependencies }}</p>
+          <p class="mt-1 text-xs text-slate-500">Cross-team links</p>
+        </div>
+        <div class="flex size-12 items-center justify-center rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+          <span class="material-symbols-outlined">account_tree</span>
         </div>
       </div>
-    </section>
-    <!-- Department Grid -->
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-          Departments
-        </h3>
-        <button
-          class="text-primary text-sm font-semibold hover:underline"
-        >
-          View All
-        </button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Dept Card 1 -->
-        <div
-          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-        >
-          <div class="h-2 bg-primary"></div>
-          <div class="p-6">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4
-                  class="text-lg font-bold text-slate-900 dark:text-white"
-                >
-                  xTV_Web
-                </h4>
-                <p class="text-sm text-slate-500">
-                  Core web platform engineering
-                </p>
-              </div>
-              <span
-                class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase"
-                >Active</span
-              >
+    </a>
+  </section>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
+    <div class="space-y-6">
+      <section class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex flex-col gap-2 border-b border-slate-100 px-5 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="font-black text-slate-950 dark:text-white">Next 7 Days</h2>
+            <p class="text-sm text-slate-500">Upcoming scheduled work that needs attention first.</p>
+          </div>
+          <a href="{% url 'scheduling:upcoming_schedules' %}" class="inline-flex items-center gap-1 text-sm font-black text-primary">
+            View calendar
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for meeting in upcoming_meetings %}
+          <a href="{% url 'scheduling:meeting_detail' meeting.pk %}" class="grid gap-3 px-5 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-950 md:grid-cols-[9rem_minmax(0,1fr)_auto] md:items-center">
+            <div>
+              <p class="text-xs font-black uppercase tracking-wider text-primary">{{ meeting.scheduled_at|date:"M j" }}</p>
+              <p class="text-sm font-bold text-slate-600 dark:text-slate-300">{{ meeting.scheduled_at|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</p>
             </div>
-            <div class="space-y-3 mb-6">
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >person</span
-                >
-                <span
-                  >Head:
-                  <span class="font-medium text-slate-900 dark:text-white"
-                    >Sebastian Holt</span
-                  ></span
-                >
-              </div>
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >layers</span
-                >
-                <span>3 Dedicated Teams</span>
-              </div>
+            <div class="min-w-0">
+              <p class="truncate font-black text-slate-950 dark:text-white">{{ meeting.title }}</p>
+              <p class="truncate text-sm text-slate-500">{% if meeting.team %}{{ meeting.team.name }}{% else %}No team linked{% endif %} · {{ meeting.get_platform_display }}</p>
             </div>
-            <button
-              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-            >
-              View Teams
-              <span class="material-symbols-outlined text-sm"
-                >arrow_forward</span
-              >
-            </button>
+            <span class="inline-flex w-fit items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+              <span class="material-symbols-outlined text-sm">group</span>
+              {{ meeting.attendee_count }}
+            </span>
+          </a>
+          {% empty %}
+          <div class="px-5 py-10 text-center">
+            <span class="material-symbols-outlined text-5xl text-slate-300">event_busy</span>
+            <p class="mt-2 font-black text-slate-900 dark:text-white">No meetings in the next 7 days</p>
+            <p class="text-sm text-slate-500">Your schedule is clear for now.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+            <h2 class="font-black text-slate-950 dark:text-white">Department Coverage</h2>
+            <a href="{% url 'depertment_overview' %}" class="text-xs font-black text-primary">Open</a>
+          </div>
+          <div class="space-y-4 p-5">
+            {% for item in department_cards %}
+            <a href="{% url 'depertment_detail' item.department.id %}" class="block rounded-lg border border-slate-100 bg-slate-50 p-4 transition hover:border-primary dark:border-slate-800 dark:bg-slate-950">
+              <div class="mb-3 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p class="truncate font-black text-slate-950 dark:text-white">{{ item.department.name }}</p>
+                  <p class="text-xs text-slate-500">{{ item.department.total_members }} active engineers</p>
+                </div>
+                <span class="rounded-full bg-white px-2.5 py-1 text-xs font-black text-primary dark:bg-slate-900">{{ item.department.total_teams }} teams</span>
+              </div>
+              <div class="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+                <div class="h-full rounded-full bg-primary" style="width: {{ item.team_width }}%"></div>
+              </div>
+            </a>
+            {% empty %}
+            <p class="py-8 text-center text-sm text-slate-500">No departments recorded.</p>
+            {% endfor %}
           </div>
         </div>
-        <!-- Dept Card 2 -->
-        <div
-          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-        >
-          <div class="h-2 bg-slate-200 dark:bg-slate-700"></div>
-          <div class="p-6">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4
-                  class="text-lg font-bold text-slate-900 dark:text-white"
-                >
-                  Broadcast Ops
-                </h4>
-                <p class="text-sm text-slate-500">
-                  Signal processing &amp; logistics
-                </p>
+
+        <div class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+            <h2 class="font-black text-slate-950 dark:text-white">Recent Teams</h2>
+            <a href="{% url 'team_list' %}" class="text-xs font-black text-primary">Registry</a>
+          </div>
+          <div class="divide-y divide-slate-100 dark:divide-slate-800">
+            {% for team in recent_teams %}
+            <a href="{% url 'team_detail' team.pk %}" class="flex items-center justify-between gap-4 px-5 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-950">
+              <div class="min-w-0">
+                <p class="truncate font-black text-slate-950 dark:text-white">{{ team.name }}</p>
+                <p class="truncate text-sm text-slate-500">{{ team.department.name }}{% if team.manager %} · {{ team.manager.get_full_name|default:team.manager.username }}{% endif %}</p>
               </div>
-              <span
-                class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase"
-                >Review</span
-              >
-            </div>
-            <div class="space-y-3 mb-6">
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >person</span
-                >
-                <span
-                  >Head:
-                  <span class="font-medium italic text-slate-400"
-                    >TBD</span
-                  ></span
-                >
-              </div>
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >layers</span
-                >
-                <span>3 Dedicated Teams</span>
-              </div>
-            </div>
-            <button
-              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-            >
-              View Teams
-              <span class="material-symbols-outlined text-sm"
-                >arrow_forward</span
-              >
-            </button>
+              <span class="rounded-full px-2.5 py-1 text-[11px] font-black uppercase {% if team.status == 'active' %}bg-emerald-100 text-emerald-700{% elif team.status == 'restructured' %}bg-amber-100 text-amber-700{% else %}bg-slate-100 text-slate-500{% endif %}">{{ team.get_status_display }}</span>
+            </a>
+            {% empty %}
+            <p class="px-5 py-8 text-center text-sm text-slate-500">No team records yet.</p>
+            {% endfor %}
           </div>
         </div>
-      </div>
-    </section>
-    <!-- Recent Updates Table -->
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-          Recent Team Changes
-        </h3>
-      </div>
-      <div
-        class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden"
-      >
-        <table class="w-full text-left">
-          <thead
-            class="bg-background-light dark:bg-slate-800 border-b border-primary/10"
-          >
-            <tr>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Event
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Target
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Department
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right"
-              >
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-primary/5">
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-sm"
-                    >edit</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Team updated</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                The Debuggers
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">xTV_Web</td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                2 mins ago
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-green-500 bg-green-50 p-1.5 rounded-lg text-sm"
-                    >add_circle</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Team created</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Code Warriors
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Broadcast Ops
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                1 hour ago
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-amber-500 bg-amber-50 p-1.5 rounded-lg text-sm"
-                    >group_add</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Lead assigned</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Sarah Jenkins
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Streaming Core
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                3 hours ago
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-purple-500 bg-purple-50 p-1.5 rounded-lg text-sm"
-                    >swap_horiz</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Transferred</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Platform Sec
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Infrastructure
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                Yesterday
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-slate-500 bg-slate-50 p-1.5 rounded-lg text-sm"
-                    >info</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Policy Update</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Global Registry
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                All Departments
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                2 days ago
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+      </section>
+    </div>
+
+    <aside class="space-y-6">
+      <section class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+          <div>
+            <h2 class="font-black text-slate-950 dark:text-white">Inbox</h2>
+            <p class="text-sm text-slate-500">{{ draft_count }} draft{{ draft_count|pluralize }}</p>
+          </div>
+          <a href="{% url 'messages_inbox' %}" class="text-xs font-black text-primary">Open</a>
+        </div>
+        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for message in recent_messages %}
+          <a href="{% url 'messages_detail' message.id %}" class="block px-5 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-950">
+            <div class="flex items-center justify-between gap-3">
+              <p class="truncate font-black text-slate-950 dark:text-white">{{ message.subject|default:"(no subject)" }}</p>
+              {% if not message.is_read %}<span class="h-2 w-2 shrink-0 rounded-full bg-primary"></span>{% endif %}
+            </div>
+            <p class="truncate text-sm text-slate-500">{{ message.sender.get_full_name|default:message.sender.username }} · {{ message.display_timestamp|date:"M j, H:i" }}</p>
+          </a>
+          {% empty %}
+          <div class="px-5 py-8 text-center text-sm text-slate-500">No inbox messages.</div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-slate-800">
+          <h2 class="font-black text-slate-950 dark:text-white">Registry Activity</h2>
+          <a href="{% url 'team_list' %}" class="text-xs font-black text-primary">Teams</a>
+        </div>
+        <div class="divide-y divide-slate-100 dark:divide-slate-800">
+          {% for audit in recent_audits %}
+          <div class="px-5 py-4">
+            <div class="flex gap-3">
+              <span class="material-symbols-outlined mt-0.5 text-primary">history</span>
+              <div class="min-w-0">
+                <p class="line-clamp-2 text-sm font-bold text-slate-900 dark:text-white">{{ audit.edit_description }}</p>
+                <p class="mt-1 truncate text-xs text-slate-500">{{ audit.team.name }} · {{ audit.timestamp|date:"M j, H:i" }}</p>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="px-5 py-8 text-center text-sm text-slate-500">No registry activity yet.</div>
+          {% endfor %}
+        </div>
+      </section>
+    </aside>
+  </div>
+</div>
 {% endblock content %}
