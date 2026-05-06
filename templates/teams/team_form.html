@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="mb-5 flex items-center gap-2 text-sm text-slate-500">
+    <a class="hover:text-primary" href="{% url 'team_list' %}">Teams</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="font-semibold text-slate-900 dark:text-slate-200">Add Team</span>
+</nav>
+
+<header class="mb-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="border-b border-slate-100 bg-white px-6 py-7 dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                    <span class="material-symbols-outlined text-sm">group_add</span>
+                    Registry Intake
+                </div>
+                <h2 class="text-3xl font-black tracking-tight text-slate-950 dark:text-white">Add Engineering Team</h2>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Capture ownership, contacts, delivery focus, and discovery metadata in one pass.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+                    <p class="text-xl font-black text-slate-950 dark:text-white">{{ total_departments }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Departments</p>
+                </div>
+                <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+                    <p class="text-xl font-black text-slate-950 dark:text-white">{{ total_team_types }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Types</p>
+                </div>
+                <div class="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-950">
+                    <p class="text-xl font-black text-slate-950 dark:text-white">{{ total_skills }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Skills</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<form method="post" class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+    {% csrf_token %}
+    <div class="space-y-6">
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-5 flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <span class="material-symbols-outlined">badge</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-950 dark:text-white">Identity</h3>
+                    <p class="text-sm text-slate-500">The essentials shown across registry, search, and org views.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="md:col-span-2">
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.name.id_for_label }}">Team Name</label>
+                    {{ form.name }}
+                    {{ form.name.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.department.id_for_label }}">Department</label>
+                    {{ form.department }}
+                    {{ form.department.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.team_type.id_for_label }}">Team Type</label>
+                    {{ form.team_type }}
+                    {{ form.team_type.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.manager.id_for_label }}">Manager</label>
+                    {{ form.manager }}
+                    {{ form.manager.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.status.id_for_label }}">Status</label>
+                    {{ form.status }}
+                    {{ form.status.errors }}
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-5 flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+                    <span class="material-symbols-outlined">target</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-950 dark:text-white">Scope</h3>
+                    <p class="text-sm text-slate-500">Mission, workstream, and current engineering focus.</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.mission.id_for_label }}">Mission</label>
+                    {{ form.mission }}
+                    {{ form.mission.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    {{ form.description.errors }}
+                </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="mb-2 block text-sm font-bold" for="{{ form.workstream.id_for_label }}">Workstream</label>
+                        {{ form.workstream }}
+                        {{ form.workstream.errors }}
+                    </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-bold" for="{{ form.jira_project_name.id_for_label }}">Jira Project</label>
+                        {{ form.jira_project_name }}
+                        {{ form.jira_project_name.errors }}
+                    </div>
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.development_focus.id_for_label }}">Development Focus</label>
+                    {{ form.development_focus }}
+                    {{ form.development_focus.errors }}
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-5 flex items-center gap-3">
+                <div class="flex size-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+                    <span class="material-symbols-outlined">connect_without_contact</span>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-950 dark:text-white">Channels</h3>
+                    <p class="text-sm text-slate-500">Contact and collaboration links used by downstream workflows.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.email_address.id_for_label }}">Team Email</label>
+                    {{ form.email_address }}
+                    {{ form.email_address.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.slack_channel.id_for_label }}">Slack Channel</label>
+                    {{ form.slack_channel }}
+                    {{ form.slack_channel.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.daily_standup_link.id_for_label }}">Standup Link</label>
+                    {{ form.daily_standup_link }}
+                    {{ form.daily_standup_link.errors }}
+                </div>
+                <div>
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.team_wiki_url.id_for_label }}">Team Wiki</label>
+                    {{ form.team_wiki_url }}
+                    {{ form.team_wiki_url.errors }}
+                </div>
+                <div class="md:col-span-2">
+                    <label class="mb-2 block text-sm font-bold" for="{{ form.jira_board_link.id_for_label }}">Jira Board Link</label>
+                    {{ form.jira_board_link }}
+                    {{ form.jira_board_link.errors }}
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <aside class="space-y-6">
+        <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 xl:sticky xl:top-24">
+            <h3 class="mb-4 font-black text-slate-950 dark:text-white">Capability Profile</h3>
+            <div class="mb-5">
+                <label class="mb-2 block text-sm font-bold" for="{{ form.key_skills.id_for_label }}">Key Skills Summary</label>
+                {{ form.key_skills }}
+                {{ form.key_skills.errors }}
+            </div>
+            <div>
+                <p class="mb-3 text-sm font-bold">Structured Skills</p>
+                <div class="max-h-80 space-y-2 overflow-auto rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950">
+                    {% for checkbox in form.skills %}
+                    <label class="flex items-start gap-3 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm dark:bg-slate-900 dark:text-slate-200">
+                        {{ checkbox.tag }}
+                        <span>{{ checkbox.choice_label }}</span>
+                    </label>
+                    {% empty %}
+                    <p class="text-sm text-slate-500">No reusable skills are available yet.</p>
+                    {% endfor %}
+                </div>
+                {{ form.skills.errors }}
+            </div>
+            {% if form.non_field_errors %}
+            <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            <div class="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 dark:border-slate-800">
+                <button class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-primary/90" type="submit">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Team
+                </button>
+                <a class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600 transition hover:border-primary hover:text-primary dark:border-slate-700 dark:text-slate-300" href="{% url 'team_list' %}">
+                    Cancel
+                </a>
+            </div>
+        </section>
+    </aside>
+</form>
+{% endblock content %}

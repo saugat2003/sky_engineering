@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from department.models import Department
-from teams.forms import TeamEmailForm
+from teams.forms import TeamEmailForm, TeamForm
 from teams.models import AuditTrail, Skill, Team, TeamDependency, TeamEmail, TeamType
 
 
@@ -17,6 +17,7 @@ def _team_queryset():
         .prefetch_related(
             'members__user',
             'repositories',
+            'software_products',
             'contact_channels',
             'skills',
             'downstream_dependencies__to_team',
@@ -108,6 +109,34 @@ def team_search(request):
         'total_teams': teams.count(),
     }
     return render(request, 'teams/team_search.html', context)
+
+
+@login_required
+def team_create(request):
+    if request.method == 'POST':
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            team = form.save(commit=False)
+            team.is_active = team.status == 'active'
+            team.save()
+            form.save_m2m()
+            AuditTrail.objects.create(
+                team=team,
+                edited_by=request.user,
+                edit_description='Team created from the registry UI.',
+            )
+            messages.success(request, f'{team.name} was added to the team registry.')
+            return redirect('team_detail', pk=team.pk)
+    else:
+        form = TeamForm()
+
+    context = {
+        'form': form,
+        'total_departments': Department.objects.count(),
+        'total_team_types': TeamType.objects.count(),
+        'total_skills': Skill.objects.count(),
+    }
+    return render(request, 'teams/team_form.html', context)
 
 
 @login_required

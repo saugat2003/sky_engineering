@@ -1,137 +1,198 @@
 {% extends "base.html" %}
 
 {% block content %}
-<nav class="flex items-center gap-2 text-sm text-slate-500 my-3">
+<nav class="mb-5 flex items-center gap-2 text-sm text-slate-500">
     <a class="hover:text-primary" href="{% url 'dashboard' %}">Home</a>
     <span class="material-symbols-outlined text-sm">chevron_right</span>
-    <span class="font-medium text-slate-900 dark:text-slate-200">Teams</span>
+    <span class="font-semibold text-slate-900 dark:text-slate-200">Teams</span>
 </nav>
 
-<div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-    <div>
-        <h2 class="text-3xl font-black tracking-tight text-slate-700">Engineering Teams</h2>
-        <p class="text-slate-500">Browse departments, managers, ownership, skills, and dependencies.</p>
-    </div>
-    <div class="flex flex-wrap gap-2">
-        <a href="{% url 'team_search' %}" class="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-white px-4 py-2 text-sm font-bold text-primary hover:bg-primary/10 dark:bg-slate-900">
-            <span class="material-symbols-outlined text-sm">manage_search</span>
-            Advanced Search
-        </a>
-        <a href="{% url 'org_chart' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary/90">
-            <span class="material-symbols-outlined text-sm">account_tree</span>
-            Org Chart
-        </a>
-    </div>
-</div>
-
-<section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-    <div class="rounded-xl border border-primary/10 bg-white p-5 shadow-sm dark:bg-slate-900">
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Teams</p>
-        <p class="mt-1 text-3xl font-black">{{ total_teams }}</p>
-    </div>
-    <div class="rounded-xl border border-primary/10 bg-white p-5 shadow-sm dark:bg-slate-900">
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Team Types</p>
-        <p class="mt-1 text-3xl font-black">{{ team_types|length }}</p>
-    </div>
-    <div class="rounded-xl border border-primary/10 bg-white p-5 shadow-sm dark:bg-slate-900">
-        <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Dependencies</p>
-        <p class="mt-1 text-3xl font-black">{{ total_dependencies }}</p>
-    </div>
-</section>
-
-<form id="team-filter-form" method="get" class="mb-6 rounded-xl border border-primary/10 bg-white p-4 shadow-sm dark:bg-slate-900">
-    <div class="grid grid-cols-1 gap-3 lg:grid-cols-6">
-        <div class="relative lg:col-span-2">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-            <input id="live-team-search" name="q" value="{{ selected_query }}" class="w-full rounded-lg border border-slate-200 py-2.5 pl-10 pr-3 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900" placeholder="Search teams, departments, managers..." type="search">
+<header class="mb-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="border-b border-slate-100 bg-white px-6 py-7 dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+                <div class="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                    <span class="material-symbols-outlined text-sm">hub</span>
+                    Engineering Registry
+                </div>
+                <h2 class="text-3xl font-black tracking-tight text-slate-950 dark:text-white">Engineering Teams</h2>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Browse ownership, delivery scope, dependencies, and operating channels across the engineering organization.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'team_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-primary/90">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Team
+                </a>
+                <a href="{% url 'team_search' %}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                    <span class="material-symbols-outlined text-sm">manage_search</span>
+                    Advanced Search
+                </a>
+                <a href="{% url 'org_chart' %}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                    <span class="material-symbols-outlined text-sm">account_tree</span>
+                    Org Chart
+                </a>
+            </div>
         </div>
-        <select name="department" class="rounded-lg border-slate-200 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-900">
+    </div>
+    <section class="grid grid-cols-1 divide-y divide-slate-100 dark:divide-slate-800 md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined">groups</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ total_teams }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Filtered Teams</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+                <span class="material-symbols-outlined">category</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ team_types|length }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Team Types</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                <span class="material-symbols-outlined">account_tree</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ total_dependencies }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Dependencies</p>
+            </div>
+        </div>
+    </section>
+</header>
+
+<form id="team-filter-form" method="get" class="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="grid grid-cols-1 gap-3 xl:grid-cols-12">
+        <div class="relative xl:col-span-4">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <input id="live-team-search" name="q" value="{{ selected_query }}" class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-950" placeholder="Search teams, departments, managers..." type="search">
+        </div>
+        <select name="department" class="rounded-lg border-slate-200 bg-white text-sm shadow-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-950 xl:col-span-2">
             <option value="">All departments</option>
             {% for department in departments %}
             <option value="{{ department.id }}" {% if selected_department == department.id|stringformat:"s" %}selected{% endif %}>{{ department.name }}</option>
             {% endfor %}
         </select>
-        <select name="manager" class="rounded-lg border-slate-200 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-900">
+        <select name="manager" class="rounded-lg border-slate-200 bg-white text-sm shadow-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-950 xl:col-span-2">
             <option value="">All managers</option>
             {% for manager in managers %}
             <option value="{{ manager.manager_id }}" {% if selected_manager == manager.manager_id|stringformat:"s" %}selected{% endif %}>{{ manager.manager__first_name }} {{ manager.manager__last_name|default:manager.manager__username }}</option>
             {% endfor %}
         </select>
-        <select name="team_type" class="rounded-lg border-slate-200 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-900">
+        <select name="team_type" class="rounded-lg border-slate-200 bg-white text-sm shadow-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-950 xl:col-span-2">
             <option value="">All types</option>
             {% for team_type in team_types %}
             <option value="{{ team_type.id }}" {% if selected_team_type == team_type.id|stringformat:"s" %}selected{% endif %}>{{ team_type.name }}</option>
             {% endfor %}
         </select>
-        <div class="flex gap-2">
-            <button class="flex-1 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white" type="submit">Filter</button>
-            <a class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-500 dark:border-slate-700" href="{% url 'team_list' %}">Reset</a>
+        <select name="status" class="rounded-lg border-slate-200 bg-white text-sm shadow-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-950 xl:col-span-1">
+            <option value="">Any status</option>
+            {% for value,label in status_choices %}
+            <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <div class="flex gap-2 xl:col-span-1">
+            <button class="flex-1 rounded-lg bg-primary px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-primary/90" type="submit">Filter</button>
+            <a class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-500 transition hover:border-primary hover:text-primary dark:border-slate-700" href="{% url 'team_list' %}" title="Reset filters">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+            </a>
         </div>
     </div>
-    <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
-        <p id="visible-count" class="text-sm text-slate-500">Showing {{ teams|length }} team cards on this page.</p>
-        <div class="flex rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
-            <button id="grid-toggle" class="rounded-md bg-white px-3 py-1.5 text-xs font-bold shadow-sm dark:bg-slate-700" type="button">Grid</button>
-            <button id="list-toggle" class="rounded-md px-3 py-1.5 text-xs font-bold text-slate-500" type="button">List</button>
+    <div class="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+        <p id="visible-count" class="text-sm text-slate-500">Showing {{ teams|length }} team card{{ teams|length|pluralize }} on this page.</p>
+        <div class="inline-flex w-fit rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
+            <button id="grid-toggle" class="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-xs font-black text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white" type="button">
+                <span class="material-symbols-outlined text-sm">grid_view</span>
+                Grid
+            </button>
+            <button id="list-toggle" class="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-bold text-slate-500" type="button">
+                <span class="material-symbols-outlined text-sm">view_list</span>
+                List
+            </button>
         </div>
     </div>
 </form>
 
-<div id="no-results" class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900">
+<div id="no-results" class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900">
     <span class="material-symbols-outlined mb-2 text-4xl text-slate-300">search_off</span>
-    <p class="font-bold">No results found</p>
+    <p class="font-black text-slate-900 dark:text-white">No visible matches</p>
+    <p class="text-sm">Adjust the page search or submit a broader filter.</p>
 </div>
 
-<div id="team-results" class="grid grid-cols-1 gap-5 lg:grid-cols-3">
+<div id="team-results" class="grid grid-cols-1 gap-5 xl:grid-cols-3">
     {% for team in teams %}
-    <article class="team-card rounded-xl border border-primary/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-900" data-search="{{ team.name }} {{ team.department.name }} {% if team.manager %}{{ team.manager.get_full_name }} {{ team.manager.username }}{% endif %} {{ team.team_type.name }}">
+    <article class="team-card group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900" data-search="{{ team.name }} {{ team.department.name }} {% if team.manager %}{{ team.manager.get_full_name }} {{ team.manager.username }}{% endif %} {{ team.team_type.name }} {{ team.mission }} {{ team.description }}">
+        <div class="h-1.5 {% if team.status == 'active' %}bg-emerald-500{% elif team.status == 'restructured' %}bg-amber-500{% else %}bg-slate-400{% endif %}"></div>
         <div class="p-5">
             <div class="mb-4 flex items-start justify-between gap-3">
-                <div class="flex items-start gap-3">
-                    <div class="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div class="flex min-w-0 items-start gap-3">
+                    <div class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                         <span class="material-symbols-outlined">groups</span>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white"><a class="hover:text-primary" href="{% url 'team_detail' team.pk %}">{{ team.name }}</a></h3>
-                        <p class="text-xs font-semibold text-primary">{{ team.department.name }}</p>
+                    <div class="min-w-0">
+                        <h3 class="truncate font-black text-slate-950 dark:text-white"><a class="hover:text-primary" href="{% url 'team_detail' team.pk %}">{{ team.name }}</a></h3>
+                        <p class="truncate text-xs font-bold uppercase tracking-wider text-primary">{{ team.department.name }}</p>
                     </div>
                 </div>
-                <span class="rounded-full px-2.5 py-1 text-[11px] font-bold uppercase {% if team.status == 'active' %}bg-green-100 text-green-700{% elif team.status == 'restructured' %}bg-amber-100 text-amber-700{% else %}bg-slate-100 text-slate-500{% endif %}">{{ team.get_status_display }}</span>
+                <span class="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-black uppercase {% if team.status == 'active' %}bg-emerald-100 text-emerald-700{% elif team.status == 'restructured' %}bg-amber-100 text-amber-700{% else %}bg-slate-100 text-slate-500{% endif %}">{{ team.get_status_display }}</span>
             </div>
-            <p class="line-clamp-2 min-h-10 text-sm text-slate-500">{{ team.mission|default:team.description|default:"No mission statement recorded." }}</p>
-            <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div class="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60">
-                    <p class="text-xs text-slate-400">Manager</p>
-                    <p class="truncate font-semibold">{% if team.manager %}{{ team.manager.get_full_name|default:team.manager.username }}{% else %}Unassigned{% endif %}</p>
+            <p class="line-clamp-2 min-h-10 text-sm leading-5 text-slate-500">{{ team.mission|default:team.description|default:"No mission statement recorded." }}</p>
+            <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                <div class="rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Manager</p>
+                    <p class="truncate font-bold text-slate-900 dark:text-white">{% if team.manager %}{{ team.manager.get_full_name|default:team.manager.username }}{% else %}Unassigned{% endif %}</p>
                 </div>
-                <div class="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60">
-                    <p class="text-xs text-slate-400">Members</p>
-                    <p class="font-semibold">{{ team.member_count }}</p>
+                <div class="rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Members</p>
+                    <p class="font-bold text-slate-900 dark:text-white">{{ team.member_count }}</p>
                 </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                {% for skill in team.skills.all|slice:":4" %}
+                <span class="rounded-full bg-cyan-50 px-2.5 py-1 text-[11px] font-bold text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">{{ skill.name }}</span>
+                {% empty %}
+                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold text-slate-500 dark:bg-slate-800">No skills</span>
+                {% endfor %}
             </div>
         </div>
-        <div class="flex items-center justify-between border-t border-slate-100 px-5 py-3 dark:border-slate-800">
-            <span class="text-xs text-slate-400">{{ team.team_type.name|default:"General" }}</span>
-            <a class="inline-flex items-center gap-1 text-sm font-bold text-primary" href="{% url 'team_detail' team.pk %}">
-                Details
-                <span class="material-symbols-outlined text-sm">arrow_forward</span>
-            </a>
+        <div class="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-sm dark:border-slate-800">
+            <span class="truncate text-xs font-bold uppercase tracking-wider text-slate-400">{{ team.team_type.name|default:"General" }}</span>
+            <div class="flex items-center gap-3">
+                {% if team.primary_contact %}
+                <a class="text-slate-400 transition hover:text-primary" href="mailto:{{ team.primary_contact }}" title="Email team">
+                    <span class="material-symbols-outlined text-lg">alternate_email</span>
+                </a>
+                {% endif %}
+                <a class="inline-flex items-center gap-1 font-black text-primary" href="{% url 'team_detail' team.pk %}">
+                    Details
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
         </div>
     </article>
     {% empty %}
-    <div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-700 dark:bg-slate-900 lg:col-span-3">
+    <div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900 xl:col-span-3">
         <span class="material-symbols-outlined mb-2 text-4xl text-slate-300">group_off</span>
-        <p class="font-bold">No teams found.</p>
+        <p class="font-black text-slate-900 dark:text-white">No teams found</p>
+        <p class="mb-5 text-sm">Create the first registry record or clear the active filters.</p>
+        <a href="{% url 'team_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-black text-white">
+            <span class="material-symbols-outlined text-sm">add_circle</span>
+            Add Team
+        </a>
     </div>
     {% endfor %}
 </div>
 
 {% if page_obj.has_other_pages %}
-<div class="mt-8 flex items-center justify-between text-sm text-slate-500">
-    <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+<div class="mt-8 flex flex-col gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
+    <p class="font-semibold">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
     <div class="flex gap-2">
-        {% if page_obj.has_previous %}<a class="rounded-lg border border-slate-200 px-3 py-2 font-bold" href="?page={{ page_obj.previous_page_number }}&q={{ selected_query }}">Previous</a>{% endif %}
-        {% if page_obj.has_next %}<a class="rounded-lg border border-slate-200 px-3 py-2 font-bold" href="?page={{ page_obj.next_page_number }}&q={{ selected_query }}">Next</a>{% endif %}
+        {% if page_obj.has_previous %}<a class="rounded-lg border border-slate-200 px-3 py-2 font-bold transition hover:border-primary hover:text-primary dark:border-slate-700" href="?page={{ page_obj.previous_page_number }}&q={{ selected_query }}&department={{ selected_department }}&manager={{ selected_manager }}&team_type={{ selected_team_type }}&status={{ selected_status }}">Previous</a>{% endif %}
+        {% if page_obj.has_next %}<a class="rounded-lg border border-slate-200 px-3 py-2 font-bold transition hover:border-primary hover:text-primary dark:border-slate-700" href="?page={{ page_obj.next_page_number }}&q={{ selected_query }}&department={{ selected_department }}&manager={{ selected_manager }}&team_type={{ selected_team_type }}&status={{ selected_status }}">Next</a>{% endif %}
     </div>
 </div>
 {% endif %}
@@ -142,6 +203,14 @@ const cards = Array.from(document.querySelectorAll('.team-card'));
 const noResults = document.getElementById('no-results');
 const visibleCount = document.getElementById('visible-count');
 const results = document.getElementById('team-results');
+const gridToggle = document.getElementById('grid-toggle');
+const listToggle = document.getElementById('list-toggle');
+
+function setToggle(activeButton, inactiveButton) {
+    activeButton.className = 'inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-xs font-black text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white';
+    inactiveButton.className = 'inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-bold text-slate-500';
+}
+
 function filterVisibleCards() {
     const term = searchInput.value.toLowerCase().trim();
     let visible = 0;
@@ -153,12 +222,15 @@ function filterVisibleCards() {
     noResults.classList.toggle('hidden', visible !== 0);
     visibleCount.textContent = `Showing ${visible} team card${visible === 1 ? '' : 's'} on this page.`;
 }
+
 searchInput.addEventListener('input', filterVisibleCards);
-document.getElementById('grid-toggle').addEventListener('click', () => {
-    results.className = 'grid grid-cols-1 gap-5 lg:grid-cols-3';
+gridToggle.addEventListener('click', () => {
+    results.className = 'grid grid-cols-1 gap-5 xl:grid-cols-3';
+    setToggle(gridToggle, listToggle);
 });
-document.getElementById('list-toggle').addEventListener('click', () => {
+listToggle.addEventListener('click', () => {
     results.className = 'grid grid-cols-1 gap-4';
+    setToggle(listToggle, gridToggle);
 });
 </script>
 {% endblock content %}

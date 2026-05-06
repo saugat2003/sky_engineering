@@ -96,7 +96,7 @@
 
         <!-- Teams -->
         <a
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name in 'team_list,team_search,team_detail,team_email,team_dependencies,team_skills' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg {% if request.resolver_match.url_name in 'team_list,team_create,team_search,team_detail,team_email,team_dependencies,team_skills' %}bg-primary text-white{% else %}text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary{% endif %} transition-colors"
           href="{% url 'team_list' %}"
         >
           <span class="material-symbols-outlined">groups</span>
@@ -185,7 +185,17 @@
     </header>
     <!-- Main Content Area -->
     <main class="ml-0 md:ml-64 flex flex-col min-h-[calc(100vh-4rem)]">
-        <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}my-2 mx-6 pb-6{% endif %}">
+        <div class="{% if request.resolver_match.app_name == 'scheduling' %}m-4 sm:m-5 pb-6{% else %}m-4 sm:m-6 lg:m-8 pb-8{% endif %}">
+          {% if messages %}
+          <div class="mb-5 space-y-3">
+            {% for message in messages %}
+            <div class="flex items-start gap-3 rounded-lg border px-4 py-3 text-sm shadow-sm {% if message.tags == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-800{% elif message.tags == 'error' %}border-red-200 bg-red-50 text-red-800{% else %}border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200{% endif %}">
+              <span class="material-symbols-outlined text-lg">{% if message.tags == 'success' %}check_circle{% elif message.tags == 'error' %}error{% else %}info{% endif %}</span>
+              <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
           {% block content %}{% endblock content %}
           
         </div>
