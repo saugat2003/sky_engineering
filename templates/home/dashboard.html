@@ -2,48 +2,30 @@
 {% block content %}
     <!-- Stats Bar -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
+        <div class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
           <span class="material-symbols-outlined">apartment</span>
         </div>
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            2
-          </p>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ dept_count }}</p>
           <p class="text-sm text-slate-500 font-medium">Departments</p>
         </div>
       </div>
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
+        <div class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
           <span class="material-symbols-outlined">hub</span>
         </div>
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            6
-          </p>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ team_count }}</p>
           <p class="text-sm text-slate-500 font-medium">Teams</p>
         </div>
       </div>
-      <div
-        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4"
-      >
-        <div
-          class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
-        >
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
+        <div class="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
           <span class="material-symbols-outlined">engineering</span>
         </div>
         <div>
-          <p class="text-2xl font-bold text-slate-900 dark:text-white">
-            35
-          </p>
+          <p class="text-2xl font-bold text-slate-900 dark:text-white">{{ engineer_count }}</p>
           <p class="text-sm text-slate-500 font-medium">Engineers</p>
         </div>
       </div>
@@ -51,289 +33,90 @@
     <!-- Department Grid -->
     <section>
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-          Departments
-        </h3>
-        <button
-          class="text-primary text-sm font-semibold hover:underline"
-        >
-          View All
-        </button>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Departments</h3>
+        <a href="{% url 'depertment_overview' %}" class="text-primary text-sm font-semibold hover:underline">View All</a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Dept Card 1 -->
-        <div
-          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-        >
-          <div class="h-2 bg-primary"></div>
+        {% for dept in departments %}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm">
+          <div class="h-2 {% if dept.is_active %}bg-primary{% else %}bg-slate-200 dark:bg-slate-700{% endif %}"></div>
           <div class="p-6">
             <div class="flex justify-between items-start mb-4">
               <div>
-                <h4
-                  class="text-lg font-bold text-slate-900 dark:text-white"
-                >
-                  xTV_Web
-                </h4>
-                <p class="text-sm text-slate-500">
-                  Core web platform engineering
-                </p>
+                <h4 class="text-lg font-bold text-slate-900 dark:text-white">{{ dept.name }}</h4>
+                {% if dept.specialisation %}
+                <p class="text-sm text-slate-500">{{ dept.specialisation|truncatechars:50 }}</p>
+                {% endif %}
               </div>
-              <span
-                class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase"
-                >Active</span
-              >
+              {% if dept.is_active %}
+              <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase">Active</span>
+              {% else %}
+              <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase">Inactive</span>
+              {% endif %}
             </div>
             <div class="space-y-3 mb-6">
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >person</span
-                >
-                <span
-                  >Head:
-                  <span class="font-medium text-slate-900 dark:text-white"
-                    >Sebastian Holt</span
-                  ></span
-                >
+              <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-sm">person</span>
+                <span>Head:
+                  {% if dept.head %}
+                  <span class="font-medium text-slate-900 dark:text-white">{{ dept.head.get_full_name|default:dept.head.username }}</span>
+                  {% else %}
+                  <span class="font-medium italic text-slate-400">TBD</span>
+                  {% endif %}
+                </span>
               </div>
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >layers</span
-                >
-                <span>3 Dedicated Teams</span>
+              <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                <span class="material-symbols-outlined text-sm">layers</span>
+                <span>{{ dept.teams.count }} Team{{ dept.teams.count|pluralize }}</span>
               </div>
             </div>
-            <button
-              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-            >
+            <a href="{% url 'depertment_detail' dept.pk %}"
+               class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2">
               View Teams
-              <span class="material-symbols-outlined text-sm"
-                >arrow_forward</span
-              >
-            </button>
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
           </div>
         </div>
-        <!-- Dept Card 2 -->
-        <div
-          class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 overflow-hidden shadow-sm group"
-        >
-          <div class="h-2 bg-slate-200 dark:bg-slate-700"></div>
-          <div class="p-6">
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4
-                  class="text-lg font-bold text-slate-900 dark:text-white"
-                >
-                  Broadcast Ops
-                </h4>
-                <p class="text-sm text-slate-500">
-                  Signal processing &amp; logistics
-                </p>
-              </div>
-              <span
-                class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full uppercase"
-                >Review</span
-              >
-            </div>
-            <div class="space-y-3 mb-6">
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >person</span
-                >
-                <span
-                  >Head:
-                  <span class="font-medium italic text-slate-400"
-                    >TBD</span
-                  ></span
-                >
-              </div>
-              <div
-                class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined text-sm"
-                  >layers</span
-                >
-                <span>3 Dedicated Teams</span>
-              </div>
-            </div>
-            <button
-              class="w-full py-2 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
-            >
-              View Teams
-              <span class="material-symbols-outlined text-sm"
-                >arrow_forward</span
-              >
-            </button>
-          </div>
-        </div>
+        {% empty %}
+        <div class="col-span-2 text-center py-12 text-slate-400 text-sm">No departments yet.</div>
+        {% endfor %}
       </div>
     </section>
     <!-- Recent Updates Table -->
     <section>
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-bold text-slate-900 dark:text-white">
-          Recent Team Changes
-        </h3>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Recent Team Changes</h3>
       </div>
-      <div
-        class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden"
-      >
+      <div class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden">
         <table class="w-full text-left">
-          <thead
-            class="bg-background-light dark:bg-slate-800 border-b border-primary/10"
-          >
+          <thead class="bg-background-light dark:bg-slate-800 border-b border-primary/10">
             <tr>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Event
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Target
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider"
-              >
-                Department
-              </th>
-              <th
-                class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right"
-              >
-                Date
-              </th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Change</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Team</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Department</th>
+              <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">When</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-primary/5">
+            {% for entry in recent_changes %}
             <tr class="hover:bg-primary/5 transition-colors">
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-sm"
-                    >edit</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Team updated</span
-                  >
+                  <span class="material-symbols-outlined text-blue-500 bg-blue-50 p-1.5 rounded-lg text-sm">edit</span>
+                  <span class="text-sm font-medium text-slate-900 dark:text-white">{{ entry.edit_description|truncatechars:40 }}</span>
                 </div>
               </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                The Debuggers
+              <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold">
+                <a href="{% url 'team_detail' entry.team.pk %}" class="hover:text-primary hover:underline">{{ entry.team.name }}</a>
               </td>
-              <td class="px-6 py-4 text-sm text-slate-500">xTV_Web</td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                2 mins ago
-              </td>
+              <td class="px-6 py-4 text-sm text-slate-500">{{ entry.team.department.name|default:"—" }}</td>
+              <td class="px-6 py-4 text-sm text-slate-400 text-right">{{ entry.timestamp|timesince }} ago</td>
             </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-green-500 bg-green-50 p-1.5 rounded-lg text-sm"
-                    >add_circle</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Team created</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Code Warriors
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Broadcast Ops
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                1 hour ago
-              </td>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="px-6 py-8 text-center text-sm text-slate-400">No changes recorded yet.</td>
             </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-amber-500 bg-amber-50 p-1.5 rounded-lg text-sm"
-                    >group_add</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Lead assigned</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Sarah Jenkins
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Streaming Core
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                3 hours ago
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-purple-500 bg-purple-50 p-1.5 rounded-lg text-sm"
-                    >swap_horiz</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Transferred</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Platform Sec
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                Infrastructure
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                Yesterday
-              </td>
-            </tr>
-            <tr class="hover:bg-primary/5 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <span
-                    class="material-symbols-outlined text-slate-500 bg-slate-50 p-1.5 rounded-lg text-sm"
-                    >info</span
-                  >
-                  <span
-                    class="text-sm font-medium text-slate-900 dark:text-white"
-                    >Policy Update</span
-                  >
-                </div>
-              </td>
-              <td
-                class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-semibold"
-              >
-                Global Registry
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-500">
-                All Departments
-              </td>
-              <td class="px-6 py-4 text-sm text-slate-400 text-right">
-                2 days ago
-              </td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

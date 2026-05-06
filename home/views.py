@@ -4,12 +4,31 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 from accounts.models import UserProfile
+from department.models import Department
+from teams.models import Team, TeamMember, AuditTrail
+from scheduling.models import Notification
 
 
 @login_required
 def home_redirect(request):
-    return render(request, 'home/dashboard.html')
+    dept_count = Department.objects.count()
+    team_count = Team.objects.count()
+    engineer_count = TeamMember.objects.count()
+    departments = Department.objects.prefetch_related('teams').order_by('name')[:4]
+    recent_changes = AuditTrail.objects.select_related(
+        'team', 'team__department', 'edited_by'
+    ).order_by('-timestamp')[:5]
+    return render(request, 'home/dashboard.html', {
+        'dept_count': dept_count,
+        'team_count': team_count,
+        'engineer_count': engineer_count,
+        'departments': departments,
+        'recent_changes': recent_changes,
+    })
 
 
 @login_required
@@ -53,3 +72,10 @@ def profile_view(request):
         'password_form': PasswordChangeForm(user),
     }
     return render(request, 'home/profile.html', context)
+
+
+@require_POST
+@login_required
+def mark_notifications_read(request):
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'ok'})

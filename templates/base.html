@@ -163,11 +163,54 @@
         </div>
       </div>
       <div class="flex items-center gap-4">
-        <button
-          class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors"
-        >
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
+        <!-- Notification Bell -->
+        <div class="relative" id="notif-wrapper">
+          <button
+            id="notif-btn"
+            onclick="toggleNotifDropdown()"
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-400 hover:text-purple-500 transition-colors relative"
+          >
+            <span class="material-symbols-outlined">notifications</span>
+            {% if unread_notification_count > 0 %}
+            <span class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-0.5 leading-none">
+              {{ unread_notification_count }}
+            </span>
+            {% endif %}
+          </button>
+          <!-- Dropdown -->
+          <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+              <span class="text-sm font-bold text-slate-900 dark:text-white">Notifications</span>
+              {% if unread_notification_count > 0 %}
+              <button onclick="markAllRead()" class="text-xs text-primary font-semibold hover:underline">Mark all read</button>
+              {% endif %}
+            </div>
+            <ul class="max-h-72 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+              {% if recent_notifications %}
+                {% for n in recent_notifications %}
+                <li class="{% if not n.is_read %}bg-primary/5{% endif %}">
+                  {% if n.link %}
+                  <a href="{{ n.link }}" class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  {% else %}
+                  <span class="flex items-start gap-3 px-4 py-3">
+                  {% endif %}
+                    <span class="material-symbols-outlined text-primary mt-0.5 text-base shrink-0">notifications</span>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm text-slate-700 dark:text-slate-300 leading-snug">{{ n.message }}</p>
+                      <p class="text-xs text-slate-400 mt-1">{{ n.created_at|timesince }} ago</p>
+                    </div>
+                    {% if not n.is_read %}
+                    <span class="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5"></span>
+                    {% endif %}
+                  {% if n.link %}</a>{% else %}</span>{% endif %}
+                </li>
+                {% endfor %}
+              {% else %}
+              <li class="px-4 py-6 text-center text-sm text-slate-400">No notifications yet</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
         <div class="h-8 w-[1px] bg-gray-200 dark:bg-gray-800"></div>
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block">
@@ -200,6 +243,22 @@
           
         </div>
     </main>
-    
+    <script>
+      function toggleNotifDropdown() {
+        document.getElementById('notif-dropdown').classList.toggle('hidden');
+      }
+      document.addEventListener('click', function(e) {
+        const wrapper = document.getElementById('notif-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+          document.getElementById('notif-dropdown').classList.add('hidden');
+        }
+      });
+      function markAllRead() {
+        fetch('{% url "notifications_mark_read" %}', {
+          method: 'POST',
+          headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        }).then(() => location.reload());
+      }
+    </script>
   </body>
 </html>

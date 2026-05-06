@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -56,14 +57,26 @@ def send_meeting_notification(meeting, recipients, action, recipient_name=None):
     return len(emails)
 
 
+def _create_in_app_notification(user, message, meeting):
+    """Create an in-app Notification record for the given user."""
+    from scheduling.models import Notification
+    try:
+        link = reverse('scheduling:meeting_detail', args=[meeting.pk])
+    except Exception:
+        link = None
+    Notification.objects.create(user=user, message=message, link=link)
+
+
 def notify_meeting_created(meeting):
     """Notify organizer and attendees that a meeting was created."""
     organizer_name = meeting.organiser.get_full_name() or meeting.organiser.username
     send_meeting_notification(meeting, [meeting.organiser.email], "created", recipient_name=organizer_name)
+    _create_in_app_notification(meeting.organiser, f'Meeting created: "{meeting.title}"', meeting)
 
     for attendee in meeting.attendees.select_related("user").all():
         attendee_name = attendee.user.get_full_name() or attendee.user.username
         send_meeting_notification(meeting, [attendee.user.email], "scheduled", recipient_name=attendee_name)
+        _create_in_app_notification(attendee.user, f'You have been invited to: "{meeting.title}"', meeting)
 
 
 def notify_meeting_updated(meeting, added_users=None, removed_users=None):
@@ -86,8 +99,15 @@ def notify_meeting_updated(meeting, added_users=None, removed_users=None):
         if user.email:
             recipient_map[user.email] = user.get_full_name() or user.username
 
+    all_users = set()
     for email, recipient_name in recipient_map.items():
         send_meeting_notification(meeting, [email], "updated", recipient_name=recipient_name)
+
+    for attendee in meeting.attendees.select_related("user").all():
+        _create_in_app_notification(attendee.user, f'Meeting updated: "{meeting.title}"', meeting)
+        all_users.add(attendee.user.pk)
+    if meeting.organiser.pk not in all_users:
+        _create_in_app_notification(meeting.organiser, f'Meeting updated: "{meeting.title}"', meeting)
 
 
 def notify_meeting_cancelled(meeting):
@@ -95,8 +115,10 @@ def notify_meeting_cancelled(meeting):
     if meeting.organiser.email:
         organizer_name = meeting.organiser.get_full_name() or meeting.organiser.username
         send_meeting_notification(meeting, [meeting.organiser.email], "cancelled", recipient_name=organizer_name)
+    _create_in_app_notification(meeting.organiser, f'Meeting cancelled: "{meeting.title}"', meeting)
 
     for attendee in meeting.attendees.select_related("user").all():
         if attendee.user.email:
             attendee_name = attendee.user.get_full_name() or attendee.user.username
             send_meeting_notification(meeting, [attendee.user.email], "cancelled", recipient_name=attendee_name)
+        _create_in_app_notification(attendee.user, f'Meeting cancelled: "{meeting.title}"', meeting)
