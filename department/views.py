@@ -1,6 +1,9 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect, render
+
+from department.forms import DepartmentForm
 from department.models import Department
 from teams.models import Team, TeamDependency, TeamMember
 
@@ -30,6 +33,21 @@ def department_overview(request):
         "departments": departments
     }
     return render(request, "department/overview.html", context=context)
+
+
+@login_required
+@user_passes_test(lambda user: user.is_staff)
+def department_create(request):
+    if request.method == "POST":
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            department = form.save()
+            messages.success(request, f"{department.name} department was created.")
+            return redirect("depertment_detail", id=department.id)
+    else:
+        form = DepartmentForm()
+
+    return render(request, "department/department_form.html", {"form": form})
 
 
 @login_required
