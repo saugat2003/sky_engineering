@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count
 from department.models import Department
 from teams.models import Team, TeamDependency, TeamMember
 
 # Create your views here.
+@login_required
 def department_overview(request):
     
     total_department = Department.objects.all().count()
@@ -30,6 +32,7 @@ def department_overview(request):
     return render(request, "department/overview.html", context=context)
 
 
+@login_required
 def department_detail(request, id):
     department = get_object_or_404(Department.objects.prefetch_related(
         'teams',
@@ -44,6 +47,7 @@ def department_detail(request, id):
     return render(request, "department/department_detail.html", context=context )
 
 
+@login_required
 def org_chart(request):
     departments = Department.objects.annotate(
         total_teams=Count("teams", distinct=True),
