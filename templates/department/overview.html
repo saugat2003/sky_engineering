@@ -1,135 +1,177 @@
 {% extends "base.html" %}
 {% block content %}
+<nav class="mb-5 flex items-center gap-2 text-sm text-slate-500">
+    <a class="hover:text-primary" href="{% url 'dashboard' %}">Home</a>
+    <span class="material-symbols-outlined text-sm">chevron_right</span>
+    <span class="font-semibold text-slate-900 dark:text-slate-200">Departments</span>
+</nav>
 
-    <!-- Breadcrumbs -->
-    <nav class="flex items-center gap-2 text-sm text-slate-500 my-3">
-        <a class="hover:text-primary" href="{% url "dashboard" %}">Home</a>
-        <span class="material-symbols-outlined text-sm">chevron_right</span>
-        <span class="text-slate-900 dark:text-slate-200 font-medium">Departments</span>
-    </nav>
-    <!-- Page Header -->
-    <div class="mb-8 flex justify-between items-end">
-        <div>
-            <h2 class="text-3xl text-slate-700 font-black tracking-tight mb-1">Departments</h2>
-            <p class="text-slate-500">Overview of all active engineering divisions and their scale.</p>
+<header class="mb-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="border-b border-slate-100 bg-white px-6 py-7 dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+                <h2 class="text-3xl font-black tracking-tight text-slate-950 dark:text-white">Departments</h2>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Track engineering divisions, ownership, team coverage, and staffing scale across the organization.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{% url 'org_chart' %}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                    <span class="material-symbols-outlined text-sm">account_tree</span>
+                    Org Chart
+                </a>
+                {% if request.user.is_staff %}
+                <a href="{% url 'department_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-primary/90">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Create Department
+                </a>
+                {% endif %}
+            </div>
         </div>
+    </div>
+    <section class="grid grid-cols-1 divide-y divide-slate-100 dark:divide-slate-800 md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span class="material-symbols-outlined">corporate_fare</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ total_department }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Departments</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-cyan-50 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-300">
+                <span class="material-symbols-outlined">groups</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ total_active_teams }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Active Teams</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 p-5">
+            <div class="flex size-11 items-center justify-center rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                <span class="material-symbols-outlined">engineering</span>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-slate-950 dark:text-white">{{ total_engineers }}</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Engineers</p>
+            </div>
+        </div>
+    </section>
+</header>
+
+<section class="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div class="relative w-full lg:max-w-md">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+            <input id="department-search" class="w-full rounded-lg border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-950" placeholder="Search departments, heads, or focus..." type="search">
+        </div>
+        <p id="visible-count" class="text-sm font-semibold text-slate-500">Showing {{ departments|length }} department{{ departments|length|pluralize }}.</p>
+    </div>
+</section>
+
+<div id="no-results" class="hidden rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <span class="material-symbols-outlined mb-2 text-4xl text-slate-300">search_off</span>
+    <p class="font-black text-slate-900 dark:text-white">No departments match</p>
+    <p class="text-sm">Try a different department, head, or focus term.</p>
+</div>
+
+<section id="department-results" class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+    {% for dep in departments %}
+    <article class="department-card group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900" data-search="{{ dep.name }} {{ dep.description }} {{ dep.specialisation }} {% if dep.head %}{{ dep.head.get_full_name }} {{ dep.head.username }}{% endif %}">
+        <div class="h-1.5 {% if dep.is_active %}bg-emerald-500{% else %}bg-slate-400{% endif %}"></div>
+        <div class="p-5">
+            <div class="mb-5 flex items-start justify-between gap-4">
+                <div class="flex min-w-0 items-start gap-3">
+                    <div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-base font-black uppercase text-primary">
+                        {{ dep.name|make_list|first }}{% if dep.name|length > 1 %}{{ dep.name|make_list|slice:"1:2"|first }}{% endif %}
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="truncate text-lg font-black text-slate-950 dark:text-white">
+                            <a class="hover:text-primary" href="{% url 'depertment_detail' dep.id %}">{{ dep.name }}</a>
+                        </h3>
+                        <p class="mt-1 line-clamp-2 min-h-10 text-sm leading-5 text-slate-500">{{ dep.description|default:"No description recorded for this department." }}</p>
+                    </div>
+                </div>
+                <span class="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-black uppercase {% if dep.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-slate-100 text-slate-500{% endif %}">
+                    {% if dep.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div class="rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950 sm:col-span-1">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Dept Head</p>
+                    <div class="mt-2 flex min-w-0 items-center gap-2">
+                        {% if dep.head %}
+                        <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-black uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                            {{ dep.head.first_name|make_list|first|default:dep.head.username|make_list|first }}{{ dep.head.last_name|make_list|first|default:"" }}
+                        </div>
+                        <p class="truncate text-sm font-bold text-slate-900 dark:text-white">{{ dep.head.get_full_name|default:dep.head.username }}</p>
+                        {% else %}
+                        <div class="flex items-center gap-1.5 text-slate-400">
+                            <span class="material-symbols-outlined text-[17px]">person_off</span>
+                            <span class="text-sm font-semibold italic">Unassigned</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="rounded-lg border border-slate-100 bg-slate-50 p-3 text-center dark:border-slate-800 dark:bg-slate-950">
+                    <p class="text-2xl font-black text-slate-950 dark:text-white">{{ dep.total_teams }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Teams</p>
+                </div>
+                <div class="rounded-lg border border-slate-100 bg-slate-50 p-3 text-center dark:border-slate-800 dark:bg-slate-950">
+                    <p class="text-2xl font-black text-slate-950 dark:text-white">{{ dep.total_members }}</p>
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Engineers</p>
+                </div>
+            </div>
+
+            {% if dep.specialisation %}
+            <div class="mt-4 rounded-lg border border-cyan-100 bg-cyan-50 px-3 py-2 text-sm leading-5 text-cyan-800 dark:border-cyan-900 dark:bg-cyan-950 dark:text-cyan-200">
+                <span class="font-black">Focus:</span> {{ dep.specialisation|truncatechars:150 }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-sm dark:border-slate-800">
+            <span class="truncate text-xs font-bold uppercase tracking-wider text-slate-400">Updated {{ dep.updated_at|date:"M j, Y" }}</span>
+            <a class="inline-flex items-center gap-1 font-black text-primary" href="{% url 'depertment_detail' dep.id %}">
+                View Teams
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+        </div>
+    </article>
+    {% empty %}
+    <div class="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900 xl:col-span-2">
+        <span class="material-symbols-outlined mb-2 text-4xl text-slate-300">domain_disabled</span>
+        <p class="font-black text-slate-900 dark:text-white">No departments found</p>
+        <p class="mb-5 text-sm">Create the first department to start organizing teams.</p>
         {% if request.user.is_staff %}
-        <a
-            href="{% url 'department_create' %}"
-            class="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
-            <span class="material-symbols-outlined text-sm">add</span>
+        <a href="{% url 'department_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-black text-white">
+            <span class="material-symbols-outlined text-sm">add_circle</span>
             Create Department
         </a>
         {% endif %}
     </div>
-    <!-- Stats Bar -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div
-            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined text-3xl">domain</span>
-            </div>
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Departments</p>
-                <p class="text-3xl font-black">{{total_department}}</p>
-            </div>
-        </div>
-        <div
-            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined text-3xl">group_work</span>
-            </div>
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Active Teams</p>
-                <p class="text-3xl font-black">{{total_active_teams}}</p>
-            </div>
-        </div>
-        <div
-            class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined text-3xl">engineering</span>
-            </div>
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Engineers</p>
-                <p class="text-3xl font-black">{{total_engineers}}</p>
-            </div>
-        </div>
-    </div>
-    <!-- Department Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <!-- Card 1: xTV_Web -->
-        {% if departments %}
-            {% for dep in departments %}
-                <div
-                    class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-14 h-14 rounded-xl bg-primary text-white flex items-center justify-center font-black text-xl uppercase shadow-md shadow-primary/20">
-                                    {{ dep.name|make_list|first }}{% if dep.name|length > 1 %}{{ dep.name|make_list|slice:"1:2"|first }}{% endif %}
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-bold">{{dep.name}}</h3>
-                                    <p class="text-sm text-slate-500 line-clamp-1">{{dep.description|default:"No description available."}}</p>
-                                </div>
-                            </div>
-                            <span
-                                class="{% if dep.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %} text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">
-                                {% if dep.is_active %}Active{% else %}Inactive{% endif %}
-                            </span>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-slate-500 font-medium">Dept Head</span>
-                                <div class="flex items-center gap-2">
-                                    {% if dep.head %}
-                                        <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 dark:border-slate-700 text-slate-600 font-bold text-xs flex items-center justify-center overflow-hidden">
-                                            {% if dep.head.profile_picture %}
-                                                <img alt="{{ dep.head.get_full_name }}" class="w-full h-full object-cover" src="{{ dep.head.profile_picture.url }}" />
-                                            {% else %}
-                                                {{ dep.head.first_name|make_list|first|default:dep.head.username|make_list|first }}{{ dep.head.last_name|make_list|first|default:"" }}
-                                            {% endif %}
-                                        </div>
-                                        <span class="font-semibold text-slate-700 dark:text-slate-300">{{dep.head.get_full_name|default:dep.head.username}}</span>
-                                    {% else %}
-                                        <div class="flex items-center gap-1.5 text-slate-400">
-                                            <span class="material-symbols-outlined text-[16px]">person_off</span>
-                                            <span class="font-medium italic">Unassigned</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 py-4 border-y border-primary/5">
-                                <div class="text-center">
-                                    <p class="text-2xl font-black text-primary">{{dep.total_teams}}</p>
-                                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Teams
-                                    </p>
-                                </div>
-                                <div class="text-center border-l border-primary/5">
-                                    <p class="text-2xl font-black text-primary">{{dep.total_members}}</p>
-                                    <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                                        Engineers</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 border-t border-primary/5">
-                        <a  
-                            href="{% url "depertment_detail" dep.id %}"
-                            class="w-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2">
-                            View Teams
-                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div
-                class="bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm hover:shadow-md transition-all group overflow-hidden">
-                <p>Department Not found</p>
-            </div>
-        {% endif %}
-        
-    </div>
+    {% endfor %}
+</section>
+
+<script>
+const searchInput = document.getElementById('department-search');
+const cards = Array.from(document.querySelectorAll('.department-card'));
+const noResults = document.getElementById('no-results');
+const visibleCount = document.getElementById('visible-count');
+
+function filterDepartments() {
+    const term = searchInput.value.toLowerCase().trim();
+    let visible = 0;
+    cards.forEach((card) => {
+        const match = card.dataset.search.toLowerCase().includes(term);
+        card.classList.toggle('hidden', !match);
+        if (match) visible += 1;
+    });
+    noResults.classList.toggle('hidden', visible !== 0 || cards.length === 0);
+    visibleCount.textContent = `Showing ${visible} department${visible === 1 ? '' : 's'}.`;
+}
+
+if (searchInput) {
+    searchInput.addEventListener('input', filterDepartments);
+}
+</script>
 {% endblock content %}
