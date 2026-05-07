@@ -13,11 +13,14 @@
             <h2 class="text-3xl text-slate-700 font-black tracking-tight mb-1">Departments</h2>
             <p class="text-slate-500">Overview of all active engineering divisions and their scale.</p>
         </div>
-        <button
+        {% if request.user.is_staff %}
+        <a
+            href="{% url 'department_create' %}"
             class="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
             <span class="material-symbols-outlined text-sm">add</span>
             Create Department
-        </button>
+        </a>
+        {% endif %}
     </div>
     <!-- Stats Bar -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
