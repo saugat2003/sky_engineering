@@ -1,3 +1,4 @@
+# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
 from django.urls import path
 
 from . import views

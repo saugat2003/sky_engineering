@@ -1,9 +1,10 @@
+# Authorship: Teams module tests led by Saugat Bhattarai (0xsaugat).
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
 from department.models import Department
-from teams.models import AuditTrail, ContactChannel, Skill, Team, TeamEmail, TeamMember, TeamType
+from teams.models import AuditTrail, ContactChannel, Skill, Team, TeamDependency, TeamEmail, TeamMember, TeamType
 
 
 class TeamViewsTest(TestCase):
@@ -23,6 +24,7 @@ class TeamViewsTest(TestCase):
         )
         ContactChannel.objects.create(team=self.team, channel_type='email', value='code.warriors@example.com', is_primary=True)
         Skill.objects.create(name='Django', description='Backend web framework')
+        Skill.objects.create(name='Incident Management', description='Incident response and comms')
         self.team.skills.add(Skill.objects.get(name='Django'))
         for index in range(5):
             member = User.objects.create_user(username=f'engineer{index}', password='pass')
@@ -98,3 +100,57 @@ class TeamViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/scheduling/create/', response['Location'])
         self.assertIn(f'team={self.team.pk}', response['Location'])
+
+    def test_dependency_page_adds_and_removes_upstream_dependency(self):
+        target = Team.objects.create(
+            name='Playback API',
+            department=self.department,
+            team_type=self.team_type,
+            manager=self.user,
+            mission='Provides playback APIs.',
+        )
+
+        add_response = self.client.post(
+            reverse('team_dependencies', args=[self.team.pk]),
+            {
+                'action': 'add',
+                'to_team': target.pk,
+                'dependency_type': 'API',
+                'description': 'Consumes playback API availability data.',
+            },
+        )
+
+        self.assertRedirects(add_response, reverse('team_dependencies', args=[self.team.pk]))
+        dependency = TeamDependency.objects.get(from_team=self.team, to_team=target)
+        self.assertEqual(dependency.dependency_type, 'API')
+        self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Dependency added').exists())
+
+        remove_response = self.client.post(
+            reverse('team_dependencies', args=[self.team.pk]),
+            {'action': 'remove', 'dependency_id': dependency.pk},
+        )
+
+        self.assertRedirects(remove_response, reverse('team_dependencies', args=[self.team.pk]))
+        self.assertFalse(TeamDependency.objects.filter(pk=dependency.pk).exists())
+        self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Dependency removed').exists())
+
+    def test_skill_page_adds_and_removes_team_skill(self):
+        skill = Skill.objects.get(name='Incident Management')
+
+        add_response = self.client.post(
+            reverse('team_skills', args=[self.team.pk]),
+            {'action': 'add', 'skill': skill.pk},
+        )
+
+        self.assertRedirects(add_response, reverse('team_skills', args=[self.team.pk]))
+        self.assertTrue(self.team.skills.filter(pk=skill.pk).exists())
+        self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Skill added').exists())
+
+        remove_response = self.client.post(
+            reverse('team_skills', args=[self.team.pk]),
+            {'action': 'remove', 'skill_id': skill.pk},
+        )
+
+        self.assertRedirects(remove_response, reverse('team_skills', args=[self.team.pk]))
+        self.assertFalse(self.team.skills.filter(pk=skill.pk).exists())
+        self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Skill removed').exists())

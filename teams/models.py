@@ -1,3 +1,6 @@
+# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
+# Model foundations and migrations include earlier group contributions; see Git
+# history for exact author attribution.
 from django.db import models
 from django.contrib.auth.models import User
 from department.models import Department
