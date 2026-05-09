@@ -1,6 +1,5 @@
-
-
-"""Authentication views for registration, login, and logout flows."""
+"""Authentication views for registration, login, and logout flows.
+Author: Rupesh Dahal"""
 
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +10,14 @@ from accounts.forms import RegisterForm
 
 # Create your views here.
 def register_view(request):
-    """Render and process the user registration form."""
+    """Render and process the user registration form.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse with the registration page or a redirect on success.
+    """
 
     if request.method == "POST":
         form = RegisterForm(request.POST)
@@ -26,7 +32,14 @@ def register_view(request):
 
 
 def login_view(request):
-    """Authenticate users by username or email and start a session."""
+    """Authenticate users by username or email and start a session.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse with the login page or a redirect on success.
+    """
 
     if request.user.is_authenticated:
         return redirect("dashboard")
@@ -65,7 +78,14 @@ def login_view(request):
 
 
 def logout_view(request):
-    """Log out the current user and redirect to the login page."""
+    """Log out the current user and redirect to the login page.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse redirecting to the login page.
+    """
 
     logout(request)
     return redirect("login")

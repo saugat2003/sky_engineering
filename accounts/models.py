@@ -1,4 +1,5 @@
-"""Data models for account-related user profile information."""
+"""Data models for account-related user profile information.
+Author: Rupesh Dahal"""
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
