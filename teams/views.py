@@ -1,13 +1,17 @@
+# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
+# Some model foundations were co-authored earlier in the group repository history;
+# see Git history for exact author attribution.
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from department.models import Department
-from teams.forms import TeamEmailForm, TeamForm
+from teams.forms import TeamDependencyForm, TeamEmailForm, TeamForm, TeamSkillForm
 from teams.models import AuditTrail, Skill, Team, TeamDependency, TeamEmail, TeamType
 
 
@@ -195,10 +199,46 @@ def team_email(request, pk):
 @login_required
 def team_dependencies(request, pk):
     team = get_object_or_404(_team_queryset(), pk=pk)
+    form = TeamDependencyForm(source_team=team)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'add':
+            form = TeamDependencyForm(request.POST, source_team=team)
+            if form.is_valid():
+                dependency = form.save(commit=False)
+                dependency.from_team = team
+                try:
+                    dependency.save()
+                except IntegrityError:
+                    form.add_error('to_team', 'This dependency already exists.')
+                else:
+                    AuditTrail.objects.create(
+                        team=team,
+                        edited_by=request.user,
+                        edit_description=f'Dependency added: {team.name} -> {dependency.to_team.name}.',
+                    )
+                    messages.success(request, 'Dependency was added to the team record.')
+                    return redirect('team_dependencies', pk=team.pk)
+        elif action == 'remove':
+            dependency = get_object_or_404(TeamDependency, pk=request.POST.get('dependency_id'), from_team=team)
+            target_name = dependency.to_team.name
+            dependency.delete()
+            AuditTrail.objects.create(
+                team=team,
+                edited_by=request.user,
+                edit_description=f'Dependency removed: {team.name} -> {target_name}.',
+            )
+            messages.success(request, 'Dependency was removed from the team record.')
+            return redirect('team_dependencies', pk=team.pk)
+        else:
+            messages.error(request, 'Unknown dependency action.')
+
     context = {
         'team': team,
         'upstream_dependencies': team.downstream_dependencies.select_related('to_team', 'to_team__department'),
         'downstream_dependencies': team.upstream_dependencies.select_related('from_team', 'from_team__department'),
+        'form': form,
     }
     return render(request, 'teams/team_dependencies.html', context)
 
@@ -206,7 +246,36 @@ def team_dependencies(request, pk):
 @login_required
 def team_skills(request, pk):
     team = get_object_or_404(_team_queryset(), pk=pk)
-    return render(request, 'teams/team_skills.html', {'team': team, 'all_skills': Skill.objects.all()})
+    form = TeamSkillForm(team=team)
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'add':
+            form = TeamSkillForm(request.POST, team=team)
+            if form.is_valid():
+                skill = form.cleaned_data['skill']
+                team.skills.add(skill)
+                AuditTrail.objects.create(
+                    team=team,
+                    edited_by=request.user,
+                    edit_description=f'Skill added: {skill.name}.',
+                )
+                messages.success(request, 'Skill was added to the team record.')
+                return redirect('team_skills', pk=team.pk)
+        elif action == 'remove':
+            skill = get_object_or_404(Skill, pk=request.POST.get('skill_id'), teams=team)
+            team.skills.remove(skill)
+            AuditTrail.objects.create(
+                team=team,
+                edited_by=request.user,
+                edit_description=f'Skill removed: {skill.name}.',
+            )
+            messages.success(request, 'Skill was removed from the team record.')
+            return redirect('team_skills', pk=team.pk)
+        else:
+            messages.error(request, 'Unknown skill action.')
+
+    return render(request, 'teams/team_skills.html', {'team': team, 'form': form})
 
 
 @login_required

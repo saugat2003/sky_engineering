@@ -43,7 +43,8 @@ class Message(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"Message({self.id}) {self.sender} -> {self.recipient}: {self.subject}"
+        subject = self.subject or "(no subject)"
+        return f"{subject} | {self.sender} -> {self.recipient}"
 
     @property
     def display_timestamp(self):

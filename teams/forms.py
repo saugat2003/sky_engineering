@@ -1,6 +1,9 @@
+# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
+# Some model foundations were co-authored earlier in the group repository history;
+# see Git history for exact author attribution.
 from django import forms
 
-from .models import Team, TeamEmail
+from .models import Skill, Team, TeamDependency, TeamEmail
 
 
 CONTROL_CLASS = (
@@ -121,3 +124,52 @@ class TeamEmailForm(forms.ModelForm):
                 'placeholder': 'Write the team message...',
             }),
         }
+
+
+class TeamDependencyForm(forms.ModelForm):
+    class Meta:
+        model = TeamDependency
+        fields = ['to_team', 'dependency_type', 'description']
+        widgets = {
+            'to_team': forms.Select(attrs={'class': CONTROL_CLASS}),
+            'dependency_type': forms.TextInput(attrs={
+                'class': CONTROL_CLASS,
+                'placeholder': 'e.g. API, data feed, deployment dependency',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': TEXTAREA_CLASS,
+                'rows': 3,
+                'placeholder': 'Short note explaining the dependency.',
+            }),
+        }
+
+    def __init__(self, *args, source_team=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.source_team = source_team
+        queryset = Team.objects.all()
+        if source_team:
+            queryset = queryset.exclude(pk=source_team.pk)
+        self.fields['to_team'].queryset = queryset.order_by('name')
+
+    def clean_to_team(self):
+        to_team = self.cleaned_data['to_team']
+        if self.source_team and to_team.pk == self.source_team.pk:
+            raise forms.ValidationError('A team cannot depend on itself.')
+        if self.source_team and TeamDependency.objects.filter(from_team=self.source_team, to_team=to_team).exists():
+            raise forms.ValidationError('This dependency already exists.')
+        return to_team
+
+
+class TeamSkillForm(forms.Form):
+    skill = forms.ModelChoiceField(
+        queryset=Skill.objects.none(),
+        widget=forms.Select(attrs={'class': CONTROL_CLASS}),
+        label='Skill',
+    )
+
+    def __init__(self, *args, team=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        queryset = Skill.objects.order_by('name')
+        if team:
+            queryset = queryset.exclude(pk__in=team.skills.values_list('pk', flat=True))
+        self.fields['skill'].queryset = queryset
