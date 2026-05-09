@@ -1,5 +1,5 @@
 """Forms for account registration.
-Author: Rupesh Dahal
+Author: Saugat Bhattarai and Rupesh Dahal
 """
 
 from django import forms

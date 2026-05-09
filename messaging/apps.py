@@ -1,3 +1,7 @@
+"""App configuration for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from django.apps import AppConfig
 
 

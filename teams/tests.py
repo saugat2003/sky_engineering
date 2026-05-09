@@ -1,4 +1,4 @@
-# Authorship: Teams module authored by 0xsaugat.
+# Author: 0xsaugat (Saugat Bhattarai)
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse

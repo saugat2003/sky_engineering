@@ -1,3 +1,7 @@
+"""Forms for composing and replying to messages.
+Author: Kaushik Singh Bhandari
+"""
+
 from django import forms
 from django.contrib.auth.models import User
 

@@ -1,4 +1,6 @@
-"""Utility helpers for meeting notifications."""
+"""Utility helpers for meeting notifications.
+Author: Bijay Bikram Dahal
+"""
 
 from django.conf import settings
 from django.core.mail import send_mail

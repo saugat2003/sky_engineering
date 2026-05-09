@@ -1,3 +1,7 @@
+"""URL routes for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from django.urls import path
 
 from . import views

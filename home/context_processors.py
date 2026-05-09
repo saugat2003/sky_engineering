@@ -1,3 +1,7 @@
+"""Context processors for dashboard and profile data.
+Author: Saugat Bhattarai and Rupesh Dahal
+"""
+
 from scheduling.models import Notification
 from accounts.models import UserProfile
 

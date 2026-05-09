@@ -1,4 +1,4 @@
-# Authorship: Teams module authored by 0xsaugat.
+# Author: 0xsaugat (Saugat Bhattarai)
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail

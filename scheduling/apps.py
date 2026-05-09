@@ -1,3 +1,7 @@
+"""App configuration for the scheduling app.
+Author: Bijay Bikram Dahal
+"""
+
 from django.apps import AppConfig
 
 

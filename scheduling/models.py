@@ -1,4 +1,6 @@
-"""Models for meeting scheduling and calendar management."""
+"""Models for meeting scheduling and calendar management.
+Author: Bijay Bikram Dahal
+"""
 
 from django.db import models
 from django.contrib.auth.models import User

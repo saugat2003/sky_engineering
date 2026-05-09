@@ -1,4 +1,6 @@
-"""App configuration for the accounts app."""
+"""App configuration for the accounts app.
+Author: Saugat Bhattarai and Rupesh Dahal
+"""
 
 from django.apps import AppConfig
 

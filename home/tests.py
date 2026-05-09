@@ -1,3 +1,7 @@
+"""Tests for the home app.
+Author: Saugat Bhattarai and Rupesh Dahal
+"""
+
 from datetime import timedelta
 
 from django.contrib.auth.models import User

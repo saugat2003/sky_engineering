@@ -1,3 +1,7 @@
+"""Admin registrations for the scheduling app.
+Author: Bijay Bikram Dahal
+"""
+
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse

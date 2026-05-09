@@ -1,4 +1,6 @@
-"""Views for meeting scheduling and calendar management."""
+"""Views for meeting scheduling and calendar management.
+Author: Bijay Bikram Dahal
+"""
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required

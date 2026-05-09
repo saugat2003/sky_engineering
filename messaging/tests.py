@@ -1,3 +1,7 @@
+"""Tests for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 

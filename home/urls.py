@@ -1,3 +1,7 @@
+"""URL routes for the home app.
+Author: Saugat Bhattarai and Rupesh Dahal
+"""
+
 from django.urls import path
 from . import views
 

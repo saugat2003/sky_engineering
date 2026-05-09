@@ -1,3 +1,7 @@
+"""Context processors for messaging-related template data.
+Author: Kaushik Singh Bhandari
+"""
+
 from .models import Message
 
 

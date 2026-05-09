@@ -1,5 +1,5 @@
 """Authentication views for registration, login, and logout flows.
-Author: Rupesh Dahal"""
+Author: Saugat Bhattarai and Rupesh Dahal"""
 
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout

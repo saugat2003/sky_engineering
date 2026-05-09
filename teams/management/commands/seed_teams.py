@@ -1,4 +1,4 @@
-# Authorship: Teams module authored by 0xsaugat.
+# Author: 0xsaugat (Saugat Bhattarai)
 from django.core.management.base import BaseCommand
 
 from seed import DEFAULT_PASSWORD, seed_database

@@ -1,5 +1,5 @@
 """URL routes for account authentication views.
-Author: Rupesh Dahal"""
+Author: Saugat Bhattarai and Rupesh Dahal"""
 
 from django.urls import path
 from . import views

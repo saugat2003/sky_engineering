@@ -1,3 +1,7 @@
+"""Views for the home dashboard and profile pages.
+Author: Saugat Bhattarai and Rupesh Dahal
+"""
+
 from datetime import timedelta
 
 from django.db.models import Count, Q

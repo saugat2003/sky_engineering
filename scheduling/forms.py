@@ -1,4 +1,6 @@
-"""Forms for meeting scheduling."""
+"""Forms for meeting scheduling.
+Author: Bijay Bikram Dahal
+"""
 
 from django import forms
 from django.contrib.auth.models import User

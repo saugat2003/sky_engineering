@@ -1,3 +1,7 @@
+"""Admin registrations for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from django.contrib import admin
 
 from messaging.models import Message

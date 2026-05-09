@@ -1,3 +1,7 @@
+"""Data models for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone

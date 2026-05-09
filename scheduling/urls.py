@@ -1,4 +1,6 @@
-"""URL configuration for scheduling app."""
+"""URL configuration for scheduling app.
+Author: Bijay Bikram Dahal
+"""
 
 from django.urls import path
 from . import views

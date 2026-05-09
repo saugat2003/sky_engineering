@@ -1,3 +1,7 @@
+"""Views for the messaging app.
+Author: Kaushik Singh Bhandari
+"""
+
 from __future__ import annotations
 
 from datetime import datetime

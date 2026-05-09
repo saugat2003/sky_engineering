@@ -1,5 +1,5 @@
 """Tests for the accounts app.
-Author: Rupesh Dahal"""
+Author: Saugat Bhattarai and Rupesh Dahal"""
 
 from django.test import TestCase
 
