@@ -1,4 +1,6 @@
-"""Tests for department app views and permissions."""
+"""Tests for department app views and permissions.
+
+Author: Rupesh Dahal"""
 
 from django.contrib.auth.models import User
 from django.test import TestCase

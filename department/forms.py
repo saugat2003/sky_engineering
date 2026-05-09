@@ -1,4 +1,5 @@
-"""Forms for creating and editing departments."""
+"""Forms for creating and editing departments.
+Author: Rupesh Dahal"""
 
 from django import forms
 

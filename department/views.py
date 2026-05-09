@@ -12,7 +12,7 @@ from department.forms import DepartmentForm
 from department.models import Department
 from teams.models import Team, TeamDependency, TeamMember
 
-# Create your views here.
+
 @login_required
 def department_overview(request):
     """Render the department overview dashboard.
