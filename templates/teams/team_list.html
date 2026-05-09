@@ -15,10 +15,12 @@
                 <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400">Browse ownership, delivery scope, dependencies, and operating channels across the engineering organization.</p>
             </div>
             <div class="flex flex-wrap gap-2">
+                {% if request.user.is_superuser %}
                 <a href="{% url 'team_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-black text-white shadow-sm transition hover:bg-primary/90">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     Add Team
                 </a>
+                {% endif %}
                 <a href="{% url 'team_search' %}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm transition hover:border-primary hover:text-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
                     <span class="material-symbols-outlined text-sm">manage_search</span>
                     Advanced Search
@@ -175,10 +177,12 @@
         <span class="material-symbols-outlined mb-2 text-4xl text-slate-300">group_off</span>
         <p class="font-black text-slate-900 dark:text-white">No teams found</p>
         <p class="mb-5 text-sm">Create the first registry record or clear the active filters.</p>
+        {% if request.user.is_superuser %}
         <a href="{% url 'team_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-black text-white">
             <span class="material-symbols-outlined text-sm">add_circle</span>
             Add Team
         </a>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

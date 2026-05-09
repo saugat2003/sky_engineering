@@ -1,6 +1,4 @@
-# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
-# Some model foundations were co-authored earlier in the group repository history;
-# see Git history for exact author attribution.
+# Authorship: Teams module authored by 0xsaugat.
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -16,6 +14,7 @@ from teams.models import AuditTrail, Skill, Team, TeamDependency, TeamEmail, Tea
 
 
 def _team_queryset():
+    # Build the optimized base queryset for team views.
     return (
         Team.objects.select_related('department', 'team_type', 'manager')
         .prefetch_related(
@@ -34,6 +33,7 @@ def _team_queryset():
 
 
 def _filtered_teams(request):
+    # Apply search and filter parameters to the team queryset.
     teams = _team_queryset()
     query = request.GET.get('q', '').strip()
     department_id = request.GET.get('department', '').strip()
@@ -64,6 +64,7 @@ def _filtered_teams(request):
 
 
 def _filter_context(request):
+    # Prepare dropdown filter data and selected values.
     managers = (
         Team.objects.filter(manager__isnull=False)
         .select_related('manager')
@@ -86,7 +87,9 @@ def _filter_context(request):
 
 @login_required
 def team_list(request):
+    # Render the main team list with filters and pagination.
     teams = _filtered_teams(request)
+    # Paginate the main listing for dashboard consumption.
     paginator = Paginator(teams, 9)
     page_obj = paginator.get_page(request.GET.get('page'))
 
@@ -103,7 +106,9 @@ def team_list(request):
 
 @login_required
 def team_search(request):
+    # Render the search-focused team list view.
     teams = _filtered_teams(request)
+    # Use a wider page size to fit the search layout.
     paginator = Paginator(teams, 12)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
@@ -117,9 +122,11 @@ def team_search(request):
 
 @login_required
 def team_create(request):
+    # Create a new team and audit the action.
     if request.method == 'POST':
         form = TeamForm(request.POST)
         if form.is_valid():
+            # Persist the team before saving many-to-many fields.
             team = form.save(commit=False)
             team.is_active = team.status == 'active'
             team.save()
@@ -145,6 +152,7 @@ def team_create(request):
 
 @login_required
 def team_detail(request, pk):
+    # Show the detailed team profile with dependencies and audit history.
     team = get_object_or_404(_team_queryset(), pk=pk)
     context = {
         'team': team,
@@ -157,6 +165,7 @@ def team_detail(request, pk):
 
 @login_required
 def team_email(request, pk):
+    # Send or store a team message from the detail page.
     team = get_object_or_404(Team.objects.prefetch_related('contact_channels'), pk=pk)
     initial = {
         'recipient': team.primary_contact or team.primary_slack,
@@ -170,6 +179,7 @@ def team_email(request, pk):
             team_email.sender = request.user
             try:
                 if '@' in team_email.recipient:
+                    # Only attempt SMTP delivery for email-like targets.
                     send_mail(
                         team_email.subject,
                         team_email.message,
@@ -198,6 +208,7 @@ def team_email(request, pk):
 
 @login_required
 def team_dependencies(request, pk):
+    # Add or remove downstream dependencies for a team.
     team = get_object_or_404(_team_queryset(), pk=pk)
     form = TeamDependencyForm(source_team=team)
 
@@ -221,6 +232,7 @@ def team_dependencies(request, pk):
                     messages.success(request, 'Dependency was added to the team record.')
                     return redirect('team_dependencies', pk=team.pk)
         elif action == 'remove':
+            # Remove an existing dependency from the team.
             dependency = get_object_or_404(TeamDependency, pk=request.POST.get('dependency_id'), from_team=team)
             target_name = dependency.to_team.name
             dependency.delete()
@@ -245,6 +257,7 @@ def team_dependencies(request, pk):
 
 @login_required
 def team_skills(request, pk):
+    # Add or remove skills for a team.
     team = get_object_or_404(_team_queryset(), pk=pk)
     form = TeamSkillForm(team=team)
 
@@ -263,6 +276,7 @@ def team_skills(request, pk):
                 messages.success(request, 'Skill was added to the team record.')
                 return redirect('team_skills', pk=team.pk)
         elif action == 'remove':
+            # Remove a previously added skill from the team.
             skill = get_object_or_404(Skill, pk=request.POST.get('skill_id'), teams=team)
             team.skills.remove(skill)
             AuditTrail.objects.create(
@@ -280,6 +294,7 @@ def team_skills(request, pk):
 
 @login_required
 def schedule_team_meeting(request, pk):
+    # Redirect to scheduling with prefilled team context.
     team = get_object_or_404(Team, pk=pk)
     url = f"{reverse('scheduling:schedule_meeting_create')}?team={team.pk}&title={team.name}"
     return redirect(url)
