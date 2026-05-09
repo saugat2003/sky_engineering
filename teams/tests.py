@@ -1,4 +1,4 @@
-# Authorship: Teams module tests led by Saugat Bhattarai (0xsaugat).
+# Authorship: Teams module authored by 0xsaugat.
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -9,6 +9,7 @@ from teams.models import AuditTrail, ContactChannel, Repository, Skill, Team, Te
 
 class TeamViewsTest(TestCase):
     def setUp(self):
+        # Build baseline fixtures for team view tests.
         self.user = User.objects.create_user(username='manager', password='pass', email='manager@example.com')
         self.client.force_login(self.user)
         self.department = Department.objects.create(name='xTV Web', description='Web platform')
@@ -31,6 +32,7 @@ class TeamViewsTest(TestCase):
             TeamMember.objects.create(team=self.team, user=member, role='Software Engineer')
 
     def test_team_pages_render_for_logged_in_user(self):
+        # Ensure core team pages render with authentication.
         urls = [
             reverse('team_list'),
             reverse('team_create'),
@@ -47,12 +49,14 @@ class TeamViewsTest(TestCase):
                 self.assertEqual(response.status_code, 200)
 
     def test_search_finds_team_by_department_and_manager(self):
+        # Search should surface teams by department and manager.
         response = self.client.get(reverse('team_search'), {'q': 'manager'})
 
         self.assertContains(response, 'Code Warriors')
         self.assertContains(response, 'xTV Web')
 
     def test_email_form_stores_team_message(self):
+        # Submitting the team email form should create a TeamEmail.
         response = self.client.post(
             reverse('team_email', args=[self.team.pk]),
             {
@@ -66,6 +70,7 @@ class TeamViewsTest(TestCase):
         self.assertTrue(TeamEmail.objects.filter(team=self.team, subject='Release update').exists())
 
     def test_create_team_form_adds_registry_record(self):
+        # Team create form should persist and audit the new team.
         response = self.client.post(
             reverse('team_create'),
             {
@@ -95,6 +100,7 @@ class TeamViewsTest(TestCase):
         self.assertTrue(AuditTrail.objects.filter(team=team, edit_description__icontains='created').exists())
 
     def test_schedule_button_redirects_with_team_prefill(self):
+        # Schedule button should redirect with the team prefill.
         response = self.client.get(reverse('team_schedule', args=[self.team.pk]))
 
         self.assertEqual(response.status_code, 302)
@@ -102,6 +108,7 @@ class TeamViewsTest(TestCase):
         self.assertIn(f'team={self.team.pk}', response['Location'])
 
     def test_dependency_page_adds_and_removes_upstream_dependency(self):
+        # Dependencies should add and remove as expected.
         target = Team.objects.create(
             name='Playback API',
             department=self.department,
@@ -135,6 +142,7 @@ class TeamViewsTest(TestCase):
         self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Dependency removed').exists())
 
     def test_repository_string_representation_is_readable(self):
+        # Repository __str__ should be human-friendly.
         repository = Repository.objects.create(
             team=self.team,
             name='Playback Web',
@@ -145,6 +153,7 @@ class TeamViewsTest(TestCase):
         self.assertEqual(str(repository), 'Playback Web (Code Warriors)')
 
     def test_skill_page_adds_and_removes_team_skill(self):
+        # Skills should add and remove through the team skill form.
         skill = Skill.objects.get(name='Incident Management')
 
         add_response = self.client.post(

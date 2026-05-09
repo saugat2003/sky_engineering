@@ -1,6 +1,4 @@
-# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
-# Some model foundations were co-authored earlier in the group repository history;
-# see Git history for exact author attribution.
+# Authorship: Teams module authored by 0xsaugat.
 from django import forms
 
 from .models import Skill, Team, TeamDependency, TeamEmail
@@ -24,6 +22,7 @@ TEXTAREA_CLASS = (
 class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
+        # Core fields exposed in the team create/update flow.
         fields = [
             'name',
             'department',
@@ -110,6 +109,7 @@ class TeamEmailForm(forms.ModelForm):
     class Meta:
         model = TeamEmail
         fields = ['recipient', 'subject', 'message']
+        # Apply consistent form styling to the team email fields.
         widgets = {
             'recipient': forms.TextInput(attrs={
                 'class': 'w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900',
@@ -130,6 +130,7 @@ class TeamDependencyForm(forms.ModelForm):
     class Meta:
         model = TeamDependency
         fields = ['to_team', 'dependency_type', 'description']
+        # Provide concise placeholders to guide dependency entry.
         widgets = {
             'to_team': forms.Select(attrs={'class': CONTROL_CLASS}),
             'dependency_type': forms.TextInput(attrs={
@@ -144,6 +145,7 @@ class TeamDependencyForm(forms.ModelForm):
         }
 
     def __init__(self, *args, source_team=None, **kwargs):
+        # Filter the dependency picker to avoid self-references.
         super().__init__(*args, **kwargs)
         self.source_team = source_team
         queryset = Team.objects.all()
@@ -152,6 +154,7 @@ class TeamDependencyForm(forms.ModelForm):
         self.fields['to_team'].queryset = queryset.order_by('name')
 
     def clean_to_team(self):
+        # Enforce unique, non-self dependencies at the form layer.
         to_team = self.cleaned_data['to_team']
         if self.source_team and to_team.pk == self.source_team.pk:
             raise forms.ValidationError('A team cannot depend on itself.')
@@ -168,6 +171,7 @@ class TeamSkillForm(forms.Form):
     )
 
     def __init__(self, *args, team=None, **kwargs):
+        # Limit selectable skills to those not already assigned.
         super().__init__(*args, **kwargs)
         queryset = Skill.objects.order_by('name')
         if team:

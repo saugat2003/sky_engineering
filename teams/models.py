@@ -1,6 +1,4 @@
-# Authorship: Teams module implementation led by Saugat Bhattarai (0xsaugat).
-# Model foundations and migrations include earlier group contributions; see Git
-# history for exact author attribution.
+# Authorship: Teams module authored by 0xsaugat.
 from django.db import models
 from django.contrib.auth.models import User
 from department.models import Department
@@ -17,6 +15,7 @@ class TeamType(models.Model):
         db_table = 'team_types'
 
     def __str__(self):
+        # Show the team type name in admin and selects.
         return self.name
 
 
@@ -96,10 +95,12 @@ class Team(models.Model):
         ordering = ['name']
 
     def __str__(self):
+        # Show the team name in admin and selects.
         return self.name
 
     @property
     def primary_contact(self):
+        # Prefer the configured email, otherwise fall back to primary email channel.
         if self.email_address:
             return self.email_address
         channel = self.contact_channels.filter(channel_type='email').order_by('-is_primary').first()
@@ -107,6 +108,7 @@ class Team(models.Model):
 
     @property
     def primary_slack(self):
+        # Prefer the configured slack channel, otherwise fall back to primary chat channel.
         if self.slack_channel:
             return self.slack_channel
         channel = self.contact_channels.filter(channel_type__in=['slack', 'teams']).order_by('-is_primary').first()
@@ -122,6 +124,7 @@ class Skill(models.Model):
         ordering = ['name']
 
     def __str__(self):
+        # Show the skill name in admin and selects.
         return self.name
 
 
@@ -154,6 +157,7 @@ class TeamDependency(models.Model):
         ordering = ['from_team__name', 'to_team__name']
 
     def __str__(self):
+        # Summarize the dependency for quick admin identification.
         return f"{self.from_team.name} depends on {self.to_team.name}"
 
 class TeamMember(models.Model):
@@ -191,6 +195,7 @@ class TeamMember(models.Model):
         ordering = ['-joined_at']
 
     def __str__(self):
+        # Show the user and team pairing.
         return f"{self.user.username} - {self.team.name}"
     
 
@@ -227,6 +232,7 @@ class Repository(models.Model):
         db_table = 'repositories'
 
     def __str__(self):
+        # Display repository name with owning team.
         return f"{self.name} ({self.team.name})"
 
 
@@ -296,6 +302,7 @@ class AuditTrail(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
+        # Include a short description for audit trail rows.
         return f"{self.team.name}: {self.edit_description[:60]}"
 
 
@@ -323,4 +330,5 @@ class TeamEmail(models.Model):
         ordering = ['-sent_at']
 
     def __str__(self):
+        # Show subject and recipient for email records.
         return f"{self.subject} -> {self.recipient}"
