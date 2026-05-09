@@ -1,3 +1,5 @@
+"""Data models for departments."""
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -24,4 +26,5 @@ class Department(models.Model):
         ordering = ['name']
 
     def __str__(self):
+        """Return the display name for the department."""
         return self.name

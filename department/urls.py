@@ -1,3 +1,5 @@
+"""URL routes for department views."""
+
 from django.urls import path
 from . import views
 urlpatterns = [

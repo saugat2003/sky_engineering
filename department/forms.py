@@ -1,3 +1,5 @@
+"""Forms for creating and editing departments."""
+
 from django import forms
 
 from department.models import Department

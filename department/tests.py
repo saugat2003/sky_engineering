@@ -1,3 +1,5 @@
+"""Tests for department app views and permissions."""
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -7,6 +9,7 @@ from department.models import Department
 
 class DepartmentCreateTests(TestCase):
     def setUp(self):
+        """Create users for department creation tests."""
         self.staff_user = User.objects.create_user(
             username="admin",
             password="pass",
@@ -18,6 +21,7 @@ class DepartmentCreateTests(TestCase):
         )
 
     def test_staff_user_can_create_department(self):
+        """Verify staff users can create a department."""
         self.client.login(username="admin", password="pass")
 
         response = self.client.post(reverse("department_create"), {
@@ -32,6 +36,7 @@ class DepartmentCreateTests(TestCase):
         self.assertTrue(department.is_active)
 
     def test_regular_user_cannot_access_create_department(self):
+        """Verify non-staff users cannot access department creation."""
         self.client.login(username="engineer", password="pass")
 
         response = self.client.get(reverse("department_create"))

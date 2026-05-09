@@ -1,3 +1,8 @@
+"""Department app views.
+
+Author: Rupesh Dahal
+"""
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
@@ -10,7 +15,14 @@ from teams.models import Team, TeamDependency, TeamMember
 # Create your views here.
 @login_required
 def department_overview(request):
-    
+    """Render the department overview dashboard.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse with the department overview page.
+    """
     total_department = Department.objects.all().count()
     total_active_teams = Team.objects.filter(status="active").count()
     total_engineers = TeamMember.objects.all().count()
@@ -19,12 +31,6 @@ def department_overview(request):
         total_teams = Count("teams", distinct=True),
         total_members = Count("teams__members__user", distinct=True)
     )
-
-    # for dept in departments:
-    #     print("Department:", dept.name)
-    #     print("Total Teams:", dept.total_teams)
-    #     print("Total Members:", dept.total_members)
-    #     print("-" * 30)
 
     context = {
         "total_department": total_department,
@@ -38,6 +44,14 @@ def department_overview(request):
 @login_required
 @user_passes_test(lambda user: user.is_staff)
 def department_create(request):
+    """Create a new department.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse with the form or a redirect on success.
+    """
     if request.method == "POST":
         form = DepartmentForm(request.POST)
         if form.is_valid():
@@ -52,6 +66,15 @@ def department_create(request):
 
 @login_required
 def department_detail(request, id):
+    """Render details for a single department.
+
+    Args:
+        request: Django HTTP request.
+        id: Department primary key.
+
+    Returns:
+        HttpResponse with the department detail page.
+    """
     department = get_object_or_404(Department.objects.prefetch_related(
         'teams',
         'teams__team_type',
@@ -67,6 +90,14 @@ def department_detail(request, id):
 
 @login_required
 def org_chart(request):
+    """Render the organization chart view.
+
+    Args:
+        request: Django HTTP request.
+
+    Returns:
+        HttpResponse with the org chart page.
+    """
     departments = Department.objects.annotate(
         total_teams=Count("teams", distinct=True),
         total_members=Count("teams__members__user", distinct=True)
