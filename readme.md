@@ -71,7 +71,7 @@ Collect static files (if needed):
 python manage.py collectstatic
 ```
 
-Static assets are collected into `staticfiles/`. Media files, including the logo in `media/`, are served separately under `/media/`.
+Static assets are collected into `staticfiles/`. User uploads live under `media/` and are served separately under `/media/`.
 
 ## Main Structure
 

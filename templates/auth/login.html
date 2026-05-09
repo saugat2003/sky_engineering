@@ -1,4 +1,5 @@
 <!doctype html>
+{% load static %}
 
 <html lang="en">
   <head>
@@ -113,9 +114,10 @@
           class="absolute inset-0 z-0 opacity-10"
           data-alt="Abstract view of broadcast control room equipment"
           style="
-            background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuAwDAkR7PUK1K8U67tkxAbleHpllsDvFBM7-LWT3atwZJmIGpcm6FqCWpNkKJUtRy-QzQ4s8mMhw1UhlUTYI8YqdzKZhdOSmwbuZvuZkj-0h2PMLnk3-OimCqjW77zINJyIKkaXl0Rum3H6CYxpfnrv6xr6_wYI9iOKzGsFecGqxtgP2hOw4xDXWDXiWizTYPNpcAjAY-3I9AGxZpZ89&quot;);
+            background-image: url('{% static 'img/auth-background.svg' %}');
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
           "
         ></div>
       </div>

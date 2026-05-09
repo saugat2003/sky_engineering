@@ -1,3 +1,4 @@
+{% load static %}
 {% extends 'base.html' %}
 
 {% block content %}
@@ -36,7 +37,7 @@
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-lg font-bold text-gray-600 overflow-hidden">
                     {% if department.head.profile_picture %}
-                        <img src="{{ department.head.profile_picture.url }}" alt="{{ department.head.get_full_name }}" class="w-full h-full object-cover" />
+                        <img src="{{ department.head.profile_picture.url }}" alt="{{ department.head.get_full_name }}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='{% static 'img/default-avatar.svg' %}'" />
                     {% else %}
                         {{ department.head.first_name|make_list|first }}{{ department.head.last_name|make_list|first }}
                     {% endif %}

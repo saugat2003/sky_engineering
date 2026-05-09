@@ -1,11 +1,12 @@
 <!doctype html>
+{% load static %}
 
 <html class="light" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>{% block title %}Broadcast Co. Engineering Team Registry{% endblock %}</title>
-    <link rel="icon" type="image/png" href="{{ MEDIA_URL }}logo.png" />
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rowdies:wght@300;400;700&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -63,7 +64,7 @@
     >
       <div class="p-6 flex items-center gap-3">
         <a href="{% url 'dashboard' %}" class="size-10 rounded-xl bg-primary flex items-center justify-center text-white hover:opacity-90 transition-opacity">
-          <img src="{{ MEDIA_URL }}logo.png" alt="Broadcast Co. Logo" class="w-full h-full object-cover rounded-xl" />
+          <img src="{% static 'img/logo.png' %}" alt="Broadcast Co. Logo" class="w-full h-full object-cover rounded-xl" />
         </a>
         <div>
           <h1 class="font-bold text-slate-900 dark:text-white leading-tight">
@@ -237,6 +238,7 @@
               alt="{{ user.get_full_name|default:user.username }}"
               class="w-9 h-9 rounded-full object-cover bg-gray-200"
               src="{{ current_profile.avatar.url }}"
+              onerror="this.onerror=null;this.src='{% static 'img/default-avatar.svg' %}'"
             />
             {% else %}
             <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-xs font-black uppercase">
@@ -254,6 +256,7 @@
                   alt="{{ user.get_full_name|default:user.username }}"
                   class="w-10 h-10 rounded-full object-cover bg-gray-200"
                   src="{{ current_profile.avatar.url }}"
+                  onerror="this.onerror=null;this.src='{% static 'img/default-avatar.svg' %}'"
                 />
                 {% else %}
                 <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-black uppercase">
