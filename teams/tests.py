@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from department.models import Department
-from teams.models import AuditTrail, ContactChannel, Skill, Team, TeamDependency, TeamEmail, TeamMember, TeamType
+from teams.models import AuditTrail, ContactChannel, Repository, Skill, Team, TeamDependency, TeamEmail, TeamMember, TeamType
 
 
 class TeamViewsTest(TestCase):
@@ -133,6 +133,16 @@ class TeamViewsTest(TestCase):
         self.assertRedirects(remove_response, reverse('team_dependencies', args=[self.team.pk]))
         self.assertFalse(TeamDependency.objects.filter(pk=dependency.pk).exists())
         self.assertTrue(AuditTrail.objects.filter(team=self.team, edit_description__icontains='Dependency removed').exists())
+
+    def test_repository_string_representation_is_readable(self):
+        repository = Repository.objects.create(
+            team=self.team,
+            name='Playback Web',
+            url='https://github.com/example/playback-web',
+            platform='GitHub',
+        )
+
+        self.assertEqual(str(repository), 'Playback Web (Code Warriors)')
 
     def test_skill_page_adds_and_removes_team_skill(self):
         skill = Skill.objects.get(name='Incident Management')
