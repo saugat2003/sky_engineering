@@ -1,3 +1,7 @@
+"""Forms for account registration.
+Author: Rupesh Dahal
+"""
+
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -20,6 +24,14 @@ class RegisterForm(forms.ModelForm):
         fields = ["first_name", "last_name", "username", "email", "password"]
 
     def clean(self):
+        """Validate matching passwords.
+
+        Returns:
+            dict: Cleaned form data.
+
+        Raises:
+            ValidationError: When password and confirmation do not match.
+        """
         cleaned_data = super().clean()
 
         if cleaned_data.get("password") != cleaned_data.get("confirm_password"):
@@ -28,6 +40,14 @@ class RegisterForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
+        """Create a new user with a hashed password.
+
+        Args:
+            commit: Whether to persist the user to the database.
+
+        Returns:
+            User: The created user instance.
+        """
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
 

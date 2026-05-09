@@ -1,3 +1,6 @@
+"""Forms for creating and editing departments.
+Author: Rupesh Dahal"""
+
 from django import forms
 
 from department.models import Department
