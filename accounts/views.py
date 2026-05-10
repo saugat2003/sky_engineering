@@ -1,9 +1,10 @@
 """Authentication views for registration, login, and logout flows.
 Author: Saugat Bhattarai and Rupesh Dahal"""
 
-from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib import messages
+from django.shortcuts import redirect, render
 
 from accounts.forms import RegisterForm
 
@@ -24,6 +25,7 @@ def register_view(request):
 
         if form.is_valid():
             form.save()
+            messages.success(request, "User created successfully.")
             return redirect("login")
     else:
         form = RegisterForm()

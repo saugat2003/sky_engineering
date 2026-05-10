@@ -141,7 +141,7 @@
                 <span class="rounded-full bg-white px-2.5 py-1 text-xs font-black text-primary dark:bg-slate-900">{{ item.department.total_teams }} teams</span>
               </div>
               <div class="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                <div class="h-full rounded-full bg-primary" style="width: {{ item.team_width }}%"></div>
+                <div class="h-full rounded-full bg-primary" data-team-width="{{ item.team_width }}"></div>
               </div>
             </a>
             {% empty %}
@@ -220,4 +220,9 @@
     </aside>
   </div>
 </div>
+<script>
+  document.querySelectorAll('[data-team-width]').forEach((bar) => {
+    bar.style.width = `${bar.dataset.teamWidth}%`;
+  });
+</script>
 {% endblock content %}
