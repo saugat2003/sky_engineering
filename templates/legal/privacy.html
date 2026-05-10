@@ -1,0 +1,59 @@
+<!-- Author: Saugat Bhattarai and Rupesh Dahal -->
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
+    <title>Privacy Policy | Broadcast Engineering Team Registry</title>
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-6 lg:px-8">
+      <a class="text-sm font-semibold text-indigo-600 hover:underline" href="{% url 'register' %}">Back to registration</a>
+      <section class="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <h1 class="text-3xl font-black tracking-tight">Privacy Policy</h1>
+        <p class="mt-2 text-sm text-slate-500">Last updated: May 10, 2026</p>
+
+        <div class="mt-8 space-y-6 text-sm leading-6 text-slate-700">
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">1. Information We Collect</h2>
+            <p class="mt-2">We collect account details such as name, username, email address, password credentials, profile information, team assignments, meeting records, messages, and activity needed to operate the registry.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">2. How We Use Information</h2>
+            <p class="mt-2">Your information is used to authenticate users, manage teams and departments, schedule meetings, send messages, display dashboards, maintain audit history, and support administrative workflows.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">3. Password and Account Security</h2>
+            <p class="mt-2">Passwords are stored using Django's password hashing system. Administrators cannot view your password. You should use a strong password and keep it private.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">4. Sharing and Access</h2>
+            <p class="mt-2">Information may be visible to authenticated users and administrators where required by application features. We do not sell personal information.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">5. Data Retention</h2>
+            <p class="mt-2">Records may be retained while the application is active or as needed for coursework, operational continuity, audit history, troubleshooting, or administrative requirements.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">6. Your Choices</h2>
+            <p class="mt-2">You may update your profile information after signing in. For account removal or corrections that are not available in the interface, contact an administrator.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">7. Contact</h2>
+            <p class="mt-2">For privacy questions, data correction requests, or account concerns, contact the system administrator or project maintainer responsible for this deployment.</p>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

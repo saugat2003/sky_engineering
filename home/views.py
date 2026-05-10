@@ -23,6 +23,18 @@ from teams.models import AuditTrail, Team, TeamDependency, TeamMember
 from scheduling.models import Notification
 
 
+def terms_view(request):
+    """Render the public Terms of Service page."""
+
+    return render(request, 'legal/terms.html')
+
+
+def privacy_view(request):
+    """Render the public Privacy Policy page."""
+
+    return render(request, 'legal/privacy.html')
+
+
 @login_required
 def home_redirect(request):
     now = timezone.now()

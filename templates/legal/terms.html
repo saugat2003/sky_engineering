@@ -1,0 +1,59 @@
+<!-- Author: Saugat Bhattarai and Rupesh Dahal -->
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}" />
+    <title>Terms of Service | Broadcast Engineering Team Registry</title>
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <main class="mx-auto max-w-4xl px-5 py-10 sm:px-6 lg:px-8">
+      <a class="text-sm font-semibold text-indigo-600 hover:underline" href="{% url 'register' %}">Back to registration</a>
+      <section class="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <h1 class="text-3xl font-black tracking-tight">Terms of Service</h1>
+        <p class="mt-2 text-sm text-slate-500">Last updated: May 10, 2026</p>
+
+        <div class="mt-8 space-y-6 text-sm leading-6 text-slate-700">
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">1. Use of the Service</h2>
+            <p class="mt-2">Broadcast Engineering Team Registry is provided for managing engineering teams, departments, schedules, messages, and related operational records. You agree to use the service only for authorized academic, organizational, or administrative purposes.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">2. Account Responsibility</h2>
+            <p class="mt-2">You are responsible for keeping your login credentials confidential and for all activity performed through your account. Notify an administrator if you believe your account has been accessed without permission.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">3. Acceptable Conduct</h2>
+            <p class="mt-2">You must not misuse the platform, attempt unauthorized access, upload harmful content, disrupt system availability, or enter information that is false, abusive, or unrelated to legitimate team operations.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">4. Content and Records</h2>
+            <p class="mt-2">Information you submit may be visible to authorized users and administrators based on the feature being used. You should only submit content that you are permitted to share.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">5. Availability and Changes</h2>
+            <p class="mt-2">The service may be updated, paused, or modified for maintenance, coursework requirements, security, or operational improvements. Features may change without prior notice.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">6. Termination</h2>
+            <p class="mt-2">Access may be suspended or removed if an account is misused, no longer needed, or violates these terms or applicable institutional policies.</p>
+          </section>
+
+          <section>
+            <h2 class="text-lg font-bold text-slate-900">7. Contact</h2>
+            <p class="mt-2">For questions about these terms, contact the system administrator or project maintainer responsible for this deployment.</p>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

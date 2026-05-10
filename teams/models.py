@@ -251,6 +251,10 @@ class SoftwareProduct(models.Model):
     class Meta:
         db_table = 'software_products'
 
+    def __str__(self):
+        # Show product name with owning team in admin and selects.
+        return f"{self.name} ({self.team.name})"
+
 
 class ContactChannel(models.Model):
     CHANNEL_CHOICES = [
@@ -279,6 +283,10 @@ class ContactChannel(models.Model):
 
     class Meta:
         db_table = 'contact_channels'
+
+    def __str__(self):
+        # Show the contact target with its type and team in admin and selects.
+        return f"{self.get_channel_type_display()}: {self.value} ({self.team.name})"
 
 
 class AuditTrail(models.Model):

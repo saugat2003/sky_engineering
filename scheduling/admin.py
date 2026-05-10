@@ -4,6 +4,7 @@ Author: Bijay Bikram Dahal
 
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.db.models import Q, Count
 from datetime import timedelta
@@ -80,6 +81,7 @@ class MeetingAdmin(admin.ModelAdmin):
     readonly_fields = (
         'created_at',
         'updated_at',
+        'end_time',
         'attendee_stats',
         'meeting_duration',
         'time_until_meeting',
@@ -217,7 +219,7 @@ class MeetingAdmin(admin.ModelAdmin):
             </tr>
         </table>
         """
-        return format_html(stats)
+        return mark_safe(stats)
     attendee_stats.short_description = 'Attendee Statistics'
     
     def meeting_duration(self, obj):
